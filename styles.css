@@ -1,0 +1,30 @@
+@charset "UTF-8";
+
+body{
+	font-family: "Trebuchet MS", sans-serif;
+  font-size: 18px;
+	background: #ddffdd;
+	overflow: hidden;
+	margin: 10px 30px 10px;
+}
+
+canvas{
+	background-color: transparent;
+	margin: 0px;
+}
+
+canvas:focus{
+	outline: none;
+}
+
+#canvas{
+	z-index: 0;
+}
+
+.screen{
+	margin: 6px;
+}
+
+input{
+	margin: 12px 24px 12px;
+}

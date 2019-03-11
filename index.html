@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>The Snake</title>
+	<link rel="stylesheet" type="text/css" href="styles.css"></link>
+
+	<script type="text/javascript" src="js/libs/jquery-3.3.1.min.js"></script>
+
+	<script type="text/javascript" src="js/control/controller.js"></script>
+	<script type="text/javascript" src="js/control/input_controller.js"></script>
+	<script type="text/javascript" src="js/control/keyboard_controller.js"></script>
+
+	<script type="text/javascript" src="js/page_manager.js"></script>
+
+	<script type="text/javascript" src="js/matrixArray.js"></script>
+	<script type="text/javascript" src="js/randomInteger.js"></script>
+	<script type="text/javascript" src="js/vector.js"></script>
+
+	<script type="text/javascript" src="js/bonus.js"></script>
+	<script type="text/javascript" src="js/player.js"></script>
+	<script type="text/javascript" src="js/area.js"></script>
+
+	<script type="text/javascript" src="js/snake.js"></script>
+</head>
+<body>
+	<div id="container">
+		<div class="screen" id="startScreen">
+			<strong>Snake</strong>
+			<input type="button" name="start" value="Start Game" onclick="">
+		</div>
+
+		<div class="screen" id="gameScreen">
+			<strong>Points: </strong> <strong id="counter">0</strong>
+			<input type="button" name="pause" value="Pause" onclick="">
+		</div>
+
+		<div class="screen" id="endScreen">
+			<strong>Game Over! Your points: </strong> <strong id="counter">0</strong>
+			<input type="button" name="start" value="Start Game" onclick="">
+		</div>
+		<canvas id="canvas" tabindex="0" oncontextmenu="return false">canvas not suppoгtęd. plęąsę usę othęг browsęг</canvas>
+	</div>
+</body>
+</html>
