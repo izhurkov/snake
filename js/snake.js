@@ -26,14 +26,14 @@ document.addEventListener( "DOMContentLoaded", function() {
 
 		blockColor: "rgba(144, 255, 144, 1)",
 		wallColor: "rgba(72, 127, 72, 1)"	,
-		areaX: 13,
-		areaY: 13,
+		areaX: 25,
+		areaY: 15,
 		blockSize: 20,
 
 		outerColor: "rgba(124, 112, 96, 1)",
 		innerColor: "rgba(204, 177, 156, 1)",
-		startPos: { x: 7, y: 5 },
-		startLength: 4,
+		startPos: { x: 10, y: 8 },
+		startLength: 3,
 
 		bonusColor: "rgba(200, 70, 150, 1)"
 	};
@@ -51,6 +51,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 	var currentVelocity = null;
 
 	var inputController = new InputController( config ); 
+	inputController.attach( canvas );
 	inputController.attach( canvas );
 
 	$( document ).on( inputController.ACTION_ACTIVATED, function(e, param) {
@@ -72,7 +73,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 		setTimeout( function(){
 			requestAnimationFrame( mainStep );
 			gameStep();
-		}, 300 );
+		}, 500 );
 	};
 
 	function gameStep(  ){
@@ -86,13 +87,11 @@ document.addEventListener( "DOMContentLoaded", function() {
 			player.addBlock();
 			score++;
 		}
-		else if ( area.blocks[player.head.x][player.head.y] != 0 ){
-			setState()
+		else if ( wallCollision() ){
+			console.log("lose wall");
 		}
-		else if ( Vector.equals( player.head, bonus.pos ) ){
-			bonus.update( getNewBonusPosition() );
-			player.addBlock();
-			score++;
+		else if ( snakeCollision() ){
+			console.log("lose snake");
 		}
 		else
 			player.update( currentVelocity );
@@ -105,11 +104,30 @@ document.addEventListener( "DOMContentLoaded", function() {
 		return newPos;
 	};
 
+	function wallCollision(){
+		if (area.blocks[player.head.x][player.head.y] != 0)
+			return true;
+		return false;
+	};
+
+	function snakeCollision(){
+		for ( var i = 1; i < player.pos.length; i++ ){
+			if ( Vector.equals( player.pos[i], player.head ) )
+				return true;
+		}
+		return false;
+	};
+
+
 	function drawGame(){
 		area.draw( ctx );
 		player.draw( ctx );
 		bonus.draw( ctx );
 	};
+	
+	showPrompt("Введите что-нибудь<br>... умное :)", function(value) {
+	  alert( value );
+	});
 
 	gameStart();
 });

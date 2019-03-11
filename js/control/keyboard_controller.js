@@ -42,12 +42,12 @@ class KeyboardInputDevice extends Controller{
           return;
         var action = keyboard.actions_by_keycode[ e.keyCode ];
         if (!action) return;
-        scope.setActionActive(action, false);
+        scope.setActionActive( action, false );
       };
     };
 
     target.addEventListener( 'keydown', this.onKeyDown, true );
-    target.addEventListener( 'keyup', this.onKeyUp, true );  
+    target.addEventListener( 'keyup', this.onKeyUp, true );
   };
 
   detach( target ){

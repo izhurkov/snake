@@ -56,16 +56,19 @@ class Player{
 	};
 
 	draw( ctx ){
+		// draw body
 		ctx.fillStyle = this.innerColor;
 		for ( var i = 1; i < this.pos.length; i++ )
 			ctx.fillRect( this.pos[i].x * this.blockSize + 1,
 										this.pos[i].y * this.blockSize + 1,
 										this.blockSize - 2,
 										this.blockSize - 2 );
+
+		// draw head
 		ctx.fillStyle = this.outerColor;
-		ctx.fillRect( this.pos[0].x * this.blockSize + 1,
-										this.pos[0].y * this.blockSize + 1,
-										this.blockSize - 2,
-										this.blockSize - 2 );
+		ctx.fillRect( this.pos[0].x * this.blockSize,
+										this.pos[0].y * this.blockSize,
+										this.blockSize,
+										this.blockSize );
 	};
 }
