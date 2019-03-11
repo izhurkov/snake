@@ -124,10 +124,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 		player.draw( ctx );
 		bonus.draw( ctx );
 	};
-	
-	showPrompt("Введите что-нибудь<br>... умное :)", function(value) {
-	  alert( value );
-	});
+
+	modalWindow.show( "hello" );
 
 	gameStart();
 });
