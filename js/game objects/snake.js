@@ -1,6 +1,6 @@
 'use strict';
 
-class Player{
+class Snake{
 
 	constructor( config ){
 		this.pos = [];
@@ -19,13 +19,13 @@ class Player{
 
 	update( currentVelocity ){
 		this.changeVelocity( currentVelocity );
-		this.moveSnake()
+		this.moveSnake();
 	};
 
-	addBlock(){
+	addBlock( currentVelocity ){
+		this.changeVelocity( currentVelocity );
 		var length = this.pos.length;
-		this.pos.push( new Vector( this.pos[length-1].x, this.pos[length-1].y))
-		this.moveSnake()
+		this.pos.push( new Vector( this.pos[length-1].x, this.pos[length-1].y));
 	};
 
 	moveSnake(){

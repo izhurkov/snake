@@ -25,20 +25,14 @@ class Area {
 	};
 
 	draw( ctx ){
-		for ( var i = 0; i < this.blocks.length; i++ ){
-			for ( var j = 0; j < this.blocks[0].length; j++ ){
-				if ( i !== 0 && j !== 0
-							&& i !== this.blocks.length - 1
-							&& j !== this.blocks[0].length - 1){
-					ctx.fillStyle = this.blockColor;
-					ctx.fillRect( i * this.blockSize, j * this.blockSize, this.blockSize, this.blockSize );
-				}
-				else{
-					ctx.fillStyle = this.wallColor;
-					ctx.fillRect( i * this.blockSize, j * this.blockSize, this.blockSize, this.blockSize );
-				}
-			};
-		};
+		ctx.fillStyle = this.wallColor;
+		ctx.fillRect( 0, 0, this.blocks.length * this.blockSize, this.blocks[0].length * this.blockSize );
+
+		ctx.fillStyle = this.blockColor;
+		ctx.fillRect( this.blockSize,
+									this.blockSize,
+									(this.blocks.length - 2) * this.blockSize,
+									(this.blocks[0].length - 2) * this.blockSize );
 	};
 	
 };

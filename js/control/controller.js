@@ -3,9 +3,7 @@
 class Controller {
 
   constructor(){ };
-
-  init(){ };
-
+  
   bindActions(action){ };
 
   addActionProperties(oldAction, newAction){ };

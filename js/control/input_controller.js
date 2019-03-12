@@ -18,6 +18,8 @@ class InputController {
       }
     }
 
+    console.log("saf");
+
     this.active_devices = {};
 
     for( var device_name in config.devices ){
@@ -31,11 +33,6 @@ class InputController {
         if (device_config)
           this.addProperties(this.active_devices[device_name], device_config);
       }
-    };
-
-    for( var device_name in this.active_devices ){
-      var device = this.active_devices[ device_name ];
-      device.init( config );
     };
 
     if( config.actions ){
@@ -163,6 +160,7 @@ class InputController {
     for (var actionName in this.actions){
       this.actions[actionName].active = false;
     }
+    $(document).trigger( "deactiveAllActions" );
   };
 
   isActionActive( actionName ){

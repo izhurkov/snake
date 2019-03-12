@@ -6,24 +6,42 @@
 // ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝ 
 //  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝  
 
+$(window).on( 'page:ready', function(){
+	console.log("page:ready");
+	var params = {
+		devices:{
+	    keyboard: {
+	      enabled: true
+	    }
+	  },
+	  actions: {
+	    'right': {
+	      keyCodes:[39]
+	    },
+	    'left': {
+	      keyCodes:[37]
+	    },
+	    'up': {
+	      keyCodes:[38]
+	    },
+	    'down': {
+	      keyCodes:[40]
+	    }
+	  },
 
-// $(window).on( 'pages:ready', function(){
-// 	var params = {
-// 		var AREA_X = 21,
-// 		var AREA_Y = 15,
-// 		var BLOCK_SIZE = 20,
+	  blockColor: "rgba(144, 255, 144, 1)",
+	  wallColor: "rgba(72, 127, 72, 1)" ,
+	  areaX: 25,
+	  areaY: 15,
+	  blockSize: 20,
 
-// 		var SNAKE_START_POINT = 29,
-// 		var SNAKE_START_LENGTH = 3,
+	  outerColor: "rgba(124, 112, 96, 1)",
+	  innerColor: "rgba(204, 177, 156, 1)",
+	  startPos: { x: 10, y: 8 },
+	  startLength: 3,
 
-// 		var COLOR_SNAKE_OUTER = "rgba(178, 160, 146, 1)",
-// 		var COLOR_SNAKE_INNER = "rgba(204, 177, 156, 1)",
-// 		var COLOR_BLOCK = "rgba(144, 255, 144, 1)";
-// 		var COLOR_WALL_BLOCK = "rgba(72, 127, 72, 1)";
+	  bonusColor: "rgba(200, 70, 150, 1)"
+	};
 
-// 		var COLOR_BONUS = "rgba(206, 195, 255, 1)";	
-
-// 	};
-
-// 	var snake = new Snake( params );
-// });
+	var games = new Game( params );
+});
