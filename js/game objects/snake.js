@@ -17,6 +17,21 @@ class Snake{
 
 	get head() { return this.pos[0]; };
 
+	reset( config ){
+		
+		this.pos = [];
+		this.velocity = new Vector( 1, 0 );
+
+		this.innerColor = config.innerColor;
+		this.outerColor = config.outerColor;
+		this.blockSize = config.blockSize;
+
+		this.pos.push( new Vector( config.startPos.x, config.startPos.y ) );
+		for ( var i = 1; i < config.startLength; i++ )
+			this.pos.push( new Vector( config.startPos.x - i, config.startPos.y ) )
+		
+	}
+
 	update( currentVelocity ){
 		this.changeVelocity( currentVelocity );
 		this.moveSnake();
@@ -26,6 +41,7 @@ class Snake{
 		this.changeVelocity( currentVelocity );
 		var length = this.pos.length;
 		this.pos.push( new Vector( this.pos[length-1].x, this.pos[length-1].y));
+		this.moveSnake();
 	};
 
 	moveSnake(){

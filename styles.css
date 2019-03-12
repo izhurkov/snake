@@ -23,6 +23,7 @@ canvas:focus{
 
 .screen{
 	margin: 6px;
+    display: none;
 }
 
 input{
@@ -50,5 +51,6 @@ input{
 
 .buttons{
     font-size: 18px;
-    margin: 2px 6px 2px;
+    margin: 6px 0px 6px;
+    width: 100%;
 }

@@ -11,7 +11,6 @@ class ScreenManager {
       else
         this.hideScreen( screen_name );
     };
-
   };
 
   createScreen( target ){
@@ -25,6 +24,13 @@ class ScreenManager {
 
   showScreen( screen_name ){
     this.screens[screen_name].show();
+  };
+
+  showOneScreen( screen_name ){
+    for ( let screen_name in this.screens ){
+      this.hideScreen( screen_name );
+    }
+    this.showScreen( screen_name );
   };
 
 };

@@ -7,7 +7,7 @@
 //  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝  
 
 $(window).on( 'page:ready', function(){
-	console.log("page:ready");
+	console.log("page:ready");	
 	var params = {
 		devices:{
 	    keyboard: {
@@ -43,5 +43,7 @@ $(window).on( 'page:ready', function(){
 	  bonusColor: "rgba(200, 70, 150, 1)"
 	};
 
-	var games = new Game( params );
+	var snakeGame = new Game( params );
+	snakeGame.startGame();
+	// snakeGame.startGame();
 });

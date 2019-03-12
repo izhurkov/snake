@@ -8,6 +8,13 @@ class Bonus {
 		this.frame = true;
 	};
 
+	reset( config ){
+		this.pos.set( config.areaX - 2, config.areaY - 2);
+		this.color = config.bonusColor;
+		this.blockSize = config.blockSize;
+		this.frame = true;
+	};
+
 	update( newPos ){
 		this.pos = newPos;
 	};

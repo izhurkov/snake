@@ -18,7 +18,6 @@ class InputController {
       }
     }
 
-    console.log("saf");
 
     this.active_devices = {};
 

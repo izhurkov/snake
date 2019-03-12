@@ -30,6 +30,7 @@ class ModalWindow{
         this.wind.innerHTML = text;
         this.wind.className = "wind";
 
+        this.wind.style.textAlign = 'center';
         this.wind.style.left = '40%';
         this.wind.style.top = '50%';
 
@@ -42,6 +43,7 @@ class ModalWindow{
         input.name = button;
         input.className = "buttons";
         input.value = button;
+        input.style.display = 'block';
         var scope = this;
         input.onclick = function(){ scope.hide() };
 
@@ -49,8 +51,8 @@ class ModalWindow{
     };
 
     show(){
-        this.back.style.display = 'inline';
-        this.wind.style.display = 'inline';
+        this.back.style.display = 'block';
+        this.wind.style.display = 'block';
     };
 
     hide(){
