@@ -6,6 +6,7 @@
 	<link rel="stylesheet" type="text/css" href="styles.css"></link>
 
 	<script type="text/javascript" src="js/libs/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="js/libs/handlebars.runtime-v4.1.0.js"></script>
 
 	<script type="text/javascript" src="js/input control/controller.js"></script>
 	<script type="text/javascript" src="js/input control/input_controller.js"></script>
@@ -37,12 +38,13 @@
 
 			<div class="screen" id="startScreen">
 				<strong>Snake</strong>
-				<input type="button" class="startButton" id="start" value="Start Game" data-event="show-screen:gameScreen" >
+				<input type="button" id="start" value="Start Game" data-event="show-screen:gameScreen" >
 			</div>
 
 			<div class="screen" id="gameScreen">
 				<strong>Points: </strong> <strong id="gameCounter">0</strong>
-				<input type="button" id="pause" value="Pause">
+				<input type="button" id="pause" value="Pause" data-event="show-screen:pauseScreen">
+
 				<div id="renderer-container">
 					<canvas id="canvas" tabindex="0" oncontextmenu="return false">canvas not suppoгtęd</canvas>
 				</div>
@@ -50,8 +52,8 @@
 
 			<div class="screen" id="endScreen">
 				<strong>Game Over! Your points: </strong> <strong id="finalCounter">0</strong>
-				<input type="button" class="startButton" id="start" value="Start Game">
-				<input type="button" id="menu" value="Main Menu">
+				<input type="button" id="start" value="Start Game" data-event="show-screen:gameScreen">
+				<input type="button" id="menu" value="Main Menu" data-event="show-screen:startScreen">
 			</div>
 
 		</div>

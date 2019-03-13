@@ -12,8 +12,8 @@
 	    onHide: function() {
 	    	// console.log('onHide');
 	    },
-	    'hideAnimation': 'hide',
-	    'hideDuration': 100,
+	    'hideAnimation': 'fadeOut',
+	    'hideDuration': 400,
 
 	  },
 	  'gameScreen': {
@@ -24,8 +24,8 @@
 	    onHide: function() {
 	    	// console.log('onHide');
 	    },
-	    'showAnimation': 'show',
-	    'showDuration': 1000,
+	    'showAnimation': 'fadeIn',
+	    'showDuration': 300,
 	  },
 	  'endScreen': {
 	    onShow: function(){
@@ -83,8 +83,6 @@
 
   //
  
-
-
   // 
   // screenManager.showOneScreen('startScreen');
   $(document).trigger('show-screen','startScreen');
