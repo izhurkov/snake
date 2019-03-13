@@ -1,5 +1,6 @@
 'use strict';
 
+// создает двумерный массив
 function matrixArray( rows, columns ){
   var arr = new Array();
   for( var i = 0; i < rows; i++ ){

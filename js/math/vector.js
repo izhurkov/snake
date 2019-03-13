@@ -1,5 +1,11 @@
 'use strict';
 
+/*
+Simple 2D JavaScript Vector Class
+Hacked from evanw's lightgl.js
+https://github.com/evanw/lightgl.js/blob/master/src/vector.js
+*/
+
 function Vector(x, y) {
 	this.x = x || 0;
 	this.y = y || 0;

@@ -6,9 +6,11 @@
 // ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝ 
 //  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝  
 
+// задаются параметры игры, создаеться экземпляр с игрой
 $(window).on( 'page:ready', function(){
-	console.log("page:ready");	
-	var params = {
+
+	// данные для InputController
+	var inputConfig = {
 		devices:{
 	    keyboard: {
 	      enabled: true
@@ -27,8 +29,11 @@ $(window).on( 'page:ready', function(){
 	    'down': {
 	      keyCodes:[40]
 	    }
-	  },
+	  }
+	}
 
+	var params = {
+	  // немножко кастамизации
 	  blockColor: "rgba(144, 255, 144, 1)",
 	  wallColor: "rgba(72, 127, 72, 1)" ,
 	  areaX: 25,
@@ -40,10 +45,11 @@ $(window).on( 'page:ready', function(){
 	  startPos: { x: 10, y: 8 },
 	  startLength: 3,
 
-	  bonusColor: "rgba(200, 70, 150, 1)"
+	  bonusColor: "rgba(200, 70, 150, 1)",
+
+	  // длительность одного шага игры (в мс)
+	  stepTime: 200
 	};
 
-	var snakeGame = new Game( params );
-	snakeGame.startGame();
-	// snakeGame.startGame();
+	var snakeGame = new Game( inputConfig, params );
 });

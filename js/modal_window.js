@@ -15,6 +15,7 @@ class ModalWindow{
         this.hide();
     };
 
+    // создает полупрозрачный темный фон
     initBack( text ){
         this.back = document.createElement('div');
         this.back.id = 'back_'+ text;
@@ -23,6 +24,7 @@ class ModalWindow{
         document.getElementsByTagName('body')[0].appendChild( this.back );
     };
 
+    // создает форму с текстом
     initWindow( text ){
         this.wind = document.createElement('div');
         this.wind.id = 'wind_' + text;
@@ -31,30 +33,33 @@ class ModalWindow{
         this.wind.className = "wind";
 
         this.wind.style.textAlign = 'center';
-        this.wind.style.left = '40%';
+        this.wind.style.left = '50%';
         this.wind.style.top = '50%';
 
         document.getElementsByTagName('body')[0].appendChild( this.wind );
     };
 
+    // создает кнопки на форме
     addButton( button ){
         var input = document.createElement("input");
         input.type = "button";
-        input.name = button;
+        input.name = button.text;
         input.className = "buttons";
-        input.value = button;
+        input.value = button.text;
         input.style.display = 'block';
         var scope = this;
-        input.onclick = function(){ scope.hide() };
+        input.onclick = button.func;
 
         this.wind.appendChild( input );
     };
 
+    // показать форму
     show(){
         this.back.style.display = 'block';
         this.wind.style.display = 'block';
     };
 
+    // скрыть
     hide(){
         this.back.style.display = 'none';
         this.wind.style.display = 'none';

@@ -2,33 +2,37 @@
 
 class Snake{
 
-	constructor( config ){
-		this.pos = [];
-		this.velocity = new Vector( 1, 0 );
-
-		this.innerColor = config.innerColor;
-		this.outerColor = config.outerColor;
-		this.blockSize = config.blockSize;
-
-		this.pos.push( new Vector( config.startPos.x, config.startPos.y ) );
-		for ( var i = 1; i < config.startLength; i++ )
-			this.pos.push( new Vector( config.startPos.x - i, config.startPos.y ) )
-	};
-
-	get head() { return this.pos[0]; };
-
-	reset( config ){
+	constructor( params ){
+		this.params = params;
 		
 		this.pos = [];
 		this.velocity = new Vector( 1, 0 );
 
-		this.innerColor = config.innerColor;
-		this.outerColor = config.outerColor;
-		this.blockSize = config.blockSize;
+		this.innerColor = params.innerColor;
+		this.outerColor = params.outerColor;
+		this.blockSize = params.blockSize;
 
-		this.pos.push( new Vector( config.startPos.x, config.startPos.y ) );
-		for ( var i = 1; i < config.startLength; i++ )
-			this.pos.push( new Vector( config.startPos.x - i, config.startPos.y ) )
+		this.pos.push( new Vector( params.startPos.x, params.startPos.y ) );
+		for ( var i = 1; i < params.startLength; i++ )
+			this.pos.push( new Vector( params.startPos.x - i, params.startPos.y ) )
+	};
+
+	// позиция "головы" змейки
+	get head() { return this.pos[0]; };
+
+	// возвращение начальных свойств
+	reset(){
+		
+		this.pos = [];
+		this.velocity = new Vector( 1, 0 );
+
+		this.innerColor = this.params.innerColor;
+		this.outerColor = this.params.outerColor;
+		this.blockSize = this.params.blockSize;
+
+		this.pos.push( new Vector( this.params.startPos.x, this.params.startPos.y ) );
+		for ( var i = 1; i < this.params.startLength; i++ )
+			this.pos.push( new Vector( this.params.startPos.x - i, this.params.startPos.y ) )
 		
 	}
 
@@ -37,6 +41,7 @@ class Snake{
 		this.moveSnake();
 	};
 
+	// добавление блока в змейку (рост змеи)
 	addBlock( currentVelocity ){
 		this.changeVelocity( currentVelocity );
 		var length = this.pos.length;
@@ -44,12 +49,14 @@ class Snake{
 		this.moveSnake();
 	};
 
+	// движение змейки на один блок
 	moveSnake(){
 		for ( var i = this.pos.length-1; i > 0; i-- )
 			this.pos[i].set( this.pos[i-1].x, this.pos[i-1].y );
 		this.pos[0].add( this.velocity );
 	};
 
+	// изменение направления
 	changeVelocity( currentVelocity ){
 		switch( currentVelocity ){
     		case 'right':
@@ -71,6 +78,7 @@ class Snake{
     };
 	};
 
+	// отрисовка
 	draw( ctx ){
 		// draw body
 		ctx.fillStyle = this.innerColor;

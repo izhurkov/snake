@@ -1,13 +1,13 @@
 'use strict';
 
 class Area {
-	constructor( config ){
 
-		this.blockColor = config.blockColor;
-		this.wallColor = config.wallColor;
-		this.blockSize = config.blockSize;
+	constructor( params ){
+		this.blockColor = params.blockColor;
+		this.wallColor = params.wallColor;
+		this.blockSize = params.blockSize;
 
-		this.blocks = matrixArray( config.areaX + 2, config.areaY + 2 );
+		this.blocks = matrixArray( params.areaX + 2, params.areaY + 2 );
 		this.initBlocks();
 	};
 

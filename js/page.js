@@ -1,8 +1,10 @@
 'use strict';
 
-(function() {
+// начальная функция на странице
+(function() { 
 	$(document).trigger( 'page:ready' );
 
+	// список экранов
 	var screens = {
 	  'startScreen': {
 	    visible: true
@@ -18,10 +20,10 @@
 	var screenManager = new ScreenManager( screens );
 
   var buttons = [];
-	buttons.push( { text: "continue" } );
-	buttons.push( { text: "menu" } );
+	buttons.push( { text: "continue", func: function(){ $(document).trigger( 'modalWindow:continue'); } } );
+	buttons.push( { text: "menu", func: function(){ $(document).trigger( 'modalWindow:menu' ); } } );
 
-	var modalWindow = new ModalWindow( "pause", ["continue", "menu"] );
+	var modalWindow = new ModalWindow( "pause", buttons );
 
 	$( '.startButton' ).click(function(e) {
     $(document).trigger( 'page:start-btn-clicked' );
@@ -40,6 +42,16 @@
 
   $( document ).on( 'game:end', function(e) {
 	  screenManager.showOneScreen('endScreen');
+  });
+
+  $( document ).on( 'modalWindow:continue', function(e) {
+	  screenManager.showOneScreen('gameScreen');
+	  modalWindow.hide();
+  });
+
+  $( document ).on( 'modalWindow:menu', function(e) {
+	  screenManager.showOneScreen('startScreen');
+	  modalWindow.hide();
   });
 
 })();

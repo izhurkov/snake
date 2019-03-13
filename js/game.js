@@ -2,33 +2,41 @@
 
 class Game{
 
-	constructor( config ){
-		// input controller
+	constructor( configInput, params ){
 
 		// game objects
-		this.config = config;
-		this.area = new Area( config );
-		this.snake = new Snake( config );
-		this.bonus = new Bonus( config );
+		this.params = params;
+		this.area = new Area( params );
+		this.snake = new Snake( params );
+		this.bonus = new Bonus( params );
 		this.score = 0;
 		this.currentVelocity = null;
+		this.played = false;
 
-		this.played;
+		this.stepTime = params.stepTime;
 
 		// renderer
 		this.canvas = document.getElementById( "canvas" );
-		this.canvas.setAttribute( "width", config.blockSize * (config.areaX + 2) + "px" );
-		this.canvas.setAttribute( "height", config.blockSize * (config.areaY + 2) + "px" );
+		this.canvas.setAttribute( "width", params.blockSize * (params.areaX + 2) + "px" );
+		this.canvas.setAttribute( "height", params.blockSize * (params.areaY + 2) + "px" );
 		this.ctx = canvas.getContext( "2d" );
 
-
-		this.inputController = new InputController( config );
+		// input controller
+		this.inputController = new InputController( configInput );
 		this.inputController.attach( canvas );
 
-		this.myReq;
+		//
+		this.addListeners();
 
-	  let scope = this;
+		// launch game
+	  this.startGame();
+	  this.menuState();
+	};
 
+	addListeners(){
+		let scope = this;
+
+	  // events from InpuController
 		$( document ).on( scope.inputController.ACTION_ACTIVATED, function(e, param) {
 	    switch( param.detail ){
 	    		case 'right':
@@ -40,39 +48,82 @@ class Game{
 	    };
 	  });
 
+	  // events from page
 	  $( document ).on( 'page:start-btn-clicked', function(e) {
-			scope.resetGame();
+	    scope.startGameState();
 			scope.canvas.focus();
 	  });
 
 	  $( document ).on( 'page:pause-btn-clicked', function(e) {
-	  	console.log("pause");
-	    scope.pauseGame();
+	    scope.pauseState();
+	  });
+
+	  $( document ).on( 'page:menu-btn-clicked', function(e) {
+	    scope.menuState();
+	  });
+
+	  // events from modalWindow
+	  $( document ).on( 'modalWindow:continue', function(e) {
+	    scope.playingState();
+			scope.canvas.focus();
+	  });
+
+	  $( document ).on( 'modalWindow:menu', function(e) {
+	    scope.menuState();
 	  });
 	};
+
+
+
+	// >>> GAME STATE >>>
+	menuState(){
+		this.resetGame();
+		this.played = false;
+	};
+
+	startGameState(){
+		this.resetGame();
+		this.played = true;
+	};
+
+	playingState(){
+		this.played = true;
+	};
+
+	pauseState(){
+		this.played = false;
+	};
+
+	loseState(){
+		this.played = false;
+	};
+	// <<< GAME STATE <<<
+
+
 
 	startGame(){
 		this.mainStep();
 	};
 
 	resetGame(){
-		this.snake.reset( this.config );
+		this.snake.reset();
+		this.bonus.update( this.getNewBonusPosition() );
+
 		this.score = 0;
 		this.currentVelocity = null;
-		this.played = true;
+
+		this.updateCounter( "gameCounter" );
 	};
 
-	pauseGame(){
-	  // 	let scope = this;
-		// cancelAnimationFrame( scope.myReq );
-	};
 
+
+	// >>> GAME LOOPS >>>
 	mainStep(){
 	  let scope = this;
 		setTimeout( function(){
 			requestAnimationFrame( () => { scope.mainStep() } );
 			scope.gameStep();
-		}, 200 );
+		}, this.stepTime );
 	};
 
 	gameStep(){
@@ -82,19 +133,32 @@ class Game{
 
 	updateGame(){
 		if (!this.played) return;
+
 		if ( Vector.equals( this.snake.head, this.bonus.pos ) ){
 			this.bonus.update( this.getNewBonusPosition() );
 			this.snake.addBlock( this.currentVelocity );
 			this.score++;
 			this.updateCounter( "gameCounter" );
-		} else if ( this.wallCollision() || this.snakeCollision()){
+		}
+		else if ( this.wallCollision() || this.snakeCollision()){
 			this.updateCounter( "finalCounter" );
 			$(document).trigger( 'game:end' );
-			this.played = false;
-		} else{
+
+			this.loseState();
+		}
+		else{
 			this.snake.update( this.currentVelocity );
 		}
 	};
+
+	drawGame(){
+		this.area.draw( this.ctx );
+		this.snake.draw( this.ctx );
+		this.bonus.draw( this.ctx );
+	};
+	// <<< GAME LOOPS <<<
+
+
 
 	updateCounter( id ){
 		var counter = document.getElementById(id);
@@ -102,7 +166,7 @@ class Game{
 	};
 
 	getNewBonusPosition(){
-		var newPos = new Vector( randomInteger( 1, this.config.areaX ), randomInteger( 1, this.config.areaY ) );
+		var newPos = new Vector( randomInteger( 1, this.params.areaX ), randomInteger( 1, this.params.areaY ) );
 		for ( var pos in this.snake.pos )
 			if ( Vector.equals( newPos, this.snake.pos[pos] ) ) return this.getNewBonusPosition();
 		return newPos;
@@ -122,16 +186,4 @@ class Game{
 		return false;
 	};
 
-	drawGame(){
-		this.area.draw( this.ctx );
-		this.snake.draw( this.ctx );
-		this.bonus.draw( this.ctx );
-	};
-}
-
-
-	// >>> MODAL WINDOW >>>
-	//
-	// <<< MODAL WINDOW <<<
-
-		// renderer
+};

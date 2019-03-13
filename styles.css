@@ -17,17 +17,19 @@ canvas:focus{
 	outline: none;
 }
 
-#canvas{
-	z-index: 0;
-}
-
 .screen{
 	margin: 6px;
     display: none;
 }
 
 input{
-	margin: 12px 24px 12px;
+    font-family: "Trebuchet MS", sans-serif;
+    font-size: 18px;
+    margin: 8px 24px 8px;
+    border-radius: 5px;
+    border: 1px solid #a1a1a1;  
+    background: #fff;
+    padding: 4px 8px 2px;
 }
 
 .back, .wind {
@@ -39,7 +41,7 @@ input{
     right: 0;
     top: 0;
     bottom: 0;
-    z-index: 10;
+    z-index: 999;
 }
 .wind {
     z-index: 1000;
@@ -50,7 +52,6 @@ input{
 }
 
 .buttons{
-    font-size: 18px;
-    margin: 6px 0px 6px;
     width: 100%;
+    margin: 6px 2px 6px;
 }

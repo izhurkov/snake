@@ -1,7 +1,7 @@
 'use strict';
 
 class Screen{
-
+	
 	constructor( element ){
 		this.element = element;
 	};
