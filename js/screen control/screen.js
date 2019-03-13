@@ -2,15 +2,21 @@
 
 class Screen{
 	
-	constructor( element ){
+	constructor( element, _data ){
 		this.element = element;
+		this.data = _data;
 	};
 	
-	show(){
-		this.element.style.display = 'block';
+	show( onComplete ){
+		$(this.element)[this.data.showAnimation || 'fadeIn']( this.data.showDuration || 300, onComplete );
+		// this.element.style.display = 'block';
+		// if( onComplete ) onComplete();
 	};
 
-	hide(){
-		this.element.style.display = 'none';
+	hide( onComplete ){
+		$(this.element)[this.data.hideAnimation || 'fadeOut']( this.data.hideDuration || 300, onComplete );
+		// console.log("hide: ", onComplete );
+		// this.element.style.display = 'none';
+		// if( onComplete ) onComplete();
 	};
 }

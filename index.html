@@ -30,24 +30,33 @@
 
 </head>
 <body>
-	<div id="container">
-		<div class="screen" id="startScreen">
-			<strong>Snake</strong>
-			<input type="button" class="startButton" id="start" value="Start Game">
+	
+	<div id="game-container">
+
+		<div id="interface">
+
+			<div class="screen" id="startScreen">
+				<strong>Snake</strong>
+				<input type="button" class="startButton" id="start" value="Start Game" data-event="show-screen:gameScreen" >
+			</div>
+
+			<div class="screen" id="gameScreen">
+				<strong>Points: </strong> <strong id="gameCounter">0</strong>
+				<input type="button" id="pause" value="Pause">
+				<div id="renderer-container">
+					<canvas id="canvas" tabindex="0" oncontextmenu="return false">canvas not suppoгtęd</canvas>
+				</div>
+			</div>
+
+			<div class="screen" id="endScreen">
+				<strong>Game Over! Your points: </strong> <strong id="finalCounter">0</strong>
+				<input type="button" class="startButton" id="start" value="Start Game">
+				<input type="button" id="menu" value="Main Menu">
+			</div>
+
 		</div>
 
-		<div class="screen" id="gameScreen">
-			<strong>Points: </strong> <strong id="gameCounter">0</strong>
-			<input type="button" id="pause" value="Pause">
-		</div>
-
-		<div class="screen" id="endScreen">
-			<strong>Game Over! Your points: </strong> <strong id="finalCounter">0</strong>
-			<input type="button" class="startButton" id="start" value="Start Game">
-			<input type="button" id="menu" value="Main Menu">
-		</div>
-
-		<canvas id="canvas" tabindex="0" oncontextmenu="return false">canvas not suppoгtęd</canvas>
 	</div>
+
 </body>
 </html>

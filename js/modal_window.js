@@ -3,6 +3,7 @@
 class ModalWindow{
 
     constructor( text, buttons ){
+        
         this.back = null;
         this.wind = null;
 
@@ -12,8 +13,23 @@ class ModalWindow{
         for ( var button in buttons){
         	this.addButton(buttons[button]);
         }
+
+        // var template = Handlebars.compile(this.getTemplate());
+        // var html = template({data:data});
+        // document.appendChild( html );
+
         this.hide();
     };
+
+//     getTemplate(){
+//         return
+// `<div class="entry">
+//   <h1>{{title}}</h1>
+//   <div class="body">
+//     {{body}}
+//   </div>
+// </div>`;
+//     }
 
     // создает полупрозрачный темный фон
     initBack( text ){

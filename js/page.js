@@ -2,38 +2,60 @@
 
 // page manager
 (function() { 
-	$(document).trigger( 'page:ready' );
 
 	// список экранов
 	var screens = {
 	  'startScreen': {
-	    visible: true
+	    onShow: function(){
+	    	// console.log('onShow');
+	    },
+	    onHide: function() {
+	    	// console.log('onHide');
+	    },
+	    'hideAnimation': 'hide',
+	    'hideDuration': 100,
+
 	  },
 	  'gameScreen': {
-	    visible: false
+	    // visible: false
+	    onShow: function(){
+	    	$(document).trigger( 'page:start-btn-clicked' );
+	    },
+	    onHide: function() {
+	    	// console.log('onHide');
+	    },
+	    'showAnimation': 'show',
+	    'showDuration': 1000,
 	  },
 	  'endScreen': {
-	    visible: false
+	    onShow: function(){
+	    	// console.log('onShow');
+	    },
+	    onHide: function() {
+	    	// console.log('onHide');
+	    }
 	  }
 	};
 
   // менеджер экранов, управляющий экранами на странице
-	var screenManager = new ScreenManager( screens );
+	new ScreenManager( screens );
 
 	// создание модального окна с добавлением в него массива кнопок
 	// кнопка: текст + функция при нажатии 
-  var buttons = [];
-	buttons.push( { text: "continue", func: function(){ $(document).trigger( 'modalWindow:continue'); } } );
-	buttons.push( { text: "menu", func: function(){ $(document).trigger( 'modalWindow:menu' ); } } );
-	var modalWindow = new ModalWindow( "pause", buttons );
 
+	var modalWindow = new ModalWindow( "pause", [
+		// { text: "continue", on_click_event: 'modalWindow:continue' },
+		{ text: "continue", func: function(){ $(document).trigger( 'modalWindow:continue' ); } },
+		{ text: "menu", func: function(){ $(document).trigger( 'modalWindow:menu' ); } }
+	]);
 
 	// >>> LISTENERS AND TRIGGERS >>> 
-	$( '.startButton' ).click(function(e) {
-    $(document).trigger( 'page:start-btn-clicked' );
-	  screenManager.showOneScreen('gameScreen');
-  });
+	// $( '.startButton' ).click(function(e) {
+ //    $(document).trigger( 'page:start-btn-clicked' );
+	//   screenManager.showOneScreen('gameScreen');
+ //  });
 
+/*
   $( '#pause' ).click(function(e) {
     $(document).trigger( 'page:pause-btn-clicked' );
 		modalWindow.show();
@@ -57,6 +79,17 @@
 	  screenManager.showOneScreen('startScreen');
 	  modalWindow.hide();
   });
+*/
+
+  //
+ 
+
+
+  // 
+  // screenManager.showOneScreen('startScreen');
+  $(document).trigger('show-screen','startScreen');
+
+  $(document).trigger( 'page:ready' );
 	// <<< LISTENERS AND TRIGGERS <<<
 })();
 
