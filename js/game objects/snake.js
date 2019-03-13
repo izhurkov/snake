@@ -4,17 +4,7 @@ class Snake{
 
 	constructor( params ){
 		this.params = params;
-		
-		this.pos = [];
-		this.velocity = new Vector( 1, 0 );
-
-		this.innerColor = params.innerColor;
-		this.outerColor = params.outerColor;
-		this.blockSize = params.blockSize;
-
-		this.pos.push( new Vector( params.startPos.x, params.startPos.y ) );
-		for ( var i = 1; i < params.startLength; i++ )
-			this.pos.push( new Vector( params.startPos.x - i, params.startPos.y ) )
+		this.reset();
 	};
 
 	// позиция "головы" змейки
@@ -58,6 +48,16 @@ class Snake{
 
 	// изменение направления
 	changeVelocity( currentVelocity ){
+		
+		// var directions = {
+		// 	'right': [1, 0],
+		// 	'left': [1, 0],
+		// 	'right': [1, 0],
+		// 	'right': [1, 0],
+		// }
+
+		// this.velocity.set( directions[currentVelocity] );
+
 		switch( currentVelocity ){
     		case 'right':
     			if ( this.velocity.x == 0 )
@@ -76,6 +76,7 @@ class Snake{
     				this.velocity.set( 0, 1 );
     			break;
     };
+    
 	};
 
 	// отрисовка

@@ -51,6 +51,7 @@ class Game{
 	  });
 
 	  // events from page
+	  ////////////////////
 	  $( document ).on( 'page:start-btn-clicked', function(e) {
 
 	    scope.startGameState();
@@ -79,6 +80,7 @@ class Game{
 
 
 	// >>> GAME STATE >>>
+	// state machine please
 	menuState(){
 		this.resetGame();
 		this.played = false;
@@ -171,7 +173,7 @@ class Game{
 	// <<< GAME LOOPS <<<
 
 
-
+ //////////////// в интерфейс
 	updateCounter( id ){
 		var counter = document.getElementById(id);
 		counter.innerHTML = this.score * 10;

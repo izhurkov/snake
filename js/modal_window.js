@@ -1,9 +1,9 @@
 'use strict';
 
 class ModalWindow{
-
+/// screen analog please
     constructor( text, buttons ){
-        
+
         this.back = null;
         this.wind = null;
 
