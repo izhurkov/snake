@@ -1,6 +1,6 @@
 'use strict';
 
-// начальная функция на странице
+// page manager
 (function() { 
 	$(document).trigger( 'page:ready' );
 
@@ -17,14 +17,18 @@
 	  }
 	};
 
+  // менеджер экранов, управляющий экранами на странице
 	var screenManager = new ScreenManager( screens );
 
+	// создание модального окна с добавлением в него массива кнопок
+	// кнопка: текст + функция при нажатии 
   var buttons = [];
 	buttons.push( { text: "continue", func: function(){ $(document).trigger( 'modalWindow:continue'); } } );
 	buttons.push( { text: "menu", func: function(){ $(document).trigger( 'modalWindow:menu' ); } } );
-
 	var modalWindow = new ModalWindow( "pause", buttons );
 
+
+	// >>> LISTENERS AND TRIGGERS >>> 
 	$( '.startButton' ).click(function(e) {
     $(document).trigger( 'page:start-btn-clicked' );
 	  screenManager.showOneScreen('gameScreen');
@@ -53,6 +57,6 @@
 	  screenManager.showOneScreen('startScreen');
 	  modalWindow.hide();
   });
-
+	// <<< LISTENERS AND TRIGGERS <<<
 })();
 

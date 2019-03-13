@@ -2,8 +2,6 @@
 
 class ScreenManager {
 
-
-  // менеджер экранов, управляет всеми экранами на странице
 	constructor ( screens ){
     this.screens = [];
     for( var screen_name in screens ){

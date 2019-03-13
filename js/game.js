@@ -13,6 +13,8 @@ class Game{
 		this.currentVelocity = null;
 		this.played = false;
 
+		this.maxSnakeLenght = params.areaX * params.areaY - params.startLength;
+
 		this.stepTime = params.stepTime;
 
 		// renderer
@@ -25,7 +27,7 @@ class Game{
 		this.inputController = new InputController( configInput );
 		this.inputController.attach( canvas );
 
-		//
+		// 
 		this.addListeners();
 
 		// launch game
@@ -50,6 +52,7 @@ class Game{
 
 	  // events from page
 	  $( document ).on( 'page:start-btn-clicked', function(e) {
+
 	    scope.startGameState();
 			scope.canvas.focus();
 	  });
@@ -95,6 +98,8 @@ class Game{
 	};
 
 	loseState(){
+		this.updateCounter( "finalCounter" );
+		$(document).trigger( 'game:end' );
 		this.played = false;
 	};
 	// <<< GAME STATE <<<
@@ -134,20 +139,27 @@ class Game{
 	updateGame(){
 		if (!this.played) return;
 
-		if ( Vector.equals( this.snake.head, this.bonus.pos ) ){
-			this.bonus.update( this.getNewBonusPosition() );
-			this.snake.addBlock( this.currentVelocity );
+
+		if ( Vector.equals( this.snake.head, this.bonus.pos ) ){ // поедание бонуса
+
 			this.score++;
 			this.updateCounter( "gameCounter" );
-		}
-		else if ( this.wallCollision() || this.snakeCollision()){
-			this.updateCounter( "finalCounter" );
-			$(document).trigger( 'game:end' );
 
+			this.maxSnakeLenght--;
+			if ( this.maxSnakeLenght <= 0 ){
+				this.loseState();
+				return;
+			}
+
+			this.snake.addBlock( this.currentVelocity );
+			this.bonus.update( this.getNewBonusPosition() );
+
+		}
+		else if ( this.wallCollision() || this.snakeCollision()){ // столкновение со стеной или с собой
 			this.loseState();
 		}
 		else{
-			this.snake.update( this.currentVelocity );
+			this.snake.update( this.currentVelocity ); // просто движение
 		}
 	};
 
