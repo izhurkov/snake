@@ -22,17 +22,5 @@ class Area {
 					this.blocks[i][j] = 1;
 			};
 		};
-	};
-
-	draw( ctx ){
-		ctx.fillStyle = this.wallColor;
-		ctx.fillRect( 0, 0, this.blocks.length * this.blockSize, this.blocks[0].length * this.blockSize );
-
-		ctx.fillStyle = this.blockColor;
-		ctx.fillRect( this.blockSize,
-									this.blockSize,
-									(this.blocks.length - 2) * this.blockSize,
-									(this.blocks[0].length - 2) * this.blockSize );
-	};
-	
+	};	
 };
