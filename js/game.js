@@ -31,8 +31,8 @@ class Game{
 		this.inputController = new InputController( configInput );
 		this.inputController.attach( canvas );
 
-		// 	this.renderer = new Renderer( configInput );
-
+		// renderer
+		this.renderer = new Renderer( configInput );
 
 		// 
 		this.addListeners();

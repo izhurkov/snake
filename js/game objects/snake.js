@@ -3,7 +3,8 @@
 class Snake{
 
 	constructor( params ){
-		this.params = params;
+		this.startPos = params.startPos;
+		this.startLength = params.startLength;
 		this.reset();
 	};
 
@@ -12,17 +13,13 @@ class Snake{
 
 	// возвращение начальных свойств
 	reset(){
-		
+
 		this.cellPositions = [];
 		this.direction = new Vector( 1, 0 );
 
-		this.innerColor = this.params.innerColor;
-		this.outerColor = this.params.outerColor;
-		this.blockSize = this.params.blockSize;
-
-		this.cellPositions.push( new Vector( this.params.startPos.x, this.params.startPos.y ) );
-		for ( var i = 1; i < this.params.startLength; i++ )
-			this.cellPositions.push( new Vector( this.params.startPos.x - i, this.params.startPos.y ) )
+		this.cellPositions.push( new Vector( this.startPos.x, this.startPos.y ) );
+		for ( var i = 1; i < this.startLength; i++ )
+			this.cellPositions.push( new Vector( this.startPos.x - i, this.startPos.y ) )
 		
 	}
 
@@ -63,23 +60,5 @@ class Snake{
 			return;
 
 		this.direction.set( currentDirection );    
-	};
-
-	// отрисовка
-	draw( ctx ){
-		// draw body
-		ctx.fillStyle = this.innerColor;
-		for ( var i = 1; i < this.cellPositions.length; i++ )
-			ctx.fillRect( this.cellPositions[i].x * this.blockSize + 1,
-										this.cellPositions[i].y * this.blockSize + 1,
-										this.blockSize - 2,
-										this.blockSize - 2 );
-
-		// draw head
-		ctx.fillStyle = this.outerColor;
-		ctx.fillRect( this.cellPositions[0].x * this.blockSize,
-										this.cellPositions[0].y * this.blockSize,
-										this.blockSize,
-										this.blockSize );
 	};
 }

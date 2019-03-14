@@ -34,8 +34,8 @@ $(window).on( 'page:ready', function(){
 
 	var params = {
 	  // немножко кастамизации
-	  blockColor: "rgba(144, 255, 144, 1)",
-	  wallColor: "rgba(72, 127, 72, 1)" ,
+	  blockColor: "rgba(143, 255, 143, 1.)",
+	  wallColor: "rgba(68, 119, 68, 1.)" ,
 	  areaX: 21,
 	  areaY: 15,
 	  blockSize: 20,

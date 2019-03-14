@@ -2,7 +2,7 @@
 
 class InputController {
 
-  constructor(config, target){
+  constructor( config, target ){
     
     this.ACTION_ACTIVATED = "input-controller:action-activated";
     this.ACTION_DEACTIVATED = "input-controller:action-deactivated";
