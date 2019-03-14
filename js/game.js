@@ -20,9 +20,6 @@ class Game{
 		this.state = {};
 		this.gameState = {};
 
-
-
-		// renderer
 		this.canvas = document.getElementById( "canvas" );
 		this.canvas.setAttribute( "width", params.blockSize * (params.areaX + 2) + "px" );
 		this.canvas.setAttribute( "height", params.blockSize * (params.areaY + 2) + "px" );
@@ -30,7 +27,7 @@ class Game{
 
 		// input controller
 		this.inputController = new InputController( configInput );
-		this.inputController.attach( canvas );
+		this.inputController.attach( this.canvas );
 
 		// renderer
 		this.renderer = new Renderer( configRender, params );
@@ -61,28 +58,17 @@ class Game{
 	  // events from page
 	  ////////////////////
 	  $( document ).on( 'game:start', function(e) {
-
-			scope.canvas.focus();
 			scope.renderer.isEnable = true;
 	    scope.startGameState();
 	  });
 
-	  $( document ).on( 'page:pause-btn-clicked', function(e) {
+	  $( document ).on( 'game:pause', function(e) {
 	    scope.pauseState();
 	  });
 
-	  $( document ).on( 'page:menu-btn-clicked', function(e) {
-	    scope.menuState();
-	  });
-
 	  // events from modalWindow
-	  $( document ).on( 'modalWindow:continue', function(e) {
+	  $( document ).on( 'game:playing', function(e) {
 	    scope.playingState();
-			scope.canvas.focus();
-	  });
-
-	  $( document ).on( 'modalWindow:menu', function(e) {
-	    scope.menuState();
 	  });
 	};
 
@@ -105,6 +91,7 @@ class Game{
 	};
 
 	pauseState(){
+		console.log("pause");
 		this.played = false;
 	};
 

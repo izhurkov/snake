@@ -28,12 +28,15 @@
 	    	$('canvas:first').focus();
 	    },
 	    // hide
-	    beforeHide: function(){},
-	    onHide: function(){},
+	    beforeHide: function(){ 
+	    },
+	    onHide: function(){
+	    	$(document).trigger( 'game:pause' );
+	    },
 	    afterHide: function() {},
 
 	    'showAnimation': 'fadeIn',
-	    'showDuration': 500,
+	    'showDuration': 400,
 	    'hideAnimation': 'fadeOut',
 	    'hideDuration': 1000
 	  },

@@ -10,7 +10,7 @@ class Renderer {
 		this.defaultRender = {
 			renders: {
 				'canvas': {
-					renderClass: CanvasRender
+					renderClass: CanvasRenders
 				}
 			}
 		}
