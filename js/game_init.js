@@ -33,10 +33,17 @@ $(window).on( 'page:ready', function(){
 	};
 
 	var configRender = {
-		'canvas': {
-			renderClass: CanvasRender,
-			elementId: '#canvas'
-		}
+		renders: {
+			'canvas': {
+				renderClass: CanvasRender,
+				elementId: '#canvas'
+			},
+			'directx11': {
+				renderClass: DirectX11Render,
+				elementId: '#directx11'
+			}
+		},
+		activeRender: 'canvas'
 	};
 
 	var params = {

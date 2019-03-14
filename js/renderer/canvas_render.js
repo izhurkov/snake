@@ -1,14 +1,16 @@
 'use strict';
 
-class CanvasRender {
+class CanvasRender extends Render{
 
 	constructor ( params ){
+    super();
+    this.initialized = false;
 		this.params = params;
 		this.background = '#ddffdd';
 		this.init();
 
-		this.height = params.blockSize * (params.areaY + 2);
-		this.width = params.blockSize * (params.areaX + 2);
+		// this.height = params.blockSize * (params.areaY + 2);
+		// this.width = params.blockSize * (params.areaX + 2);
 
 		this.evenFrame = true;
 
@@ -20,6 +22,7 @@ class CanvasRender {
 		$(this.canvas).css( { 'width' : this.width + 'px', 
 													'height' : this.height + 'px' } );
 		this.ctx = canvas.getContext( "2d" );
+    this.initialized = false;
 	};
 
 	drawFrame( gameState ){

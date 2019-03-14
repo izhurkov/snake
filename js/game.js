@@ -142,7 +142,8 @@ class Game{
 
 	gameStep(){
 		this.updateGame();
-		this.drawGame();
+		// thi	s.renderer.drawFrame( gameState );
+		// this.drawGame();
 		// this.renderer.drawFrame( this.state );
 	};
 

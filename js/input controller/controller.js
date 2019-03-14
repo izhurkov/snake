@@ -4,9 +4,9 @@ class Controller {
 
   constructor(){ };
   
-  bindActions(action){ };
+  bindActions( action ){ };
 
-  addActionProperties(oldAction, newAction){ };
+  addActionProperties( oldAction, newAction ){ };
 
   attach( target, scope ){ };
 
