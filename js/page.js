@@ -13,7 +13,7 @@
 	    	// console.log('onHide');
 	    },
 	    'hideAnimation': 'fadeOut',
-	    'hideDuration': 400,
+	    'hideDuration': 200,
 
 	  },
 	  'gameScreen': {
@@ -27,14 +27,13 @@
 	    afterShow: function() {
 	    	$('canvas:first').focus();
 	    },
-
 	    // hide
 	    beforeHide: function(){},
 	    onHide: function(){},
 	    afterHide: function() {},
 
-	    'showAnimation': 'fadeIn',
-	    'showDuration': 100,
+	    'showAnimation': 'slideDown',
+	    'showDuration': 200,
 	    'hideAnimation': 'fadeOut',
 	    'hideDuration': 400
 	  },
@@ -94,6 +93,8 @@
 
   //
  
+
+
   // 
   // screenManager.showOneScreen('startScreen');
   $(document).trigger( 'show-screen','startScreen' );

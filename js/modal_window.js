@@ -21,15 +21,15 @@ class ModalWindow{
         this.hide();
     };
 
-    getTemplate(){
-        return
-        `<div class="entry">
-          <h1>{{title}}</h1>
-          <div class="body">
-            {{body}}
-          </div>
-        </div>`;
-    }
+//     getTemplate(){
+//         return
+// `<div class="entry">
+//   <h1>{{title}}</h1>
+//   <div class="body">
+//     {{body}}
+//   </div>
+// </div>`;
+//     }
 
     // создает полупрозрачный темный фон
     initBack( text ){
@@ -48,6 +48,10 @@ class ModalWindow{
         this.wind.innerHTML = text;
         this.wind.className = "wind";
 
+        this.wind.style.textAlign = 'center';
+        this.wind.style.left = '50%';
+        this.wind.style.top = '50%';
+
         document.getElementsByTagName('body')[0].appendChild( this.wind );
     };
 
@@ -58,6 +62,7 @@ class ModalWindow{
         input.name = button.text;
         input.className = "buttons";
         input.value = button.text;
+        input.style.display = 'block';
         var scope = this;
         input.onclick = button.func;
 

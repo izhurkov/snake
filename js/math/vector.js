@@ -112,6 +112,10 @@ Vector.prototype = {
 		return new Vector(this.x, this.y);
 	},
 	set: function(x, y) {
+		if (x instanceof Vector){
+			this.x = x.x; this.y = x.y;
+			return this;
+		};
 		this.x = x; this.y = y;
 		return this;
 	}
@@ -138,7 +142,8 @@ Vector.divide = function(a, b) {
 	else return new Vector(a.x / b, a.y / b);
 };
 Vector.equals = function(a, b) {
-	return a.x == b.x && a.y == b.y;
+	if (b instanceof Vector) return a.x == b.x && a.y == b.y;
+	else return a.x == b && a.y == b;
 };
 Vector.dot = function(a, b) {
 	return a.x * b.x + a.y * b.y;

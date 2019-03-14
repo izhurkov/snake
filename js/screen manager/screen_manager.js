@@ -10,10 +10,6 @@ class ScreenManager {
 
     for( var screen_name in screens ){
       this.createScreen( screen_name, screens[screen_name] );
-      // if ( screens[screen_name].visible )
-      //   this.showScreen( screen_name );
-      // else
-      this.hideScreen( screen_name );
     };
 
     $('[data-event]').each(function(i,e){

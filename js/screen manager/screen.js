@@ -14,7 +14,7 @@ class Screen{
 	};
 
 	hide( onComplete ){
-		$(this.element)[this.data.hideAnimation || 'fadeOut']( this.data.hideDuration || 300, onComplete);
+		$(this.element)[this.data.hideAnimation || 'fadeOut']( this.data.hideDuration || 300, onComplete );
 		// console.log("hide: ", onComplete );
 		// this.element.style.display = 'none';
 		// if( onComplete ) onComplete();

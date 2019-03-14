@@ -17,6 +17,10 @@ class Game{
 
 		this.stepTime = params.stepTime;
 
+		this.state = {};
+
+
+
 		// renderer
 		this.canvas = document.getElementById( "canvas" );
 		this.canvas.setAttribute( "width", params.blockSize * (params.areaX + 2) + "px" );
@@ -27,8 +31,8 @@ class Game{
 		this.inputController = new InputController( configInput );
 		this.inputController.attach( canvas );
 
-		this.inputController = new InputController( configInput );
-		this.inputController.attach( canvas );
+		// 	this.renderer = new Renderer( configInput );
+
 
 		// 
 		this.addListeners();
@@ -139,13 +143,14 @@ class Game{
 	gameStep(){
 		this.updateGame();
 		this.drawGame();
+		// this.renderer.drawFrame( this.state );
 	};
 
 	updateGame(){
 		if (!this.played) return;
 
 
-		if ( Vector.equals( this.snake.head, this.bonus.pos ) ){ // поедание бонуса
+		if ( Vector.equals( this.snake.head, this.bonus.cellPositions ) ){ // поедание бонуса
 
 			this.score++;
 			this.updateCounter( "#scoreCounter" );
@@ -185,8 +190,8 @@ class Game{
 
 	getNewBonusPosition(){
 		var newPos = new Vector( randomInteger( 1, this.params.areaX ), randomInteger( 1, this.params.areaY ) );
-		for ( var pos in this.snake.pos )
-			if ( Vector.equals( newPos, this.snake.pos[pos] ) ) return this.getNewBonusPosition();
+		for ( var cellPositions in this.snake.cellPositions )
+			if ( Vector.equals( newPos, this.snake.cellPositions[cellPositions] ) ) return this.getNewBonusPosition();
 		return newPos;
 	};
 
@@ -197,8 +202,8 @@ class Game{
 	};
 
 	snakeCollision(){
-		for ( var i = 1; i < this.snake.pos.length; i++ ){
-			if ( Vector.equals( this.snake.pos[i], this.snake.head ) )
+		for ( var i = 1; i < this.snake.cellPositions.length; i++ ){
+			if ( Vector.equals( this.snake.cellPositions[i], this.snake.head ) )
 				return true;
 		}
 		return false;
