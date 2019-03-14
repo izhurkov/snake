@@ -18,6 +18,7 @@ class Game{
 		this.stepTime = params.stepTime;
 
 		this.state = {};
+		this.gameState = {};
 
 
 
@@ -121,7 +122,7 @@ class Game{
 
 	resetGame(){
 		this.snake.reset();
-		this.bonus.update( this.getNewBonusPosition() );
+		this.bonus.position = this.getNewBonusPosition();
 
 		this.score = 0;
 		this.currentVelocity = null;
@@ -142,7 +143,8 @@ class Game{
 
 	gameStep(){
 		this.updateGame();
-		// thi	s.renderer.drawFrame( gameState );
+		console.log( this.gameState )
+		this.renderer.drawFrame( this.gameState );
 		// this.drawGame();
 		// this.renderer.drawFrame( this.state );
 	};
@@ -163,7 +165,7 @@ class Game{
 			}
 
 			this.snake.addBlock( this.currentVelocity );
-			this.bonus.update( this.getNewBonusPosition() );
+			this.bonus.position = this.getNewBonusPosition();
 
 		}
 		else if ( this.wallCollision() || this.snakeCollision()){ // столкновение со стеной или с собой
@@ -171,7 +173,11 @@ class Game{
 		}
 		else{
 			this.snake.update( this.currentVelocity ); // просто движение
+
+			this.gameState = this.snake.cellPositions;
+			// this.gameState.snake = this.snake.cellPositions;
 		}
+
 	};
 
 	drawGame(){

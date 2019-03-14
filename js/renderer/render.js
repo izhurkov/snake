@@ -2,7 +2,7 @@
 
 class Render {
 
-	constructor (){};
+	constructor ( params, renderConfig ){};
 
 	init(){};
 

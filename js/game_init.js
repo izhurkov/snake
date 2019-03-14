@@ -35,8 +35,9 @@ $(window).on( 'page:ready', function(){
 	var configRender = {
 		renders: {
 			'canvas': {
-				renderClass: CanvasRender,
-				elementId: '#canvas'
+				elementId: '#canvas',
+				width: 500,
+				height: 700
 			},
 			'directx11': {
 				renderClass: DirectX11Render,

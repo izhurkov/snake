@@ -2,41 +2,41 @@
 
 class CanvasRender extends Render{
 
-	constructor ( params ){
+	constructor ( params, renderConfig ){
     super();
     this.initialized = false;
 		this.params = params;
 		this.background = '#ddffdd';
-		this.init();
 
-		// this.height = params.blockSize * (params.areaY + 2);
-		// this.width = params.blockSize * (params.areaX + 2);
+		console.log( params, renderConfig );
+
+		this.height = params.blockSize * (params.areaY + 2);
+		this.width = params.blockSize * (params.areaX + 2);
 
 		this.evenFrame = true;
-
 	};
 
-	init(){
-		this.canvas = $('#canvas')[0];
-		console.log(this.canvas);
-		$(this.canvas).css( { 'width' : this.width + 'px', 
-													'height' : this.height + 'px' } );
+	init( elementId ){
+		
+		this.canvas = $( elementId )[0];
+		$( this.canvas ).css( { 'width' : this.width + 'px', 
+														'height' : this.height + 'px' } );
 		this.ctx = canvas.getContext( "2d" );
-    this.initialized = false;
+    this.initialized = true;
 	};
 
 	drawFrame( gameState ){
 		this.clearFrame();
 
 		this.drawArea();
-		this.drawSnake();
-		this.drawBonus();
+		this.drawSnake( gameState.snake );
+		this.drawBonus( gameState.bonus );
 
 		this.evenFrame = !this.evenFrame;
 	};
 
 	clearFrame(){
-		this.ctx.clearFrame(0, 0, this.width, this.height);
+		this.ctx.clearRect(0, 0, this.width, this.height);
 	}
 
 	drawArea(){
