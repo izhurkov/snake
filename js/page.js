@@ -17,15 +17,26 @@
 
 	  },
 	  'gameScreen': {
-	    // visible: false
+	    // show
+	    beforeShow: function(){
+	    	
+	    },
 	    onShow: function(){
 	    	$(document).trigger( 'page:start-btn-clicked' );
 	    },
-	    onHide: function() {
-	    	// console.log('onHide');
+	    afterShow: function() {
+	    	$('canvas:first').focus();
 	    },
+
+	    // hide
+	    beforeHide: function(){},
+	    onHide: function(){},
+	    afterHide: function() {},
+
 	    'showAnimation': 'fadeIn',
-	    'showDuration': 300,
+	    'showDuration': 100,
+	    'hideAnimation': 'fadeOut',
+	    'hideDuration': 400
 	  },
 	  'endScreen': {
 	    onShow: function(){
@@ -85,7 +96,7 @@
  
   // 
   // screenManager.showOneScreen('startScreen');
-  $(document).trigger('show-screen','startScreen');
+  $(document).trigger( 'show-screen','startScreen' );
 
   $(document).trigger( 'page:ready' );
 	// <<< LISTENERS AND TRIGGERS <<<

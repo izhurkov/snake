@@ -5,12 +5,15 @@
 	<title>The Snake</title>
 	<link rel="stylesheet" type="text/css" href="styles.css"></link>
 
-	<script type="text/javascript" src="js/libs/jquery-3.3.1.min.js"></script>
-	<script type="text/javascript" src="js/libs/handlebars.runtime-v4.1.0.js"></script>
+	<!-- <script type="text/javascript" src="js/libs/jquery-3.3.1.min.js"></script> -->
+	<!-- <script type="text/javascript" src="js/libs/handlebars.runtime-v4.1.0.js"></script> -->
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js"></script>
 
-	<script type="text/javascript" src="js/input control/controller.js"></script>
-	<script type="text/javascript" src="js/input control/input_controller.js"></script>
-	<script type="text/javascript" src="js/input control/keyboard_controller.js"></script>
+	<script type="text/javascript" src="js/input controller/controller.js"></script>
+	<script type="text/javascript" src="js/input controller/input_controller.js"></script>
+	<script type="text/javascript" src="js/input controller/keyboard_controller.js"></script>
 
 	<script type="text/javascript" src="js/math/matrixArray.js"></script>
 	<script type="text/javascript" src="js/math/randomInteger.js"></script>
@@ -42,7 +45,7 @@
 			</div>
 
 			<div class="screen" id="gameScreen">
-				<strong>Points: </strong> <strong id="gameCounter">0</strong>
+				<strong>Points: </strong> <strong id="scoreCounter">0</strong>
 				<input type="button" id="pause" value="Pause" data-event="show-screen:pauseScreen">
 
 				<div id="renderer-container">
@@ -51,11 +54,15 @@
 			</div>
 
 			<div class="screen" id="endScreen">
-				<strong>Game Over! Your points: </strong> <strong id="finalCounter">0</strong>
+				<strong>Game Over! Your points: </strong> <strong id="scoreCounter">0</strong>
 				<input type="button" id="start" value="Start Game" data-event="show-screen:gameScreen">
 				<input type="button" id="menu" value="Main Menu" data-event="show-screen:startScreen">
 			</div>
 
+		</div>
+
+		<div id="">
+			
 		</div>
 
 	</div>

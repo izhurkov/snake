@@ -27,6 +27,9 @@ class Game{
 		this.inputController = new InputController( configInput );
 		this.inputController.attach( canvas );
 
+		this.inputController = new InputController( configInput );
+		this.inputController.attach( canvas );
+
 		// 
 		this.addListeners();
 
@@ -145,7 +148,7 @@ class Game{
 		if ( Vector.equals( this.snake.head, this.bonus.pos ) ){ // поедание бонуса
 
 			this.score++;
-			this.updateCounter( "gameCounter" );
+			this.updateCounter( "#scoreCounter" );
 
 			this.maxSnakeLenght--;
 			if ( this.maxSnakeLenght <= 0 ){
@@ -175,8 +178,9 @@ class Game{
 
  //////////////// в интерфейс
 	updateCounter( id ){
-		var counter = document.getElementById(id);
-		counter.innerHTML = this.score * 10;
+		$(id).html(this.score * 10);
+		// var counter = document.getElementById(id);
+		// counter.innerHTML = this.score * 10;
 	};
 
 	getNewBonusPosition(){

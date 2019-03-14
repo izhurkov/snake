@@ -13,17 +13,17 @@ class ScreenManager {
       // if ( screens[screen_name].visible )
       //   this.showScreen( screen_name );
       // else
-        this.hideScreen( screen_name );
+      this.hideScreen( screen_name );
     };
 
     $('[data-event]').each(function(i,e){
-      console.log('data-event',i,e);
+      // console.log('data-event',i,e);
       var event = $(e).data('event').split(':');
       $(e).click(function(){ $(document).trigger( event[0], event[1] ); })
     });
 
     $(document).on('show-screen', function( e, data ){
-      console.log("on show-screen: ", e, data );
+      // console.log("on show-screen: ", e, data );
       scope.showOneScreen(data);
     });
 
@@ -40,17 +40,23 @@ class ScreenManager {
   showScreen( screen_name ){
     
     var scope = this;
-    
+    var screen = this.screens[screen_name];
+
     if( this.current_screen ) {
       this.hideScreen( function(){ scope.showScreen(screen_name); } );
       return;
     }
+    else
+      if( screen.data.beforeShow ) screen.data.beforeShow();
 
-    var screen = this.screens[screen_name];
-    console.log('showScreen: ', screen );
     this.current_screen = screen;
+
     if( screen.data.onShow ) screen.data.onShow();
-    screen.show();
+
+    if( screen.data.afterShow )
+      var afterShow = function(){ screen.data.afterShow() };
+
+    screen.show( afterShow );
   };
 
 
