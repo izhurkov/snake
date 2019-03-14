@@ -49,8 +49,8 @@ $(window).on( 'page:ready', function(){
 
 	var params = {
 	  // немножко кастамизации
-	  blockColor: "rgba(143, 255, 143, 1.)",
-	  wallColor: "rgba(68, 119, 68, 1.)" ,
+	  blockColor: "rgba(143, 255, 143, 1)",
+	  wallColor: "rgba(68, 119, 68, 1)" ,
 	  areaX: 21,
 	  areaY: 15,
 	  blockSize: 20,
@@ -63,7 +63,7 @@ $(window).on( 'page:ready', function(){
 	  bonusColor: "rgba(200, 70, 150, 1)",
 
 	  // длительность одного шага игры (в мс)
-	  stepTime: 150
+	  stepTime: 200
 	};
 
 	var snakeGame = new Game( configInput, configRender, params );

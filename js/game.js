@@ -62,8 +62,9 @@ class Game{
 	  ////////////////////
 	  $( document ).on( 'page:start-btn-clicked', function(e) {
 
-	    scope.startGameState();
 			scope.canvas.focus();
+			scope.renderer.isEnable = true;
+	    scope.startGameState();
 	  });
 
 	  $( document ).on( 'page:pause-btn-clicked', function(e) {
@@ -143,7 +144,6 @@ class Game{
 
 	gameStep(){
 		this.updateGame();
-		console.log( this.gameState )
 		this.renderer.drawFrame( this.gameState );
 		// this.drawGame();
 		// this.renderer.drawFrame( this.state );
@@ -152,8 +152,7 @@ class Game{
 	updateGame(){
 		if (!this.played) return;
 
-
-		if ( Vector.equals( this.snake.head, this.bonus.cellPositions ) ){ // поедание бонуса
+		if ( Vector.equals( this.snake.head, this.bonus.position ) ){ // поедание бонуса
 
 			this.score++;
 			this.updateCounter( "#scoreCounter" );
@@ -166,6 +165,7 @@ class Game{
 
 			this.snake.addBlock( this.currentVelocity );
 			this.bonus.position = this.getNewBonusPosition();
+			// this.gameState = { snake: this.snake.cellPositions, bonus: this.bonus.position }; 
 
 		}
 		else if ( this.wallCollision() || this.snakeCollision()){ // столкновение со стеной или с собой
@@ -174,10 +174,9 @@ class Game{
 		else{
 			this.snake.update( this.currentVelocity ); // просто движение
 
-			this.gameState = this.snake.cellPositions;
 			// this.gameState.snake = this.snake.cellPositions;
 		}
-
+		this.gameState = { snake: this.snake.cellPositions, bonus: this.bonus.position };
 	};
 
 	drawGame(){

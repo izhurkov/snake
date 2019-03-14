@@ -4,11 +4,7 @@ class Renderer {
 
 	constructor ( configRender, params ){
 		this.params = params;
-		this.init();
-
-		this.height = params.blockSize * (params.areaY + 2);
-		this.width = params.blockSize * (params.areaX + 2);
-
+		this.isEnable = false;
 		this.evenFrame = true;
 
 		this.defaultRender = {
@@ -33,10 +29,12 @@ class Renderer {
 		};
 
 		this.setActiveRender( configRender.activeRender );
+
+		this.init();
 	};
 
 	setActiveRender( renderName ){
-		if ( !this.renders[renderName].initialized )
+		if ( !this.renders[renderName].isInitialized )
 			this.renders[renderName].init( this.defaultRender.renders[renderName].elementId);
 		this.activeRender = this.renders[renderName];
 	};
@@ -48,7 +46,7 @@ class Renderer {
 	};
 
 	drawFrame( gameState ){
-		console.log("renderer:drawFrame:", gameState);
+		if ( !this.isEnable ) return;
 		this.activeRender.drawFrame( gameState );
 	};
 }

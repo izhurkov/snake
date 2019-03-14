@@ -4,11 +4,10 @@ class CanvasRender extends Render{
 
 	constructor ( params, renderConfig ){
     super();
-    this.initialized = false;
+    this.isInitialized = false;
 		this.params = params;
 		this.background = '#ddffdd';
 
-		console.log( params, renderConfig );
 
 		this.height = params.blockSize * (params.areaY + 2);
 		this.width = params.blockSize * (params.areaX + 2);
@@ -22,11 +21,11 @@ class CanvasRender extends Render{
 		$( this.canvas ).css( { 'width' : this.width + 'px', 
 														'height' : this.height + 'px' } );
 		this.ctx = canvas.getContext( "2d" );
-    this.initialized = true;
+    this.isInitialized = true;
 	};
 
 	drawFrame( gameState ){
-		this.clearFrame();
+		// this.clearFrame();
 
 		this.drawArea();
 		this.drawSnake( gameState.snake );
@@ -40,31 +39,30 @@ class CanvasRender extends Render{
 	}
 
 	drawArea(){
-		this.ctx.fillStyle = this.params.blockColor;
+		this.ctx.fillStyle = this.params.wallColor;
 		this.ctx.fillRect( 0, 0, this.width, this.height );
 
-
-		this.ctx.fillStyle = this.params.wallColor; 
-		this.ctx.fillRect( 0, 0, this.width - 2 * this.blockSize, this.height - 2 * this.blockSize );
+		this.ctx.fillStyle = this.params.blockColor;
+		this.ctx.fillRect( this.params.blockSize, this.params.blockSize, this.width - 2 * this.params.blockSize, this.height - 2 * this.params.blockSize );
 	};
 
 	drawSnake( cellPositions ){
 		// draw body
 		this.ctx.fillStyle = this.params.innerColor;
-		for ( var i = 1; i < this.cellPositions.length; i++ ){
-			// var kf = blockSize/2 * this.cellPositions.length/i;
-			drawBlockSizeRect( cellPositions[i].x, cellPositions[i].y, kf || 2, kf || 2);
+		for ( var i = 1; i < cellPositions.length; i++ ){
+			var kf = this.params.blockSize * i / cellPositions.length / 3;
+			this.drawBlockSizeRect( cellPositions[i].x, cellPositions[i].y, kf, kf);
 		}
 
 		// draw head
 		this.ctx.fillStyle = this.params.outerColor;
-		drawBlockSizeRect( cellPositions[0].x, cellPositions[0].y, 0, 0 );
+		this.drawBlockSizeRect( cellPositions[0].x, cellPositions[0].y, 0, 0 );
 	};
 
 	drawBonus( position ){
-		this.ctx.fillStyle = this.params;
+		this.ctx.fillStyle = this.params.bonusColor;
 		var offset = (this.evenFrame) ? 1 : 3;
-		this.drawBlockSizeRect( position.y, position.y, offset || 5, offset || 5 );
+		this.drawBlockSizeRect( position.x, position.y, offset || 5, offset || 5 );
 	};	
 
 	drawBlockSizeRect( posX, posY, offsetX, offsetY ){
