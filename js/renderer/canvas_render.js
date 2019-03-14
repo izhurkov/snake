@@ -1,6 +1,6 @@
 'use strict';
 
-class CanvasRenderer {
+class CanvasRender {
 
 	constructor ( params ){
 		this.params = params;

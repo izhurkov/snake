@@ -10,7 +10,7 @@
 $(window).on( 'page:ready', function(){
 
 	// данные для InputController
-	var inputConfig = {
+	var configInput = {
 		devices:{
 	    keyboard: {
 	      enabled: true
@@ -30,7 +30,14 @@ $(window).on( 'page:ready', function(){
 	      keyCodes:[40]
 	    }
 	  }
-	}
+	};
+
+	var configRender = {
+		'canvas': {
+			renderClass: CanvasRender,
+			elementId: '#canvas'
+		}
+	};
 
 	var params = {
 	  // немножко кастамизации
@@ -51,5 +58,5 @@ $(window).on( 'page:ready', function(){
 	  stepTime: 150
 	};
 
-	var snakeGame = new Game( inputConfig, params );
+	var snakeGame = new Game( configInput, configRender, params );
 });

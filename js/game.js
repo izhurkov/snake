@@ -2,7 +2,7 @@
 
 class Game{
 
-	constructor( configInput, params ){
+	constructor( configInput, configRender, params ){
 
 		// game objects
 		this.params = params;
@@ -32,7 +32,7 @@ class Game{
 		this.inputController.attach( canvas );
 
 		// renderer
-		this.renderer = new Renderer( configInput );
+		this.renderer = new Renderer( configRender, params );
 
 		// 
 		this.addListeners();
@@ -174,9 +174,9 @@ class Game{
 	};
 
 	drawGame(){
-		this.area.draw( this.ctx );
-		this.snake.draw( this.ctx );
-		this.bonus.draw( this.ctx );
+		// this.area.draw( this.ctx );
+		// this.snake.draw( this.ctx );
+		// this.bonus.draw( this.ctx );
 	};
 	// <<< GAME LOOPS <<<
 
