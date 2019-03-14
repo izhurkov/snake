@@ -13,13 +13,11 @@ class ScreenManager {
     };
 
     $('[data-event]').each(function(i,e){
-      // console.log('data-event',i,e);
       var event = $(e).data('event').split(':');
       $(e).click(function(){ $(document).trigger( event[0], event[1] ); })
     });
 
     $(document).on('show-screen', function( e, data ){
-      // console.log("on show-screen: ", e, data );
       scope.showOneScreen(data);
     });
 

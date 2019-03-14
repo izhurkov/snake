@@ -110,7 +110,7 @@ class Game{
 
 	loseState(){
 		this.updateCounter( "finalCounter" );
-		$(document).trigger( 'game:end' );
+		$(document).trigger( 'show-screen', 'endScreen' );
 		this.played = false;
 	};
 	// <<< GAME STATE <<<
@@ -173,8 +173,6 @@ class Game{
 		}
 		else{
 			this.snake.update( this.currentVelocity ); // просто движение
-
-			// this.gameState.snake = this.snake.cellPositions;
 		}
 		this.gameState = { snake: this.snake.cellPositions, bonus: this.bonus.position };
 	};
