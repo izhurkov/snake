@@ -29,8 +29,6 @@ class Renderer {
 		};
 
 		this.setActiveRender( configRender.activeRender );
-
-		this.init();
 	};
 
 	setActiveRender( renderName ){

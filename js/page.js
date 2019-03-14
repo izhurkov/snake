@@ -22,7 +22,7 @@
 	    	
 	    },
 	    onShow: function(){
-	    	$(document).trigger( 'page:start-btn-clicked' );
+	    	$(document).trigger( 'game:start' );
 	    },
 	    afterShow: function() {
 	    	$('canvas:first').focus();
@@ -32,10 +32,10 @@
 	    onHide: function(){},
 	    afterHide: function() {},
 
-	    'showAnimation': 'slideDown',
-	    'showDuration': 200,
+	    'showAnimation': 'fadeIn',
+	    'showDuration': 500,
 	    'hideAnimation': 'fadeOut',
-	    'hideDuration': 400
+	    'hideDuration': 1000
 	  },
 	  'endScreen': {
 	    onShow: function(){

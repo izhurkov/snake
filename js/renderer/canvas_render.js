@@ -50,8 +50,8 @@ class CanvasRender extends Render{
 		// draw body
 		this.ctx.fillStyle = this.params.innerColor;
 		for ( var i = 1; i < cellPositions.length; i++ ){
-			var kf = this.params.blockSize * i / cellPositions.length / 3;
-			this.drawBlockSizeRect( cellPositions[i].x, cellPositions[i].y, kf, kf);
+			var kf = this.params.blockSize * i / cellPositions.length / 6 + 1;
+			this.drawBlockSizeRect( cellPositions[i].x, cellPositions[i].y, kf, kf );
 		}
 
 		// draw head

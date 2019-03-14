@@ -63,7 +63,7 @@ $(window).on( 'page:ready', function(){
 	  bonusColor: "rgba(200, 70, 150, 1)",
 
 	  // длительность одного шага игры (в мс)
-	  stepTime: 200
+	  stepTime: 500
 	};
 
 	var snakeGame = new Game( configInput, configRender, params );
