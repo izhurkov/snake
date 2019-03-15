@@ -72,8 +72,7 @@
 	    },
 	    onHide: function() {
 	    },
-	    'hideAnimation': 'fadeOut',
-	    'hideDuration': 2000
+	    'hideDuration': 1000
 		}
 	};
 

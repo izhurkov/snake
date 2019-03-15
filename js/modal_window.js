@@ -21,18 +21,11 @@ class ModalWindow{
       this.addButton( button, data.buttons[button] );
     }
 
-    // $('.modal-window:last .buttons').each(function(i,e){
-    //   var event = $(e).data('event').split(':');
-    //   $(e).click(function(){ $(document).trigger( event[0], event[1] ); })
-    // });
-
     var scope = this;
     $(document).on( 'button-click', function( e, data ){
       if (scope.data.buttons[data].onClick)
         scope.data.buttons[data].onClick();
     });
-
-
 
     $(this.element).css( { 'display': 'none' } );
   };
