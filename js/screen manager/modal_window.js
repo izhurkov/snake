@@ -5,17 +5,15 @@ class ModalWindow{
   constructor( modalName, data ){
     this.data = data;
     $('#modal-window-container').append('<div class="modal-window"></div>');
-
-    this.element = $('#modal-window-container').last();
+    this.element = $('#modal-window-container').children().last();
 
     var template = Handlebars.compile(  `<div class='{{class}}'>{{text}}</div>` );
 
-    var htmlBack = template( {class: 'back', text: ''} );
-    $( '.modal-window:last' ).append( htmlBack );
+    var html = template( {class: 'back', text: ''} );
+    $( '.modal-window:last' ).append( html );
 
-    var htmlWindow = template( {class: 'wind', text: data.text } );
-    $( '.modal-window:last' ).append( htmlWindow );
-
+    html = template( {class: 'wind', text: data.text } );
+    $( '.modal-window:last' ).append( html );
 
     for ( var button in data.buttons ){
       this.addButton( button, data.buttons[button] );
@@ -26,7 +24,7 @@ class ModalWindow{
       if (scope.data.buttons[data].onClick)
         scope.data.buttons[data].onClick();
     });
-
+    
     $(this.element).css( { 'display': 'none' } );
   };
 
