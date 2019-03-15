@@ -29,12 +29,8 @@ $(window).on( 'page:ready', function(){
 		renders: {
 			'canvas': {
 				elementId: '#canvas',
-				width: 500,
-				height: 700
-			},
-			'directx11': {
-				renderClass: DirectX11Render,
-				elementId: '#directx11'
+				width: 800,
+				height: 600
 			}
 		},
 		activeRender: 'canvas'

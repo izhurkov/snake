@@ -11,7 +11,7 @@ class Game{
 		this.bonus = new Bonus( params );
 		this.score = 0;
 		this.currentVelocity = null;
-		this.played = false;
+		this.isPlaying = false;
 
 		this.maxSnakeLenght = params.areaX * params.areaY - params.startLength;
 
@@ -82,26 +82,26 @@ class Game{
 	// state machine please
 	menuState(){
 		this.resetGame();
-		this.played = false;
+		this.isPlaying = false;
 	};
 
 	startGameState(){
 		this.resetGame();
-		this.played = true;
+		this.isPlaying = true;
 	};
 
 	playingState(){
-		this.played = true;
+		this.isPlaying = true;
 	};
 
 	pauseState(){
-		this.played = false;
+		this.isPlaying = false;
 	};
 
 	loseState(){
 		this.updateCounter( ".scoreCounter" );
 		$(document).trigger( 'show-screen', 'endScreen' );
-		this.played = false;
+		this.isPlaying = false;
 	};
 	// <<< GAME STATE <<<
 
@@ -133,13 +133,20 @@ class Game{
 
 	gameStep(){
 		this.updateGame();
+		
+		this.gameState = {
+			isPlaying: this.isPlaying,
+			snake: this.snake.cellPositions,
+			bonus: this.bonus.position
+		};
+
 		this.renderer.drawFrame( this.gameState );
 		// this.drawGame();
 		// this.renderer.drawFrame( this.state );
 	};
 
 	updateGame(){
-		if (!this.played) return;
+		if (!this.isPlaying) return;
 
 		if ( Vector.equals( this.snake.head, this.bonus.position ) ){ // поедание бонуса
 
@@ -162,7 +169,6 @@ class Game{
 		else{
 			this.snake.update( this.currentVelocity ); // просто движение
 		}
-		this.gameState = { snake: this.snake.cellPositions, bonus: this.bonus.position };
 	};
 	// <<< GAME LOOPS <<<
 

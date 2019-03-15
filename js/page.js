@@ -6,30 +6,15 @@
 	// список экранов
 	var screens = {
 	  'menuScreen': {
-	    onShow: function(){
-	    	// console.log('onShow');
-	    },
-	    onHide: function() {
-	    	// console.log('onHide');
-	    },
-	    'hideAnimation': 'fadeOut',
-	    'hideDuration': 200,
-
+	    onShow: function(){ },
+	    onHide: function(){ }
 	  },
 	  'gameScreen': {
-	    // show
 	    onShow: function(){
-	    	$(document).trigger( 'game:start' );
-	    },
-	    afterShow: function() {
-	    	$('canvas:first').focus();
-	    },
-	    // hide
-	    onHide: function(){
-	    },
-	    // afterHide: function() {
-	    // 	$(document).trigger( 'game:end' );
-	    // },
+	    	$(document).trigger( 'game:start' ); },
+	    afterShow: function(){
+	    	$('canvas:first').focus(); },
+	    onHide: function(){ },
 
 	    'showAnimation': 'fadeIn',
 	    'showDuration': 400,
@@ -37,12 +22,8 @@
 	    'hideDuration': 1000
 	  },
 	  'endScreen': {
-	    onShow: function(){
-	    	// console.log('onShow');
-	    },
-	    onHide: function() {
-	    	// console.log('onHide');
-	    }
+	    onShow: function(){ },
+	    onHide: function(){ }
 	  }
 	};
 
