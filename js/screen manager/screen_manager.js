@@ -7,7 +7,6 @@ class ScreenManager {
     var scope = this;
 
     this.screens = [];
-
     this.modals = [];
 
     for( var screen_name in screens ){
@@ -23,6 +22,11 @@ class ScreenManager {
       $(e).click(function(){ $(document).trigger( event[0], event[1] ); })
     });
 
+    $(document).on( 'button-click', function( e, data ){
+      var event = data.split('+');
+      scope.modals[event[1]].data.buttons[event[0]].onClick();
+    });
+
     $(document).on( 'show-screen', function( e, data ){
       scope.showScreen( data );
     });
@@ -32,8 +36,10 @@ class ScreenManager {
     });
 
     $(document).on( 'hide-modal', function( e, data ){
-      scope.hideModal( data );
+      scope.hideModal( data  );
     });
+
+    // console.log(this.modals);
 
   };
 
@@ -82,7 +88,6 @@ class ScreenManager {
   };
 
   showModal ( modal_name ){
-    var scope = this;
     var modal = this.modals[modal_name];
 
     modal.data.onShow();
@@ -91,7 +96,6 @@ class ScreenManager {
   };
 
   hideModal ( modal_name ){
-    var scope = this;
     var modal = this.modals[modal_name];
 
     modal.data.onHide();

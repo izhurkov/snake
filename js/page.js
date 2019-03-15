@@ -34,9 +34,10 @@
 	  		'continue': {
 	  			value: "continue",
 	  			onClick: function(){
-	  				$(document).trigger( 'game:playing' );
-	  				$(document).trigger( 'hide-modal', 'pauseModal' );
-	    			$('canvas:first').focus();
+	  				// $(document).trigger( 'game:playing' );
+	  				$(document).trigger( 'show-modal', 'secondModal' );
+	  				// $(document).trigger( 'hide-modal', 'pauseModal' );
+	    			// $('canvas:first').focus();
 	  			}
 	  		},
 	  		'menu': {
@@ -48,8 +49,24 @@
 	  			}
 	  		}
 		  },
+		  onShow: function(){ $(document).trigger( 'game:pause' ); },
+	    onHide: function(){ },
+	    'hideDuration': 1000
+		},
+		'secondModal': {
+	  	text: 'Pause',
+	  	buttons: {
+	  		'close': {
+	  			value: "close",
+	  			onClick: function(){
+	  				$(document).trigger( 'game:playing' );
+	  				$(document).trigger( 'hide-modal', 'pauseModal' );
+	  				$(document).trigger( 'hide-modal', 'secondModal' );
+	    			$('canvas:first').focus();
+	  			}
+	  		}
+		  },
 		  onShow: function() { 
-	    	$(document).trigger( 'game:pause' );
 	    },
 	    onHide: function() {
 	    },
