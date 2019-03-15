@@ -66,6 +66,10 @@ class Game{
 	    scope.pauseState();
 	  });
 
+	  $( document ).on( 'game:menu', function(e) {
+	    scope.menuState();
+	  });
+
 	  // events from modalWindow
 	  $( document ).on( 'game:playing', function(e) {
 	    scope.playingState();
@@ -91,7 +95,6 @@ class Game{
 	};
 
 	pauseState(){
-		console.log("pause");
 		this.played = false;
 	};
 

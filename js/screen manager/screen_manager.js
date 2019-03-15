@@ -2,14 +2,20 @@
 
 class ScreenManager {
 
-	constructor ( screens ){
+	constructor ( screens, modals ){
     
     var scope = this;
 
     this.screens = [];
 
+    this.modals = [];
+
     for( var screen_name in screens ){
       this.createScreen( screen_name, screens[screen_name] );
+    };
+
+    for( var modal_name in modals ){
+      this.createModal( modal_name, modals[modal_name] );
     };
 
     $('[data-event]').each(function(i,e){
@@ -17,8 +23,16 @@ class ScreenManager {
       $(e).click(function(){ $(document).trigger( event[0], event[1] ); })
     });
 
-    $(document).on('show-screen', function( e, data ){
-      scope.showOneScreen(data);
+    $(document).on( 'show-screen', function( e, data ){
+      scope.showOneScreen( data );
+    });
+
+    $(document).on( 'show-modal', function( e, data ){
+      scope.modals[data].show();
+    });
+
+    $(document).on( 'hide-modal', function( e, data ){
+      scope.modals[data].hide();
     });
 
   };
@@ -27,6 +41,11 @@ class ScreenManager {
   createScreen( target, data ){
     var screen = new Screen( document.getElementById( target ), data );
     this.screens[target] = screen;
+  };
+
+  createModal( target, data ){
+    var modal = new ModalWindow( document.getElementById( target ), data );
+    this.modals[target] = modal;
   };
 
 
@@ -40,8 +59,6 @@ class ScreenManager {
       this.hideScreen( function(){ scope.showScreen(screen_name); } );
       return;
     }
-    else
-      if( screen.data.beforeShow ) screen.data.beforeShow();
 
     this.current_screen = screen;
 

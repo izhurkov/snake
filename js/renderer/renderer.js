@@ -10,7 +10,7 @@ class Renderer {
 		this.defaultRender = {
 			renders: {
 				'canvas': {
-					renderClass: CanvasRenders
+					renderClass: CanvasRender
 				}
 			}
 		}
@@ -33,7 +33,7 @@ class Renderer {
 
 	setActiveRender( renderName ){
 		if ( !this.renders[renderName].isInitialized )
-			this.renders[renderName].init( this.defaultRender.renders[renderName].elementId);
+			this.renders[renderName].inits( this.defaultRender.renders[renderName].elementId);
 		this.activeRender = this.renders[renderName];
 	};
 

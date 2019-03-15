@@ -15,7 +15,7 @@ class CanvasRender extends Render{
 		this.evenFrame = true;
 	};
 
-	init( elementId ){
+	inits( elementId ){
 		
 		this.canvas = $( elementId )[0];
 		$( this.canvas ).css( { 'width' : this.width + 'px', 
