@@ -27,9 +27,9 @@
 	    // hide
 	    onHide: function(){
 	    },
-	    afterHide: function() {
-	    	$(document).trigger( 'game:end' );
-	    },
+	    // afterHide: function() {
+	    // 	$(document).trigger( 'game:end' );
+	    // },
 
 	    'showAnimation': 'fadeIn',
 	    'showDuration': 400,
@@ -50,13 +50,30 @@
 	  'pauseModal': {
 	  	text: 'Pause',
 	  	buttons: {
-	  		'continue': { text: "continue", funct: function(){ $(document).trigger( 'game:playing' ); } },
-	  		'menu': { text: "menu", func: function(){ $(document).trigger( 'game:menu' ); } }
+	  		'continue': {
+	  			value: "continue",
+	  			onClick: function(){
+	  				$(document).trigger( 'game:playing' );
+	  				$(document).trigger( 'hide-modal', 'pauseModal' );
+	    			$('canvas:first').focus();
+	  			}
+	  		},
+	  		'menu': {
+	  			value: "menu",
+	  			onClick: function(){
+	  				$(document).trigger( 'game:menu' );
+  					$(document).trigger( 'show-screen', 'menuScreen' );
+	  				$(document).trigger( 'hide-modal', 'pauseModal' );
+	  			}
+	  		}
 		  },
-		  onShow: function() {},
-	    onHide: function() {},
+		  onShow: function() { 
+	    	$(document).trigger( 'game:pause' );
+	    },
+	    onHide: function() {
+	    },
 	    'hideAnimation': 'fadeOut',
-	    'hideDuration': 200
+	    'hideDuration': 2000
 		}
 	};
 
@@ -81,9 +98,9 @@
  //  });
 
 
-  $( document ).on( 'game:pause', function( e, data ){
-      modalWindow.show();
-    });
+  // $( document ).on( 'game:pause', function( e, data ){
+  //     modalWindow.show();
+  //   });
 
   // $( '#menu' ).click(function(e) {
   //   $(document).trigger( 'page:menu-btn-clicked' );
@@ -111,7 +128,7 @@
 
   // 
   // screenManager.showOneScreen('startScreen');
-  $(document).trigger( 'show-screen','menuScreen' );
+  $(document).trigger( 'show-screen', 'menuScreen' );
 
   $(document).trigger( 'page:ready' );
 	// <<< LISTENERS AND TRIGGERS <<<

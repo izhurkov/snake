@@ -24,15 +24,15 @@ class ScreenManager {
     });
 
     $(document).on( 'show-screen', function( e, data ){
-      scope.showOneScreen( data );
+      scope.showScreen( data );
     });
 
     $(document).on( 'show-modal', function( e, data ){
-      scope.modals[data].show();
+      scope.showModal( data )
     });
 
     $(document).on( 'hide-modal', function( e, data ){
-      scope.modals[data].hide();
+      scope.hideModal( data );
     });
 
   };
@@ -44,10 +44,9 @@ class ScreenManager {
   };
 
   createModal( target, data ){
-    var modal = new ModalWindow( document.getElementById( target ), data );
+    var modal = new ModalWindow( target, data );
     this.modals[target] = modal;
   };
-
 
   // показать экран
   showScreen( screen_name ){
@@ -80,17 +79,24 @@ class ScreenManager {
     this.current_screen = undefined;
 
     screen.hide( onComplete );
-
   };
 
+  showModal ( modal_name ){
+    var scope = this;
+    var modal = this.modals[modal_name];
 
+    modal.data.onShow();
 
-  // показывает один из экранов
-  showOneScreen( screen_name ){
-    // for ( let screen_name in this.screens ){
-    //   this.hideScreen();
-    // }
-    this.showScreen( screen_name );
+    modal.show();
   };
+
+  hideModal ( modal_name ){
+    var scope = this;
+    var modal = this.modals[modal_name];
+
+    modal.data.onHide();
+
+    modal.hide();
+  }
 
 };
