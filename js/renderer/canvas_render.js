@@ -44,13 +44,13 @@ class CanvasRender{
 	};
 
 	drawSnake( cellPositions ){
-		this.ctx.fillStyle = this.params.innerColor || '#ff0';;
+		this.ctx.fillStyle = this.params.bodyColor || '#ff0';;
 		for ( var i = 1; i < cellPositions.length; i++ ){
 			var kf = this.params.blockSize * i / cellPositions.length / 4 + 2;
 			this.drawBlockSizeRect( cellPositions[i].x, cellPositions[i].y, kf, kf );
 		}
 
-		this.ctx.fillStyle = this.params.outerColor || '#ff0';;
+		this.ctx.fillStyle = this.params.headColor || '#ff0';;
 		this.drawBlockSizeRect( cellPositions[0].x, cellPositions[0].y, 0, 0 );
 	};
 

@@ -41,8 +41,8 @@ $(window).on( 'page:ready', function(){
 	  areaY: 15,
 	  blockSize: 20,
 
-	  outerColor: "rgba(124, 112, 96, 1)",
-	  innerColor: "rgba(204, 177, 156, 1)",
+	  headColor: "rgba(124, 112, 96, 1)",
+	  bodyColor: "rgba(204, 177, 156, 1)",
 	  startPos: { x: 10, y: 8 },
 	  startLength: 3,
 

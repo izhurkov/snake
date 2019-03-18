@@ -54,8 +54,8 @@ class Game{
 		if ( !this.params.areaY ) this.params.areaY = 5;
 		if ( !this.params.blockSize ) this.params.blockSize = 15;
 
-		if ( !this.params.outerColor ) this.params.outerColor = '#9f0';
-		if ( !this.params.innerColor ) this.params.innerColor = '#9f0';
+		if ( !this.params.headColor ) this.params.headColor = '#9f0';
+		if ( !this.params.bodyColor ) this.params.bodyColor = '#9f0';
 		if ( !this.params.startPos ) this.params.startPos = { x: 1, y: 1 };
 		if ( !this.params.startLength ) this.params.startLength = 1;
 
