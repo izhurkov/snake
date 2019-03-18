@@ -2,13 +2,17 @@
 
 class Game{
 
-	constructor( configInput, configRender, params ){
+	constructor( config, params ){
 
 		// game objects
-		if ( params !== undefined )
-			this.params = params;
-		else
-			this.params = {};
+		// if ( params !== undefined )
+		// 	this.params = Object.assign({},params);
+		// else
+		// 	this.params = {};
+		this.params = params ? Object.assign({},params) : {};
+
+		// this.blockColor = params.blockColor || true;
+		// this.blockColor = params.blockColor !== undefined ? params.blockColor || '#0ff';
 
 	 	this.setDefaultParams();
 
@@ -23,22 +27,22 @@ class Game{
 
 		this.stepTime = this.params.stepTime;
 
-		this.state = {};
 		this.gameState = {};
 
-		this.canvas = document.getElementById( "canvas" );
-		this.canvas.setAttribute( "width", this.params.blockSize * (this.params.areaX + 2) + "px" );
-		this.canvas.setAttribute( "height", this.params.blockSize * (this.params.areaY + 2) + "px" );
-		this.ctx = canvas.getContext( "2d" );
-
 		// input controller
-		this.inputController = new InputController( configInput );
+		// this.canvas = document.getElementById( "canvas" );
+		// this.canvas.setAttribute( "width", this.params.blockSize * (this.params.areaX + 2) + "px" );
+		// this.canvas.setAttribute( "height", this.params.blockSize * (this.params.areaY + 2) + "px" );
+		// this.ctx = canvas.getContext( "2d" );
+		
+		this.inputController = new InputController( config.input );
 		this.inputController.attach( this.canvas );
 
 		// renderer
-		this.renderer = new Renderer( configRender, this.params );
+		this.renderer = new Renderer( config.render, this.params );
 
 		this.interfaceController = new InterfaceController();
+
 		// 
 		this.addListeners();
 
@@ -138,8 +142,6 @@ class Game{
 		this.score = 0;
 		this.currentVelocity = null;
 	};
-
-
 
 	// >>> GAME LOOPS >>>
 	mainStep(){

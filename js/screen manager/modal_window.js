@@ -5,14 +5,14 @@ class ModalWindow{
   constructor( modalName, data ){
     this.data = data;
     if( !$('*').is('#modal-window-container') ){
-      $('#game-container').append('<div id="modal-window-container"></div>');
+      $('#game-container').append( '<div id="modal-window-container"></div>' );
     }
 
-    $('#modal-window-container').append('<div class="modal-window"></div>');
+    $('#modal-window-container').append( '<div class="modal-window"></div>' );
 
     this.element = $('#modal-window-container').children().last();
 
-    var template = Handlebars.compile(  `<div class='{{class}}'>{{text}}</div>` );
+    var template = Handlebars.compile( `<div class='{{class}}'>{{text}}</div>` );
 
     var html = template( {class: 'back', text: ''} );
     $( '.modal-window:last' ).append( html );

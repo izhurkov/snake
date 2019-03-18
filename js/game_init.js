@@ -2,35 +2,36 @@
 
 $(window).on( 'page:ready', function(){
 
-	var configInput = {
-		devices:{
-	    keyboard: {
-	      enabled: true
-	    }
-	  },
-	  actions: {
-	    'right': {
-	      keyCodes:[39]
-	    },
-	    'left': {
-	      keyCodes:[37]
-	    },
-	    'up': {
-	      keyCodes:[38]
-	    },
-	    'down': {
-	      keyCodes:[40]
-	    }
-	  }
-	};
-
-	var configRender = {
-		renders: {
-			'canvas': {
-				elementId: '#canvas'
-			}
+	var config = {
+		input: {
+			devices:{
+		    keyboard: {
+		      enabled: true
+		    }
+		  },
+		  actions: {
+		    'right': {
+		      keyCodes:[39]
+		    },
+		    'left': {
+		      keyCodes:[37]
+		    },
+		    'up': {
+		      keyCodes:[38]
+		    },
+		    'down': {
+		      keyCodes:[40]
+		    }
+		  }
 		},
-		activeRender: 'canvas'
+		render: {
+			renders: {
+				'canvas': {
+					elementId: '#canvas'
+				}
+			},
+			activeRender: 'canvas'
+		}
 	};
 
 	var params = {
@@ -51,5 +52,5 @@ $(window).on( 'page:ready', function(){
 	  stepTime: 200
 	};
 
-	var snakeGame = new Game( configInput, configRender, params );
+	var snakeGame = new Game( config, params );
 });

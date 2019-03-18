@@ -62,6 +62,7 @@
 	  	buttons: {
 	  		'close': {
 	  			value: "close all",
+	  			// data_event: "game:playing;hide-modal>pauseModal;hide-modal>testModal",
 	  			onClick: function(){
 	  				$(document).trigger( 'game:playing' );
 	  				$(document).trigger( 'hide-modal', 'pauseModal' );

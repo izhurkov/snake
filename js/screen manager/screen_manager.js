@@ -22,22 +22,21 @@ class ScreenManager {
       $(e).click( function(){ $(document).trigger( event[0], event[1] ); } )
     });
 
-    $(document).on( 'button-click', function( e, data ){
-      var data = data.split('+');
-      scope.modals[data[1]].data.buttons[data[0]].onClick();
-    });
-
-    $(document).on( 'show-screen', function( e, data ){
-      scope.showScreen( data );
-    });
-
-    $(document).on( 'show-modal', function( e, data ){
-      scope.showModal( data )
-    });
-
-    $(document).on( 'hide-modal', function( e, data ){
+    $(document)
+      .on( 'button-click', function( e, data ){
+        var data = data.split('+');
+        scope.modals[data[1]].data.buttons[data[0]].onClick();
+      })
+      .on( 'show-screen', function( e, data ){
+        scope.showScreen( data );
+      })
+      .on( 'show-modal', function( e, data ){
+        scope.showModal( data )
+      })
+      .on( 'hide-modal', function( e, data ){
       scope.hideModal( data  );
-    });
+      })
+    ;
 
   };
 
