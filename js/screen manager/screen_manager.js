@@ -41,7 +41,6 @@ class ScreenManager {
 
   };
 
-  // добавить экран
   createScreen( target, data ){
     var screen = new Screen( document.getElementById( target ), data );
     this.screens[target] = screen;
@@ -52,7 +51,6 @@ class ScreenManager {
     this.modals[target] = modal;
   };
 
-  // показать экран
   showScreen( screen_name ){
     
     var scope = this;
@@ -77,8 +75,6 @@ class ScreenManager {
     screen.show( afterShow );
   };
 
-
-  // скрыть экран
   hideScreen( onComplete ){
     if( !this.current_screen ) return;
 

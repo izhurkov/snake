@@ -2,7 +2,6 @@
 
 $(window).on( 'page:ready', function(){
 
-	// данные для InputController
 	var configInput = {
 		devices:{
 	    keyboard: {

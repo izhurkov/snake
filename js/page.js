@@ -1,9 +1,7 @@
 'use strict';
 
-// page manager
 (function() { 
 
-	// список экранов
 	var screens = {
 	  'menuScreen': {
 	    onShow: function(){ },
