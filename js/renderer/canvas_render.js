@@ -22,8 +22,6 @@ class CanvasRender{
 	};
 
 	drawFrame( gameState ){
-		if ( !gameState.isPlaying )
-			return;
 		this.clearFrame();
 
 		this.drawArea();

@@ -25,7 +25,7 @@ class Snake{
 
 	update( currentVelocity ){
 		this.changeVelocity( currentVelocity );
-		this.moveSnake();
+		this.moveSnake( this.direction );
 	};
 
 	// добавление блока в змейку (рост змеи)
@@ -33,18 +33,22 @@ class Snake{
 		this.changeVelocity( currentVelocity );
 		var length = this.cellPositions.length;
 		this.cellPositions.push( new Vector( this.cellPositions[length-1].x, this.cellPositions[length-1].y));
-		this.moveSnake();
+		this.moveSnake( this.direction );
 	};
 
 	// движение змейки на один блок
-	moveSnake(){
+	moveSnake( direction ){
 		for ( var i = this.cellPositions.length-1; i > 0; i-- )
 			this.cellPositions[i].set( this.cellPositions[i-1].x, this.cellPositions[i-1].y );
 		this.cellPositions[0].add( this.direction );
 	};
 
+	bounceWall(){
+		this.cellPositions[0].add( this.direction.multiply( -1 ) );
+	};
+
 	// изменение направления
-	changeVelocity( currentVelocity ){
+	changeVelocity( _currentDirection ){
 		
 		var directions = {
 			'right': [1, 0],
@@ -54,7 +58,7 @@ class Snake{
 			'null': [1, 0]
 		}
 
-		var currentDirection = new Vector( directions[currentVelocity][0], directions[currentVelocity][1] );
+		var currentDirection = new Vector( directions[_currentDirection][0], directions[_currentDirection][1] );
 
 		if ( Vector.equals( Vector.add( currentDirection, this.direction ), 0 ))
 			return;

@@ -145,7 +145,7 @@ class Game{
 
 		if (!this.isPlaying) return;
 
-		if ( Vector.equals( this.snake.head, this.bonus.position ) ){ // поедание бонуса
+		if ( Vector.equals( this.snake.head, this.bonus.position ) ){
 
 			this.score++;
 
@@ -159,11 +159,15 @@ class Game{
 			this.bonus.position = this.getNewBonusPosition();
 
 		}
-		else if ( this.wallCollision() || this.snakeCollision()){ // столкновение со стеной или с собой
+		else if ( this.snakeCollision() ){
+			this.loseState();
+		}
+		else if ( this.wallCollision() ){
+			this.snake.bounceWall();
 			this.loseState();
 		}
 		else{
-			this.snake.update( this.currentVelocity ); // просто движение
+			this.snake.update( this.currentVelocity );
 		}
 	};
 	// <<< GAME LOOPS <<<
