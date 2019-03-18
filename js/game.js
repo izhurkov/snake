@@ -5,24 +5,30 @@ class Game{
 	constructor( configInput, configRender, params ){
 
 		// game objects
-		this.params = params;
-		this.area = new Area( params );
-		this.snake = new Snake( params );
-		this.bonus = new Bonus( params );
+		if ( params !== undefined )
+			this.params = params;
+		else
+			this.params = {};
+
+	 	this.setDefaultParams();
+
+		this.area = new Area( this.params );
+		this.snake = new Snake( this.params );
+		this.bonus = new Bonus( this.params );
 		this.score = 0;
 		this.currentVelocity = null;
 		this.isPlaying = false;
 
-		this.maxSnakeLenght = params.areaX * params.areaY - params.startLength;
+		this.maxSnakeLenght = this.params.areaX * this.params.areaY - this.params.startLength;
 
-		this.stepTime = params.stepTime;
+		this.stepTime = this.params.stepTime;
 
 		this.state = {};
 		this.gameState = {};
 
 		this.canvas = document.getElementById( "canvas" );
-		this.canvas.setAttribute( "width", params.blockSize * (params.areaX + 2) + "px" );
-		this.canvas.setAttribute( "height", params.blockSize * (params.areaY + 2) + "px" );
+		this.canvas.setAttribute( "width", this.params.blockSize * (this.params.areaX + 2) + "px" );
+		this.canvas.setAttribute( "height", this.params.blockSize * (this.params.areaY + 2) + "px" );
 		this.ctx = canvas.getContext( "2d" );
 
 		// input controller
@@ -30,7 +36,7 @@ class Game{
 		this.inputController.attach( this.canvas );
 
 		// renderer
-		this.renderer = new Renderer( configRender, params );
+		this.renderer = new Renderer( configRender, this.params );
 
 		this.interfaceController = new InterfaceController();
 		// 
@@ -40,6 +46,23 @@ class Game{
 	  this.startGame();
 	  this.menuState();
 	};
+
+	setDefaultParams(){
+		if ( !this.params.blockColor ) this.params.blockColor = '#0ff';
+		if ( !this.params.wallColor ) this.params.wallColor = '#09f';
+		if ( !this.params.areaX ) this.params.areaX = 50;
+		if ( !this.params.areaY ) this.params.areaY = 5;
+		if ( !this.params.blockSize ) this.params.blockSize = 15;
+
+		if ( !this.params.outerColor ) this.params.outerColor = '#9f0';
+		if ( !this.params.innerColor ) this.params.innerColor = '#9f0';
+		if ( !this.params.startPos ) this.params.startPos = { x: 1, y: 1 };
+		if ( !this.params.startLength ) this.params.startLength = 1;
+
+		if ( !this.params.bonusColor ) this.params.bonusColor = '#f90';
+
+		if ( !this.params.stepTime ) this.params.stepTime = 100;
+	}
 
 	addListeners(){
 		let scope = this;
