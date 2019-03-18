@@ -5,7 +5,7 @@ class ScreenManager {
 	constructor ( screens, modals ){
     
     var scope = this;
-
+    
     this.screens = [];
     this.modals = [];
 
@@ -19,12 +19,12 @@ class ScreenManager {
 
     $('[data-event]').each(function(i,e){
       var event = $(e).data('event').split(':');
-      $(e).click(function(){ $(document).trigger( event[0], event[1] ); })
+      $(e).click( function(){ $(document).trigger( event[0], event[1] ); } )
     });
 
     $(document).on( 'button-click', function( e, data ){
-      var event = data.split('+');
-      scope.modals[event[1]].data.buttons[event[0]].onClick();
+      var data = data.split('+');
+      scope.modals[data[1]].data.buttons[data[0]].onClick();
     });
 
     $(document).on( 'show-screen', function( e, data ){
@@ -38,8 +38,6 @@ class ScreenManager {
     $(document).on( 'hide-modal', function( e, data ){
       scope.hideModal( data  );
     });
-
-    // console.log(this.modals);
 
   };
 
@@ -59,6 +57,10 @@ class ScreenManager {
     
     var scope = this;
     var screen = this.screens[screen_name];
+
+    if ( !screen ){
+      console.log("ScreenManager:", "screen no exist: " + screen_name);
+      return;}
 
     if( this.current_screen ) {
       this.hideScreen( function(){ scope.showScreen(screen_name); } );
@@ -90,6 +92,11 @@ class ScreenManager {
   showModal ( modal_name ){
     var modal = this.modals[modal_name];
 
+    if ( !modal ){
+      console.log("ScreenManager:", "screen no exist: " + modal_name);
+      return;
+    }
+
     modal.data.onShow();
 
     modal.show();
@@ -97,6 +104,11 @@ class ScreenManager {
 
   hideModal ( modal_name ){
     var modal = this.modals[modal_name];
+
+    if ( !modal ){
+      console.log("ScreenManager:", "screen no exist: " + modal_name);
+      return;
+    }
 
     modal.data.onHide();
 

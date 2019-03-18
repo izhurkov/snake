@@ -37,12 +37,6 @@ class Renderer {
 		this.activeRender = this.renders[renderName];
 	};
 
-	init(){
-		// for (var renderName in this.renders){
-		// 	this.renders[renderName].init();
-		// };
-	};
-
 	drawFrame( gameState ){
 		if ( !this.isEnable ) return;
 		this.activeRender.drawFrame( gameState );

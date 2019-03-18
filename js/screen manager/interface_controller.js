@@ -2,7 +2,7 @@
 
 class InterfaceController {
 	constructor(){
-
+		
 	};
 
 	update( score ){

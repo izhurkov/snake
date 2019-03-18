@@ -32,6 +32,7 @@ class Game{
 		// renderer
 		this.renderer = new Renderer( configRender, params );
 
+		this.interfaceController = new InterfaceController();
 		// 
 		this.addListeners();
 
@@ -55,7 +56,6 @@ class Game{
 	    };
 	  });
 
-	  // events from page
 	  ////////////////////
 	  $( document ).on( 'game:start', function(e) {
 			scope.renderer.isEnable = true;
@@ -99,13 +99,10 @@ class Game{
 	};
 
 	loseState(){
-		this.updateCounter( ".scoreCounter" );
 		$(document).trigger( 'show-screen', 'endScreen' );
 		this.isPlaying = false;
 	};
 	// <<< GAME STATE <<<
-
-
 
 	startGame(){
 		this.mainStep();
@@ -117,7 +114,6 @@ class Game{
 
 		this.score = 0;
 		this.currentVelocity = null;
-		this.updateCounter( ".scoreCounter" );
 	};
 
 
@@ -133,7 +129,7 @@ class Game{
 
 	gameStep(){
 		this.updateGame();
-		
+
 		this.gameState = {
 			isPlaying: this.isPlaying,
 			snake: this.snake.cellPositions,
@@ -141,17 +137,17 @@ class Game{
 		};
 
 		this.renderer.drawFrame( this.gameState );
-		// this.drawGame();
-		// this.renderer.drawFrame( this.state );
+
+		this.interfaceController.update( this.score );
 	};
 
 	updateGame(){
+
 		if (!this.isPlaying) return;
 
 		if ( Vector.equals( this.snake.head, this.bonus.position ) ){ // поедание бонуса
 
 			this.score++;
-			this.updateCounter( ".scoreCounter" );
 
 			this.maxSnakeLenght--;
 			if ( this.maxSnakeLenght <= 0 ){
@@ -171,12 +167,6 @@ class Game{
 		}
 	};
 	// <<< GAME LOOPS <<<
-
-
- //////////////// в интерфейс
-	updateCounter( id ){
-		$(id).html(this.score * 10);
-	};
 
 	getNewBonusPosition(){
 		var newPos = new Vector( randomInteger( 1, this.params.areaX ), randomInteger( 1, this.params.areaY ) );

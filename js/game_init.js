@@ -28,9 +28,7 @@ $(window).on( 'page:ready', function(){
 	var configRender = {
 		renders: {
 			'canvas': {
-				elementId: '#canvas',
-				width: 800,
-				height: 600
+				elementId: '#canvas'
 			}
 		},
 		activeRender: 'canvas'

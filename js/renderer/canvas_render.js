@@ -1,9 +1,8 @@
 'use strict';
 
-class CanvasRender extends Render{
+class CanvasRender{
 
 	constructor ( params, renderConfig ){
-    super();
     this.isInitialized = false;
 		this.params = params;
 
