@@ -4,11 +4,6 @@ class Game{
 
 	constructor( config, params ){
 
-		// game objects
-		// if ( params !== undefined )
-		// 	this.params = Object.assign({},params);
-		// else
-		// 	this.params = {};
 		this.params = params ? Object.assign({},params) : {};
 
 		// this.blockColor = params.blockColor || true;
@@ -29,18 +24,13 @@ class Game{
 
 		this.gameState = {};
 
-		// input controller
-		// this.canvas = document.getElementById( "canvas" );
-		// this.canvas.setAttribute( "width", this.params.blockSize * (this.params.areaX + 2) + "px" );
-		// this.canvas.setAttribute( "height", this.params.blockSize * (this.params.areaY + 2) + "px" );
-		// this.ctx = canvas.getContext( "2d" );
-		
-		this.inputController = new InputController( config.input );
-		this.inputController.attach( this.canvas );
-
-		// renderer
 		this.renderer = new Renderer( config.render, this.params );
 
+		//
+		this.inputController = new InputController( config.input );
+		this.inputController.attach( this.renderer.activeRender.canvas );
+
+		//
 		this.interfaceController = new InterfaceController();
 
 		// 

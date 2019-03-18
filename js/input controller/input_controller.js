@@ -18,7 +18,6 @@ class InputController {
       }
     }
 
-
     this.active_devices = {};
 
     for( var device_name in config.devices ){

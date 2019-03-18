@@ -10,13 +10,15 @@ class CanvasRender{
 		this.width = params.blockSize * (params.areaX + 2);
 
 		this.evenFrame = true;
+
+		this.inits( "#canvas" );
 	};
 
 	inits( elementId ){
 		
 		this.canvas = $( elementId )[0];
-		$( this.canvas ).css( { 'width' : this.width + 'px', 
-														'height' : this.height + 'px' } );
+		$( this.canvas ).attr( { width : this.width, 
+														height : this.height } );
 		this.ctx = canvas.getContext( "2d" );
     this.isInitialized = true;
 	};

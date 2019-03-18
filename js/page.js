@@ -80,6 +80,13 @@
 		}
 	};
 
+	 let type = "WebGL"
+    if(!PIXI.utils.isWebGLSupported()){
+      type = "canvas"
+    }
+
+    PIXI.utils.sayHello(type)
+
 	new ScreenManager( screens, modals );
 
   $(document).trigger( 'show-screen', 'menuScreen' );
