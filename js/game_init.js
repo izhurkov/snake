@@ -43,9 +43,12 @@ $(window).on( 'page:ready', function(){
 			renders: {
 				'canvas': {
 					elementId: '#canvas'
+				},
+				'pixi': {
+					appendToElement: '#renderer-container'
 				}
 			},
-			activeRender: 'canvas'
+			activeRender: 'pixi'
 		}
 	};
 

@@ -11,6 +11,9 @@ class Renderer {
 			renders: {
 				'canvas': {
 					renderClass: CanvasRenderer
+				},
+				'pixi': {
+					renderClass: PixiJSRenderer
 				}
 			}
 		}

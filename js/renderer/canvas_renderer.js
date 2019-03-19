@@ -25,7 +25,7 @@ class CanvasRenderer{
 
 	getActiveElement(){
 		return this.canvas;
-	}
+	};
 
 	drawFrame( gameState ){
 		this.clearFrame();
