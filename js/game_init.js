@@ -7,20 +7,35 @@ $(window).on( 'page:ready', function(){
 			devices:{
 		    keyboard: {
 		      enabled: true
+		    },
+		    mouse: {
+		      enabled: true,
+		      device_class: MouseInputDevice
+		    },
+		    touchscreen: {
+		      enabled: true,
+		      device_class: TouchscreenInputDevice
 		    }
 		  },
 		  actions: {
 		    'right': {
-		      keyCodes:[39]
+		      keyCodes:[39],
+        	gestures: ['swipe-right']
 		    },
 		    'left': {
-		      keyCodes:[37]
+		      keyCodes:[37],
+        	gestures: ['swipe-left']
 		    },
 		    'up': {
-		      keyCodes:[38]
+		      keyCodes:[38],
+        	gestures: ['swipe-up']
 		    },
 		    'down': {
-		      keyCodes:[40]
+		      keyCodes:[40],
+        	gestures: ['swipe-down']
+		    },
+		    'touchup': {
+        	gestures: ['touchup']
 		    }
 		  }
 		},
@@ -49,7 +64,7 @@ $(window).on( 'page:ready', function(){
 
 	  bonusColor: "rgba(200, 70, 150, 1)",
 
-	  stepTime: 200
+	  stepTime: 300
 	};
 
 	var snakeGame = new Game( config, params );

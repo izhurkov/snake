@@ -80,12 +80,12 @@
 		}
 	};
 
-	 let type = "WebGL"
-    if(!PIXI.utils.isWebGLSupported()){
-      type = "canvas"
-    }
+	let type = "WebGL"
+	if(!PIXI.utils.isWebGLSupported()){
+		type = "canvas"
+	}
 
-    PIXI.utils.sayHello(type)
+	PIXI.utils.sayHello(type)
 
 	new ScreenManager( screens, modals );
 

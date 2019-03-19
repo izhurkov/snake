@@ -1,6 +1,6 @@
 'use strict';
 
-class CanvasRender{
+class PixiJSRenderer{
 
 	constructor ( params, renderConfig ){
     this.isInitialized = false;

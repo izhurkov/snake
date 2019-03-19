@@ -15,7 +15,7 @@ class Game{
 		this.snake = new Snake( this.params );
 		this.bonus = new Bonus( this.params );
 		this.score = 0;
-		this.currentVelocity = null;
+		this.currentDirection = null;
 		this.isPlaying = false;
 
 		this.maxSnakeLenght = this.params.areaX * this.params.areaY - this.params.startLength;
@@ -28,7 +28,7 @@ class Game{
 
 		//
 		this.inputController = new InputController( config.input );
-		this.inputController.attach( this.renderer.activeRender.canvas );
+		this.inputController.attach( this.renderer.getActiveElement() );
 
 		//
 		this.interfaceController = new InterfaceController();
@@ -63,13 +63,16 @@ class Game{
 
 	  // events from InpuController
 		$( document ).on( scope.inputController.ACTION_ACTIVATED, function(e, param) {
-	    switch( param.detail ){
+	    switch( param.detail.action_name ){
 	    		case 'right':
 	        case 'left':
 	        case 'up':
 	        case 'down':
-						scope.currentVelocity = param.detail;
+						scope.currentDirection = param.detail.action_name;
 	          break;
+	        case 'touchup':
+	        	scope.setDirectionFromTouch( param.detail.cursor_pos );
+	        	break;
 	    };
 	  });
 
@@ -130,7 +133,7 @@ class Game{
 		this.bonus.position = this.getNewBonusPosition();
 
 		this.score = 0;
-		this.currentVelocity = null;
+		this.currentDirection = null;
 	};
 
 	// >>> GAME LOOPS >>>
@@ -170,7 +173,7 @@ class Game{
 				return;
 			}
 
-			this.snake.addBlock( this.currentVelocity );
+			this.snake.addBlock( this.currentDirection );
 			this.bonus.position = this.getNewBonusPosition();
 
 		}
@@ -182,10 +185,33 @@ class Game{
 			this.loseState();
 		}
 		else{
-			this.snake.update( this.currentVelocity );
+			this.snake.update( this.currentDirection );
 		}
 	};
 	// <<< GAME LOOPS <<<
+	
+	setDirectionFromTouch( cursor_pos ){
+		if ( !cursor_pos ) return;
+		var cursor = new Vector( Math.floor( cursor_pos.x  / this.params.blockSize ),
+															Math.floor( cursor_pos.y / this.params.blockSize ) );
+		if ( !cursor ) return;
+
+		var snakeMovement = {  x:(cursor.x-this.snake.head.x),
+                        y: (cursor.y-this.snake.head.y) };
+
+    var absSnakeMovementX = Math.abs(snakeMovement.x);
+    var absSnakeMovementY = Math.abs(snakeMovement.y);
+
+    if ( absSnakeMovementX > absSnakeMovementY ) {
+      if (snakeMovement.x < 0) this.currentDirection = 'left';
+      else this.currentDirection = 'right';
+    } 
+    else {
+      if (snakeMovement.y < 0) this.currentDirection = 'up';
+      else this.currentDirection = 'down';
+    }
+
+	};
 
 	getNewBonusPosition(){
 		var newPos = new Vector( randomInteger( 1, this.params.areaX ), randomInteger( 1, this.params.areaY ) );

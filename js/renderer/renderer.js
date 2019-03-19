@@ -10,7 +10,7 @@ class Renderer {
 		this.defaultRender = {
 			renders: {
 				'canvas': {
-					renderClass: CanvasRender
+					renderClass: CanvasRenderer
 				}
 			}
 		}
@@ -28,10 +28,14 @@ class Renderer {
 			}
 		};
 
-		this.setActiveRender( configRender.activeRender );
+		this.setActiveRenderer( configRender.activeRender );
 	};
 
-	setActiveRender( renderName ){
+	getActiveElement(){
+		return this.activeRender.getActiveElement();
+	};
+
+	setActiveRenderer( renderName ){
 		if ( !this.renders[renderName].isInitialized )
 			this.renders[renderName].inits( this.defaultRender.renders[renderName].elementId);
 		this.activeRender = this.renders[renderName];

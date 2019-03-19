@@ -15,6 +15,14 @@ class InputController {
       keyboard: {
         // enabled: true,
         device_class: KeyboardInputDevice
+      },
+      mouse: {
+        enabled: true,
+        device_class: MouseInputDevice
+      },
+      touchscreen: {
+        enabled: true,
+        device_class: TouchscreenInputDevice
       }
     }
 
@@ -32,13 +40,13 @@ class InputController {
           this.addProperties(this.active_devices[device_name], device_config);
       }
     };
-
+     
     if( config.actions ){
       this.bindActions( config.actions );
     };
   };
 
-  addProperties(device, device_config){
+  addProperties( device, device_config ){
     for( var config_name in device_config ){
       device[config_name] = device_config[config_name];
     }
@@ -139,7 +147,7 @@ class InputController {
     newAction.enabled = value;
   };
 
-  setActionActive( action, _active ){
+  setActionActive( action, _active, cursor_pos ){
 
     if (!this.enabled) return;
 
@@ -150,7 +158,7 @@ class InputController {
     action.active = _active;
     // var event = new CustomEvent( _active ? this.ACTION_ACTIVATED : this.ACTION_DEACTIVATED, { detail: action.name } );
     // document.dispatchEvent( event );
-    $(document).trigger( this.ACTION_ACTIVATED, {detail: action.name} );
+    $(document).trigger( this.ACTION_ACTIVATED, {detail: { action_name: action.name, cursor_pos: cursor_pos } } );
   };
 
   deactiveAllActions(){
@@ -159,6 +167,11 @@ class InputController {
       this.actions[actionName].active = false;
     }
     $(document).trigger( "deactiveAllActions" );
+
+    // for( var device_name in this.active_devices ){
+    //   var device = this.active_devices[ device_name ];
+    //   device.detach( this.target );
+    // }
   };
 
   isActionActive( actionName ){
