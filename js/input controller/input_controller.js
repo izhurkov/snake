@@ -13,7 +13,7 @@ class InputController {
 
     var default_devices = {
       keyboard: {
-        // enabled: true,
+        enabled: true,
         device_class: KeyboardInputDevice
       },
       mouse: {
@@ -25,6 +25,7 @@ class InputController {
         device_class: TouchscreenInputDevice
       }
     }
+
 
     this.active_devices = {};
 

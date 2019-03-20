@@ -11,15 +11,26 @@ class CanvasRenderer{
 
 		this.evenFrame = true;
 
-		this.inits( renderConfig.elementId );
+		// this.inits( renderConfig.elementId );
 	};
 
-	inits( elementId ){
+	inits( target ){
+
+		var newCanvas = $('<canvas/>',{
+                   'class':'radHuhddd',
+                    'id': 'myCanvas',
+                    'tabindex':0
+                }).prop({
+                    width: this.width,
+                    height: this.height
+                });
+
+		$( target ).append( newCanvas );
 		
-		this.canvas = $( elementId )[0];
-		$( this.canvas ).attr( { width : this.width, 
-														height : this.height } );
-		this.ctx = canvas.getContext( "2d" );
+		this.canvas = $( newCanvas )[0];
+		// $( this.canvas ).attr( { width : this.width, 
+														// height : this.height } );
+		this.ctx = this.canvas.getContext( "2d" );
     this.isInitialized = true;
 	};
 

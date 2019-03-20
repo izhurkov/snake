@@ -1,12 +1,18 @@
 'use strict';
 
-$(window).on( 'page:ready', function(){
+var count = 0;
+
+$(window).on( 'preloader:complete', function( e, preloader ){
+
+	// var image = param.detail.getResult("wall");
+	// document.body.appendChild(image);
 
 	var config = {
 		input: {
 			devices:{
 		    keyboard: {
-		      enabled: true
+		      enabled: true,
+		      device_class: KeyboardInputDevice
 		    },
 		    mouse: {
 		      enabled: true,
@@ -41,14 +47,11 @@ $(window).on( 'page:ready', function(){
 		},
 		render: {
 			renders: {
-				'canvas': {
-					elementId: '#canvas'
-				},
-				'pixi': {
-					appendToElement: '#renderer-container'
-				}
+				'canvas': { },
+				'pixi': { }
 			},
-			activeRender: 'pixi'
+			activeRender: 'pixi',
+			parentElement: '#renderer-container'
 		}
 	};
 
@@ -70,5 +73,6 @@ $(window).on( 'page:ready', function(){
 	  stepTime: 300
 	};
 
-	var snakeGame = new Game( config, params );
+	var snakeGame = new Game( config, params, preloader );
+
 });

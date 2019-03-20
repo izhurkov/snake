@@ -38,6 +38,8 @@ class ScreenManager {
       })
     ;
 
+    // this.showScreen('menuScreen')
+
   };
 
   createScreen( target, data ){
@@ -88,7 +90,7 @@ class ScreenManager {
     var modal = this.modals[modal_name];
 
     if ( !modal ){
-      console.log("ScreenManager:", "screen no exist: " + modal_name);
+      console.log("ScreenManager:", "modal no exist: " + modal_name);
       return;
     }
 
@@ -101,7 +103,7 @@ class ScreenManager {
     var modal = this.modals[modal_name];
 
     if ( !modal ){
-      console.log("ScreenManager:", "screen no exist: " + modal_name);
+      console.log("ScreenManager:", "modal no exist: " + modal_name);
       return;
     }
 

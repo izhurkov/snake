@@ -18,7 +18,6 @@ class MouseInputDevice extends TouchDevice{
   };
 
   detach( target ){
-    console.log("detach target mouse");
     super.detach( target, 'mousedown', 'mouseup' );
   };
 }

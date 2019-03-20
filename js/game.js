@@ -2,13 +2,13 @@
 
 class Game{
 
-	constructor( config, params ){
+	constructor( config, params, preloader ){
 
 		this.params = params ? Object.assign({},params) : {};
 
 		// this.blockColor = params.blockColor || true;
 		// this.blockColor = params.blockColor !== undefined ? params.blockColor || '#0ff';
-
+		///////////////////// fix
 	 	this.setDefaultParams();
 
 		this.area = new Area( this.params );
@@ -24,10 +24,11 @@ class Game{
 
 		this.gameState = {};
 
-		this.renderer = new Renderer( config.render, this.params );
-
+		this.renderer = new Renderer( config.render, this.params, preloader );
 		//
 		this.inputController = new InputController( config.input );
+
+		console.log("active renderer canvas:", this.renderer.getActiveElement());
 		this.inputController.attach( this.renderer.getActiveElement() );
 
 		//
