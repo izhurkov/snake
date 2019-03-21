@@ -11,17 +11,71 @@ class PixiJSRenderer{
 
 		this.blockSize = params.blockSize;
 		// 
-		this.groundBlockTexture = PIXI.Texture.fromImage( preloader.queue.getResult("ground") );
-
-		this.wallBlockTexture = PIXI.Texture.fromImage( preloader.queue.getResult("wall") );
+		// 
+		this.textures = {};
+		this.initTextures(preloader);
 
 		this.area;
-		this.head;
+		this.snake = [];
 		this.bonus;
 		// this.inits( renderConfig.appendToElement );
 		// 
-				
+	};
 
+	initTextures(preloader){
+
+
+		this.groundBlockTexture = PIXI.Texture.from( preloader.queue.getResult("ground") );
+
+		this.wallBlockTexture = PIXI.Texture.from( preloader.queue.getResult("wall") );
+
+		this.snakeTextures = {};
+
+		var snakeSprites = {
+			'snakeHead_up': 
+			{ "x":192,"y":0,"w":64,"h":64 },
+			'snakeHead_right': 
+			{ "x":256,"y":0,"w":64,"h":64 },
+			'snakeHead_left': 
+			{ "x":192,"y":64,"w":64,"h":64 },
+			'snakeHead_down': 
+			{ "x":256,"y":64,"w":64,"h":64 },
+
+
+			'snakeBody_top_left': 
+			{ "x":256,"y":64,"w":64,"h":64 },
+			'snakeBody_top_right': 
+			{ "x":256,"y":64,"w":64,"h":64 },
+
+			'snakeBody_horizontal': 
+			{ "x":64,"y":0,"w":64,"h":64 },
+			'snakeBody_vertical': 
+			{ "x":256,"y":64,"w":64,"h":64 },
+
+			'snakeBody_bottom_left': 
+			{ "x":256,"y":64,"w":64,"h":64 },
+			'snakeBody_bottom_right': 
+			{ "x":256,"y":64,"w":64,"h":64 },
+
+			'snakeTail_up': 
+			{ "x":192,"y":128,"w":64,"h":64 },
+			'snakeTail_right': 
+			{ "x":256,"y":128,"w":64,"h":64 },
+			'snakeTail_left': 
+			{ "x":192,"y":192,"w":64,"h":64 },
+			'snakeTail_down': 
+			{ "x":256,"y":192,"w":64,"h":64 }
+		};
+
+    var atlas = PIXI.Texture.from( preloader.queue.getResult("snake-graphics") );
+
+		
+
+		for (var spriteName in snakeSprites){
+			var sprite = snakeSprites[spriteName];
+			this.snakeTextures[spriteName] = new PIXI.Texture(atlas, new Rectangle(sprite.x, sprite.y, sprite.w, sprite.h));
+		}
+		console.log("log:", this.snakeTextures);
 	};
 
 	inits( target ){
@@ -44,7 +98,7 @@ class PixiJSRenderer{
 
 	initArea(){
 		this.container = new PIXI.Container();
-		var _container =  this.container;
+		var container =  this.container;
 
 		for (var i = 0; i < this.params.areaX + 2; i++) {
 			for (var j = 0; j < this.params.areaY + 2; j++) {
@@ -57,23 +111,44 @@ class PixiJSRenderer{
 		    block.y = j * this.blockSize;
 		    block.width = this.blockSize;
 		    block.height = this.blockSize;
-		    _container.addChild(block);
+		    container.addChild(block);
 			};
 		};
 
-		this.app.stage.addChild(_container);
+		console.log("fas", container);
+
+		this.app.stage.addChild(container);
 	};
 
 	initSnake(){
-		this.head = new PIXI.Sprite(this.wallBlockTexture);
-		var _head = this.head;
+		this.snakeContainer = new PIXI.Container();
+		var container =  this.snakeContainer;
 
-		_head.width = this.blockSize;
-    _head.height = this.blockSize;
-		_head.x = 0;
-    _head.y = 0;
+  	var cell = new PIXI.Sprite(this.snakeTextures['snakeHead_right']);
+	  cell.width = this.blockSize;
+	  cell.height = this.blockSize;
+		container.addChild(cell);
 
-		this.app.stage.addChild(_head);
+		console.log(this.params.startLength);
+
+    for (var i = 1; i < this.params.startLength - 1; i++){
+    	cell = new PIXI.Sprite(this.snakeTextures['snakeBody_horizontal']);
+		  cell.width = this.blockSize;
+		  cell.height = this.blockSize;
+			container.addChild(cell);
+    }
+
+  	cell = new PIXI.Sprite(this.snakeTextures['snakeTail_right']);
+	  cell.width = this.blockSize;
+	  cell.height = this.blockSize;
+		container.addChild(cell);
+			// this.snake.push(new PIXI.Sprite(this.snakeTextures['snakeBody_horizontal']));
+		// this.snake.push(new PIXI.Sprite(this.snakeTextures['snakeTail_right']));
+
+		// for(var cell in this.snake)
+		console.log(container);
+
+		this.app.stage.addChild(container);
 	};
 
 	initBonus(){
@@ -92,7 +167,7 @@ class PixiJSRenderer{
 	}
 
 	drawFrame( gameState ){
-		this.updateSnake( gameState.snake );
+		this.updateSnake( gameState.snake, gameState.head );
 		this.updateBonus( gameState.bonus );
 	};
 
@@ -103,9 +178,29 @@ class PixiJSRenderer{
 		};
 	};
 
-	updateSnake( cellPositions ){
-    this.head.x = cellPositions[0].x * this.blockSize;
-    this.head.y = cellPositions[0].y * this.blockSize;
+	updateSnake( cellPositions, cellDirections ){
+
+    var textures = this.snakeTextures;
+    var container = this.snakeContainer;
+
+    if (cellDirections.length > container.children.length || cellPositions.length > container.children.length){
+    	let cell = new PIXI.Sprite(this.snakeTextures['snakeBody_horizontal']);
+		  cell.width = this.blockSize;
+		  cell.height = this.blockSize;
+			container.addChild(cell);
+    }
+
+    // update positions
+    for (var i = 0; i < cellPositions.length; i++ ){
+    	container.getChildAt(i).x = cellPositions[i].x * this.blockSize;
+    	container.getChildAt(i).y = cellPositions[i].y * this.blockSize;
+    }
+
+    // update textures
+    container.getChildAt(0).texture = textures['snakeHead_' + cellDirections[0]];
+    for (var i = 1; i < cellDirections.length - 1; i++ )
+	    	container.getChildAt(i).texture = textures['snakeBody_' + cellDirections[i]];
+    container.getChildAt(cellDirections.length - 1).texture = textures['snakeTail_' + cellDirections[cellDirections.length-1]];
 	};
 
 	updateBonus( position ){

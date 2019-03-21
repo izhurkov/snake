@@ -152,6 +152,7 @@ class Game{
 		this.gameState = {
 			isPlaying: this.isPlaying,
 			snake: this.snake.cellPositions,
+			head: this.snake.cellDirections,
 			bonus: this.bonus.position
 		};
 

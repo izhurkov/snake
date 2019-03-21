@@ -66,7 +66,7 @@ $(window).on( 'preloader:complete', function( e, preloader ){
 	  headColor: "rgba(124, 112, 96, 1)",
 	  bodyColor: "rgba(204, 177, 156, 1)",
 	  startPos: { x: 10, y: 8 },
-	  startLength: 3,
+	  startLength: 5,
 
 	  bonusColor: "rgba(200, 70, 150, 1)",
 
