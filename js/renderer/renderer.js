@@ -34,8 +34,6 @@ class Renderer {
 		};
 
 		this.setActiveRenderer( configRender.activeRender );
-
-		// this.activeRender.inits( renderConfig.appendToElement );
 	};
 
 	getActiveElement(){

@@ -6,8 +6,7 @@ class InputController {
     
     this.ACTION_ACTIVATED = "input-controller:action-activated";
     this.ACTION_DEACTIVATED = "input-controller:action-deactivated";
-
-    this.target = target;
+    
     this.enabled = true;
     this.actions = {};
 
@@ -45,6 +44,8 @@ class InputController {
     if( config.actions ){
       this.bindActions( config.actions );
     };
+
+    this.attach( target );
   };
 
   addProperties( device, device_config ){
@@ -53,7 +54,7 @@ class InputController {
     }
   };
 
-  bindActions(actionsToBind){
+  bindActions( actionsToBind ){
 
     var newActions = this.actions;
     
@@ -84,18 +85,18 @@ class InputController {
   };
 
   // remove some input (key code, swipe name, etc.) from actions
-  removeInputFormAction(input){
+  removeInputFormAction( input ){
     for( var device_name in this.active_devices ){
       var device = this.active_devices[ device_name ];
       device.removeInput( input );
     }
   };
 
-  enableInputDevice(deviceName, value){
+  enableInputDevice( deviceName, value ){
     this.active_devices[deviceName].enabled = value;
   };
 
-  attach(target, dontEnable){
+  attach( target, dontEnable ){
     this.target = target;
 
     if (!this.target) return;

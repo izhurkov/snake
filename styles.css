@@ -24,6 +24,9 @@ canvas:focus{
 }
 
 #outerProgressBar{
+  position: absolute;
+  top: 100px;
+  left: 20px;
   padding: 6px;
   width: 250px;
   background: rgba(0, 0, 0, 0.25);
@@ -38,8 +41,6 @@ canvas:focus{
   transition: 0.3s linear;  
   transition-property: width, background-color;
 }
-
-
 
 input{
   font-family: "Trebuchet MS", sans-serif;

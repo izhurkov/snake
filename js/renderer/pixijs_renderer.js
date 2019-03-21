@@ -17,10 +17,99 @@ class PixiJSRenderer{
 
 		this.area;
 		this.snake = [];
+		this.oldCellPositions;
 		this.bonus;
-		// this.inits( renderConfig.appendToElement );
-		// 
+
+		this.emitter = new PIXI.particles.Emitter(
+			[PIXI.Texture.fromImage('assets/Wall.png')],
+			{
+				alpha: {
+					list: [
+						{
+							value: 0.8,
+							time: 0
+						},
+						{
+							value: 0.1,
+							time: 1
+						}
+					],
+					isStepped: false
+				},
+				scale: {
+					list: [
+						{
+							value: 1,
+							time: 0
+						},
+						{
+							value: 0.3,
+							time: 1
+						}
+					],
+					isStepped: false
+				},
+				color: {
+					list: [
+						{
+							value: "fb1010",
+							time: 0
+						},
+						{
+							value: "f5b830",
+							time: 1
+						}
+					],
+					isStepped: false
+				},
+				speed: {
+					list: [
+						{
+							value: 200,
+							time: 0
+						},
+						{
+							value: 100,
+							time: 1
+						}
+					],
+					isStepped: false
+				},
+				startRotation: {
+					min: 0,
+					max: 360
+				},
+				rotationSpeed: {
+					min: 0,
+					max: 0
+				},
+				lifetime: {
+					min: 0.5,
+					max: 0.5
+				},
+				frequency: 0.008,
+				spawnChance: 1,
+				particlesPerWave: 1,
+				emitterLifetime: 0.31,
+				maxParticles: 1000,
+				pos: {
+					x: 0,
+					y: 0
+				},
+				addAtBack: false,
+				spawnType: "circle",
+				spawnCircle: {
+					x: 0,
+					y: 0,
+					r: 10
+				}
+			}
+		);
+
+
+		this.emitter.resetPositionTracking();
 	};
+
 
 	initTextures(preloader){
 
@@ -43,19 +132,19 @@ class PixiJSRenderer{
 
 
 			'snakeBody_top_left': 
-			{ "x":256,"y":64,"w":64,"h":64 },
+			{ "x":128,"y":128,"w":64,"h":64 },
 			'snakeBody_top_right': 
-			{ "x":256,"y":64,"w":64,"h":64 },
+			{ "x":0,"y":64,"w":64,"h":64 },
 
 			'snakeBody_horizontal': 
 			{ "x":64,"y":0,"w":64,"h":64 },
 			'snakeBody_vertical': 
-			{ "x":256,"y":64,"w":64,"h":64 },
+			{ "x":128,"y":64,"w":64,"h":64 },
 
 			'snakeBody_bottom_left': 
-			{ "x":256,"y":64,"w":64,"h":64 },
+			{ "x":128,"y":0,"w":64,"h":64 },
 			'snakeBody_bottom_right': 
-			{ "x":256,"y":64,"w":64,"h":64 },
+			{ "x":0,"y":0,"w":64,"h":64 },
 
 			'snakeTail_up': 
 			{ "x":192,"y":128,"w":64,"h":64 },
@@ -69,13 +158,12 @@ class PixiJSRenderer{
 
     var atlas = PIXI.Texture.from( preloader.queue.getResult("snake-graphics") );
 
-		
-
-		for (var spriteName in snakeSprites){
+		for ( var spriteName in snakeSprites ){
 			var sprite = snakeSprites[spriteName];
-			this.snakeTextures[spriteName] = new PIXI.Texture(atlas, new Rectangle(sprite.x, sprite.y, sprite.w, sprite.h));
+			this.snakeTextures[spriteName] = new PIXI.Texture( atlas, new Rectangle( sprite.x, sprite.y, sprite.w, sprite.h ) );
 		}
-		console.log("log:", this.snakeTextures);
+
+		this.bonusTexture = new PIXI.Texture( atlas, new Rectangle( 0, 192, 64, 64 ) );
 	};
 
 	inits( target ){
@@ -91,8 +179,8 @@ class PixiJSRenderer{
 		$( target ).append( this.app.view );
 
 		this.initArea();
-		this.initSnake();
 		this.initBonus();
+		this.initSnake();
     this.isInitialized = true;
 	};
 
@@ -104,9 +192,9 @@ class PixiJSRenderer{
 			for (var j = 0; j < this.params.areaY + 2; j++) {
 				var block;
 				if ( i != 0 && i != this.params.areaX + 1 && j != 0 && j != this.params.areaY + 1 )
-					block = new PIXI.Sprite(this.groundBlockTexture);
-				else
 					block = new PIXI.Sprite(this.wallBlockTexture);
+				else
+					block = new PIXI.Sprite(this.groundBlockTexture);
 		    block.x = i * this.blockSize;
 		    block.y = j * this.blockSize;
 		    block.width = this.blockSize;
@@ -114,8 +202,6 @@ class PixiJSRenderer{
 		    container.addChild(block);
 			};
 		};
-
-		console.log("fas", container);
 
 		this.app.stage.addChild(container);
 	};
@@ -129,8 +215,6 @@ class PixiJSRenderer{
 	  cell.height = this.blockSize;
 		container.addChild(cell);
 
-		console.log(this.params.startLength);
-
     for (var i = 1; i < this.params.startLength - 1; i++){
     	cell = new PIXI.Sprite(this.snakeTextures['snakeBody_horizontal']);
 		  cell.width = this.blockSize;
@@ -142,24 +226,19 @@ class PixiJSRenderer{
 	  cell.width = this.blockSize;
 	  cell.height = this.blockSize;
 		container.addChild(cell);
-			// this.snake.push(new PIXI.Sprite(this.snakeTextures['snakeBody_horizontal']));
-		// this.snake.push(new PIXI.Sprite(this.snakeTextures['snakeTail_right']));
-
-		// for(var cell in this.snake)
-		console.log(container);
 
 		this.app.stage.addChild(container);
 	};
 
 	initBonus(){
-		this.bonus = new PIXI.Sprite(this.wallBlockTexture);
-		var _bonus = this.bonus;
-		_bonus.width = this.blockSize;
-    _bonus.height = this.blockSize;
-		_bonus.x = 0;
-    _bonus.y = 0;
+		this.bonus = new PIXI.Sprite(this.bonusTexture);
+		var bonus = this.bonus;
+		bonus.width = this.blockSize;
+    bonus.height = this.blockSize;
+		bonus.x = 0;
+    bonus.y = 0;
 
-		this.app.stage.addChild(_bonus);
+		this.app.stage.addChild(bonus);
 	}
 
 	getActiveElement(){
@@ -169,6 +248,7 @@ class PixiJSRenderer{
 	drawFrame( gameState ){
 		this.updateSnake( gameState.snake, gameState.head );
 		this.updateBonus( gameState.bonus );
+		this.emitter.emit = true;
 	};
 
 	clearFrame(){
@@ -182,18 +262,19 @@ class PixiJSRenderer{
 
     var textures = this.snakeTextures;
     var container = this.snakeContainer;
+    var blockSize = this.blockSize;
 
-    if (cellDirections.length > container.children.length || cellPositions.length > container.children.length){
-    	let cell = new PIXI.Sprite(this.snakeTextures['snakeBody_horizontal']);
-		  cell.width = this.blockSize;
-		  cell.height = this.blockSize;
+    if ( cellDirections.length > container.children.length ){
+    	let cell = new PIXI.Sprite(textures['snakeBody_horizontal']);
+		  cell.width = blockSize;
+		  cell.height = blockSize;
 			container.addChild(cell);
     }
 
     // update positions
     for (var i = 0; i < cellPositions.length; i++ ){
-    	container.getChildAt(i).x = cellPositions[i].x * this.blockSize;
-    	container.getChildAt(i).y = cellPositions[i].y * this.blockSize;
+    	container.getChildAt(i).x = cellPositions[i].x * blockSize;
+    	container.getChildAt(i).y = cellPositions[i].y * blockSize;
     }
 
     // update textures
@@ -205,10 +286,6 @@ class PixiJSRenderer{
 
 	updateBonus( position ){
 		this.bonus.x = position.x * this.blockSize;
-		this.bonus.y = position.y * this.blockSize;	
-	};	
-
-	drawBlockSizeRect( posX, posY, offsetX, offsetY ){
-
+		this.bonus.y = position.y * this.blockSize;
 	};
 }

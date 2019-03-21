@@ -27,8 +27,6 @@ class Game{
 		this.renderer = new Renderer( config.render, this.params, preloader );
 		//
 		this.inputController = new InputController( config.input );
-
-		console.log("active renderer canvas:", this.renderer.getActiveElement());
 		this.inputController.attach( this.renderer.getActiveElement() );
 
 		//

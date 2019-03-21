@@ -81,11 +81,22 @@
 		}
 	};
 
-	// PIXI.utils.sayHello("Hello world!");
+	var manifest = [
+		  {src:"assets/Ground.png", id:"ground"},
+		  {src:"assets/Wall.png", id:"wall"},
+		  {src:"assets/snake-graphics.png", id:"snake-graphics"},
+		  {src:"assets/bonus.mp3", id:"bonus_mp3"},
+		  {src:"assets/game over.mp3", id:"game_over_mp3"},
+		  {src:"assets/music.mp3", id:"music_mp3"}
+		];
+
+	PIXI.utils.sayHello("Hello world!");
+	
+	new ProgressBar();
 
 	new ScreenManager( screens, modals );
-	$(document).trigger( 'show-screen', 'menuScreen' );
 
-	new Preloader();
+	new Preloader( manifest );
+
 })();
 
