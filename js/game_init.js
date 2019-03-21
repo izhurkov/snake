@@ -2,7 +2,7 @@
 
 var count = 0;
 
-$(window).on( 'preloader:complete', function( e, preloader ){
+$(window).on( 'preloader:complete', function( e, data ){
 
 	$(document).trigger('show-screen', 'menuScreen');
 
@@ -47,7 +47,43 @@ $(window).on( 'preloader:complete', function( e, preloader ){
 		render: {
 			renders: {
 				'canvas': { },
-				'pixi': { }
+				'pixi': {
+					snakeSprites: {
+						'snakeHead_up': 
+						{ "x":192,"y":0,"w":64,"h":64 },
+						'snakeHead_right': 
+						{ "x":256,"y":0,"w":64,"h":64 },
+						'snakeHead_left': 
+						{ "x":192,"y":64,"w":64,"h":64 },
+						'snakeHead_down': 
+						{ "x":256,"y":64,"w":64,"h":64 },
+
+
+						'snakeBody_top_left': 
+						{ "x":128,"y":128,"w":64,"h":64 },
+						'snakeBody_top_right': 
+						{ "x":0,"y":64,"w":64,"h":64 },
+
+						'snakeBody_horizontal': 
+						{ "x":64,"y":0,"w":64,"h":64 },
+						'snakeBody_vertical': 
+						{ "x":128,"y":64,"w":64,"h":64 },
+
+						'snakeBody_bottom_left': 
+						{ "x":128,"y":0,"w":64,"h":64 },
+						'snakeBody_bottom_right': 
+						{ "x":0,"y":0,"w":64,"h":64 },
+
+						'snakeTail_up': 
+						{ "x":192,"y":128,"w":64,"h":64 },
+						'snakeTail_right': 
+						{ "x":256,"y":128,"w":64,"h":64 },
+						'snakeTail_left': 
+						{ "x":192,"y":192,"w":64,"h":64 },
+						'snakeTail_down': 
+						{ "x":256,"y":192,"w":64,"h":64 }
+					}
+				}
 			},
 			activeRender: 'pixi',
 			parentElement: '#renderer-container'
@@ -72,6 +108,6 @@ $(window).on( 'preloader:complete', function( e, preloader ){
 	  stepTime: 150
 	};
 
-	var snakeGame = new Game( config, params, preloader );
+	var snakeGame = new Game( config, params, data.queue );
 
 });

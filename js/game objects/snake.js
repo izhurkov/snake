@@ -12,6 +12,7 @@ class Snake{
 	get head() { return this.cellPositions[0]; };
 
 	reset(){
+
 		this.cellPositions = [];
 		this._cellPositions = []; // old position
 
@@ -30,6 +31,7 @@ class Snake{
 	}
 
 	update( currentVelocity ){
+
 		this.changeVelocity( currentVelocity );
 		this.moveSnake( this.direction );
 	};
@@ -38,14 +40,17 @@ class Snake{
 	addBlock( currentVelocity ){
 		this.changeVelocity( currentVelocity );
 		var length = this.cellPositions.length;
+
 		this.cellPositions.push( new Vector( this.cellPositions[length-1].x, this.cellPositions[length-1].y));
 		this._cellPositions.push( new Vector( this._cellPositions[length-1].x, this._cellPositions[length-1].y));
 		this.cellDirections.push( this.cellDirections[length-1] );
+
 		this.moveSnake( this.direction );
 	};
 
 	// движение змейки на один блок
 	moveSnake( direction ){
+
 		var new_pos = this.cellPositions;
 		var old_pos = this._cellPositions;
 
@@ -95,10 +100,6 @@ class Snake{
 		for ( var i = new_pos.length-1; i >= 0; i-- ){
 			old_pos[i] = new_pos[i].clone();
 		};
-	};
-
-	bounceWall(){
-		this.cellPositions[0].add( this.direction.multiply( -1 ) );
 	};
 
 	// изменение направления

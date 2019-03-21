@@ -8,9 +8,9 @@
 	    onHide: function(){ }
 	  },
 	  'gameScreen': {
-	    onShow: function(){
-	    	$(document).trigger( 'game:start' ); },
+	    onShow: function(){ },
 	    afterShow: function(){
+	    	$(document).trigger( 'game:start' );
 	    	$('canvas:first').focus(); },
 	    onHide: function(){ },
 
@@ -32,20 +32,20 @@
 	  		'continue': {
 	  			value: "continue",
 	  			onClick: function(){
-	  				$(document).trigger( 'game:playing' );
 	  				$(document).trigger( 'hide-modal', 'pauseModal' );
 	    			$('canvas:first').focus();
 	  			}
 	  		},
 	  		'showTest': {
-	  			value: "show second modal window",
+	  			value: "show second modal",
 	  			onClick: function(){
 	  				$(document).trigger( 'show-modal', 'testModal' );
 	  			}
 	  		},
 	  		'menu': {
 	  			value: "menu",
-	  			//////////////////////// 'game:menu;show-screen>menuScreen;hide-modal>pauseModal'
+	  			// data-event: 'game:menu;show-screen>menuScreen;hide-modal>pauseModal',
+	  			//////////////////////// data-event: 'game:menu;show-screen>menuScreen;hide-modal>pauseModal'
 	  			onClick: function(){
 	  				$(document).trigger( 'game:menu' );
   					$(document).trigger( 'show-screen', 'menuScreen' );
@@ -55,29 +55,28 @@
 		  },
 		  onShow: function(){ $(document).trigger( 'game:pause' ); },
 	    onHide: function(){ },
+	    afterHide: function() {
+	    	$(document).trigger( 'game:playing' );
+	    },
 	    'showDuration': 500,
-	    'hideDuration': 150
+	    'hideDuration': 500
 		},
 		'testModal': {
 	  	text: 'Pause',
 	  	buttons: {
 	  		'close': {
 	  			value: "close all",
-	  			// data_event: "game:playing;hide-modal>pauseModal;hide-modal>testModal",
 	  			onClick: function(){
-	  				$(document).trigger( 'game:playing' );
 	  				$(document).trigger( 'hide-modal', 'pauseModal' );
 	  				$(document).trigger( 'hide-modal', 'testModal' );
 	    			$('canvas:first').focus();
 	  			}
 	  		}
 		  },
-		  onShow: function() { 
-	    },
-	    onHide: function() {
-	    },
+		  onShow: function() { },
+	    onHide: function() { },
 	    'showDuration': 300,
-	    'hideDuration': 150
+	    'hideDuration': 500
 		}
 	};
 

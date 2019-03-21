@@ -10,109 +10,20 @@ class PixiJSRenderer{
 		this.width = params.blockSize * (params.areaX + 2);
 
 		this.blockSize = params.blockSize;
-		// 
-		// 
+
 		this.textures = {};
-		this.initTextures(preloader);
+		this.initTextures( renderConfig, preloader );
 
 		this.area;
 		this.snake = [];
 		this.oldCellPositions;
 		this.bonus;
 
-		this.emitter = new PIXI.particles.Emitter(
-			[PIXI.Texture.fromImage('assets/Wall.png')],
-			{
-				alpha: {
-					list: [
-						{
-							value: 0.8,
-							time: 0
-						},
-						{
-							value: 0.1,
-							time: 1
-						}
-					],
-					isStepped: false
-				},
-				scale: {
-					list: [
-						{
-							value: 1,
-							time: 0
-						},
-						{
-							value: 0.3,
-							time: 1
-						}
-					],
-					isStepped: false
-				},
-				color: {
-					list: [
-						{
-							value: "fb1010",
-							time: 0
-						},
-						{
-							value: "f5b830",
-							time: 1
-						}
-					],
-					isStepped: false
-				},
-				speed: {
-					list: [
-						{
-							value: 200,
-							time: 0
-						},
-						{
-							value: 100,
-							time: 1
-						}
-					],
-					isStepped: false
-				},
-				startRotation: {
-					min: 0,
-					max: 360
-				},
-				rotationSpeed: {
-					min: 0,
-					max: 0
-				},
-				lifetime: {
-					min: 0.5,
-					max: 0.5
-				},
-				frequency: 0.008,
-				spawnChance: 1,
-				particlesPerWave: 1,
-				emitterLifetime: 0.31,
-				maxParticles: 1000,
-				pos: {
-					x: 0,
-					y: 0
-				},
-				addAtBack: false,
-				spawnType: "circle",
-				spawnCircle: {
-					x: 0,
-					y: 0,
-					r: 10
-				}
-			}
-		);
 
-
-		this.emitter.resetPositionTracking();
 	};
 
 
-	initTextures(preloader){
-
+	initTextures( configRender, preloader ){
 
 		this.groundBlockTexture = PIXI.Texture.from( preloader.queue.getResult("ground") );
 
@@ -120,41 +31,7 @@ class PixiJSRenderer{
 
 		this.snakeTextures = {};
 
-		var snakeSprites = {
-			'snakeHead_up': 
-			{ "x":192,"y":0,"w":64,"h":64 },
-			'snakeHead_right': 
-			{ "x":256,"y":0,"w":64,"h":64 },
-			'snakeHead_left': 
-			{ "x":192,"y":64,"w":64,"h":64 },
-			'snakeHead_down': 
-			{ "x":256,"y":64,"w":64,"h":64 },
-
-
-			'snakeBody_top_left': 
-			{ "x":128,"y":128,"w":64,"h":64 },
-			'snakeBody_top_right': 
-			{ "x":0,"y":64,"w":64,"h":64 },
-
-			'snakeBody_horizontal': 
-			{ "x":64,"y":0,"w":64,"h":64 },
-			'snakeBody_vertical': 
-			{ "x":128,"y":64,"w":64,"h":64 },
-
-			'snakeBody_bottom_left': 
-			{ "x":128,"y":0,"w":64,"h":64 },
-			'snakeBody_bottom_right': 
-			{ "x":0,"y":0,"w":64,"h":64 },
-
-			'snakeTail_up': 
-			{ "x":192,"y":128,"w":64,"h":64 },
-			'snakeTail_right': 
-			{ "x":256,"y":128,"w":64,"h":64 },
-			'snakeTail_left': 
-			{ "x":192,"y":192,"w":64,"h":64 },
-			'snakeTail_down': 
-			{ "x":256,"y":192,"w":64,"h":64 }
-		};
+		var snakeSprites = configRender.snakeSprites;
 
     var atlas = PIXI.Texture.from( preloader.queue.getResult("snake-graphics") );
 
@@ -248,7 +125,6 @@ class PixiJSRenderer{
 	drawFrame( gameState ){
 		this.updateSnake( gameState.snake, gameState.head );
 		this.updateBonus( gameState.bonus );
-		this.emitter.emit = true;
 	};
 
 	clearFrame(){

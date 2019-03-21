@@ -9,8 +9,8 @@ class ProgressBar{
 		    id: 'innerProgressBar'
 		})).prependTo('#interface');
 
-		$(document).on('preloader:progress', function(e, event_data){
-			$('#innerProgressBar').css("width", event_data.loaded * 100 +"%");
+		$(document).on('preloader:progress', function(e, data){
+			$('#innerProgressBar').css("width", data.event.loaded * 100 +"%");
 		});
 
 		$(document).on('preloader:complete', function(e){

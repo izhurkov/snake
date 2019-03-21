@@ -1,4 +1,4 @@
-// 'use strict';
+'use strict';
 
 class Game{
 
@@ -18,6 +18,11 @@ class Game{
 		this.currentDirection = null;
 		this.isPlaying = false;
 
+		this.STATE_LOADING = 'STATE_LOADING';
+		this.STATE_PLAYING = 'STATE_PLAYING';
+		this.STATE_FINISHED = 'STATE_FINISHED';
+		this.STATE_ANIMATION = 'STATE_ANIMATION';
+
 		this.maxSnakeLenght = this.params.areaX * this.params.areaY - this.params.startLength;
 
 		this.stepTime = this.params.stepTime;
@@ -32,6 +37,35 @@ class Game{
 		//
 		this.interfaceController = new InterfaceController();
 
+		var scope = this;
+
+
+
+		var states = {
+			'STATE_LOADING': {
+				states: null,
+				onSet: function(){
+				}
+			},
+			'STATE_PLAYING': {
+				states: [ 'STATE_LOADING', 'STATE_FINISHED' ],
+				onSet: function(){
+					scope.renderer.isEnable = true;
+	    		scope.startGameState();
+				}
+			},
+			'STATE_FINISHED': {
+				states: [ 'STATE_PLAYING' ],
+				onSet: function(){
+					scope.allert();
+				}
+			}
+		}
+
+		this.stateMachine = new StateMachine( states );
+
+		this.stateMachine.setState( 'STATE_LOADING' );
+
 		// 
 		this.addListeners();
 
@@ -39,6 +73,10 @@ class Game{
 	  this.startGame();
 	  this.menuState();
 	};
+
+	allert(){
+		console.log("wow");
+	}
 
 	setDefaultParams(){
 		if ( !this.params.blockColor ) this.params.blockColor = '#0ff';
@@ -77,28 +115,28 @@ class Game{
 
 	  ////////////////////
 	  $( document ).on( 'game:start', function(e) {
-			scope.renderer.isEnable = true;
-	    scope.startGameState();
+	  	// console.log("saf");
+			scope.stateMachine.setState( 'STATE_PLAYING' )
+			// scope.renderer.isEnable = true;
+	    // scope.startGameState();
 	  });
 
 	  $( document ).on( 'game:pause', function(e) {
-	    scope.pauseState();
+	    // scope.pauseState();
 	  });
 
 	  $( document ).on( 'game:menu', function(e) {
-	    scope.menuState();
+	    // scope.menuState();
 	  });
 
-	  // events from modalWindow
 	  $( document ).on( 'game:playing', function(e) {
-	    scope.playingState();
+	    // scope.playingState();
 	  });
 	};
 
 
 
 	// >>> GAME STATE >>>
-	// state machine please
 	menuState(){
 		this.resetGame();
 		this.isPlaying = false;
@@ -160,8 +198,10 @@ class Game{
 	};
 
 	updateGame(){
+		console.log(this.stateMachine.getState());
 
-		if (!this.isPlaying) return;
+		if ( this.stateMachine.getState() !== this.STATE_PLAYING )
+			return;
 
 		if ( Vector.equals( this.snake.head, this.bonus.position ) ){
 
@@ -181,7 +221,6 @@ class Game{
 			this.loseState();
 		}
 		else if ( this.wallCollision() ){
-			this.snake.bounceWall();
 			this.loseState();
 		}
 		else{

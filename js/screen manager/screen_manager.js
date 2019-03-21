@@ -38,8 +38,6 @@ class ScreenManager {
       })
     ;
 
-    // this.showScreen('menuScreen')
-
   };
 
   createScreen( target, data ){
@@ -57,9 +55,7 @@ class ScreenManager {
     var scope = this;
     var screen = this.screens[screen_name];
 
-    if ( !screen ){
-      console.log("ScreenManager:", "screen no exist: " + screen_name);
-      return;}
+    if ( !screen ) return;
 
     if( this.current_screen ) {
       this.hideScreen( function(){ scope.showScreen(screen_name); } );
@@ -89,10 +85,7 @@ class ScreenManager {
   showModal ( modal_name ){
     var modal = this.modals[modal_name];
 
-    if ( !modal ){
-      console.log("ScreenManager:", "modal no exist: " + modal_name);
-      return;
-    }
+    if ( !modal ) return;
 
     modal.data.onShow();
 
@@ -102,14 +95,14 @@ class ScreenManager {
   hideModal ( modal_name ){
     var modal = this.modals[modal_name];
 
-    if ( !modal ){
-      console.log("ScreenManager:", "modal no exist: " + modal_name);
-      return;
-    }
+    if ( !modal ) return;
 
     modal.data.onHide();
 
-    modal.hide();
-  }
+    if( modal.data.afterHide )
+      var afterHide = function(){ modal.data.afterHide() };
+
+    modal.hide( afterHide );
+  };
 
 };
