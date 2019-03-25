@@ -5,13 +5,13 @@ body{
   font-size: 18px;
 	background: #fff;
 	overflow: hidden;
-	margin: 10px 30px 10px;
+  margin: 10px;
+	/*margin: 10px 30px 10px;*/
 }
 
 canvas{
 	background-color: transparent;
 	margin: 0px;
-  : 0;
 }
 
 canvas:focus{
@@ -19,7 +19,7 @@ canvas:focus{
 }
 
 .screen{
-	margin: 6px;
+	/*margin: 6px;*/
   display: none;
 }
 

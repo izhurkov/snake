@@ -8,7 +8,6 @@ class Game{
 
 		this.params.areaX = this.areaX = params.areaX !== undefined ? params.areaX : 50;
 		this.params.areaY = this.areaY = params.areaY !== undefined ? params.areaY : 5;
-		this.params.blockSize = this.blockSize = params.blockSize !== undefined ? params.blockSize : 15;
 
 		this.params.stepTime = this.stepTime = params.stepTime !== undefined ? params.stepTime : 1000;
 
@@ -29,6 +28,8 @@ class Game{
 		this.gameState = {};
 
 		this.renderer = new Renderer( config.render, this.params, preloader );
+
+		this.blockSize = this.renderer.activeRender.blockSize;
 		//
 		this.inputController = new InputController( config.input );
 		this.inputController.attach( this.renderer.getActiveElement() );

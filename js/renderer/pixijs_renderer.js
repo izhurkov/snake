@@ -6,10 +6,14 @@ class PixiJSRenderer{
     this.isInitialized = false;
 		this.params = params;
 
-		this.height = params.blockSize * (params.areaY + 2);
-		this.width = params.blockSize * (params.areaX + 2);
+		this.params.areaX = this.areaX = params.areaX !== undefined ? params.areaX : 50;
+		this.params.areaY = this.areaY = params.areaY !== undefined ? params.areaY : 5;
 
-		this.blockSize = params.blockSize;
+		this.blockSize = null;
+		this.setBlockSize()
+
+		this.height = this.blockSize * (this.areaY + 2);
+		this.width = this.blockSize * (this.areaX + 2);
 
 		this.textures = {};
 		this.initTextures( renderConfig, preloader );
@@ -19,6 +23,15 @@ class PixiJSRenderer{
 		this.bonus;
 	};
 
+	setBlockSize( areaX, areaY ){
+		var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+		var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+
+		var screenRatio = ( width - 20 ) / ( height - 40 );
+		var gameRatio = ( this.areaX + 2 ) / ( this.areaY + 2 );
+
+		this.blockSize = ( screenRatio > gameRatio ) ? ( height - 40 ) / ( this.areaY + 2 ) : ( width - 20 ) / ( this.areaX + 2 );
+	};
 
 	initTextures( configRender, preloader ){
 
@@ -78,10 +91,10 @@ class PixiJSRenderer{
 		this.container = new PIXI.Container();
 		var container =  this.container;
 
-		for (var i = 0; i < this.params.areaX + 2; i++) {
-			for (var j = 0; j < this.params.areaY + 2; j++) {
+		for (var i = 0; i < this.areaX + 2; i++) {
+			for (var j = 0; j < this.areaY + 2; j++) {
 				var block;
-				if ( i != 0 && i != this.params.areaX + 1 && j != 0 && j != this.params.areaY + 1 )
+				if ( i != 0 && i != this.areaX + 1 && j != 0 && j != this.areaY + 1 )
 					block = new PIXI.Sprite(this.textures['groundBlock']);
 				else
 					block = new PIXI.Sprite(this.textures['wallBlock']);
