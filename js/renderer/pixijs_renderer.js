@@ -18,8 +18,6 @@ class PixiJSRenderer{
 		this.snake = [];
 		this.oldCellPositions;
 		this.bonus;
-
-
 	};
 
 
@@ -43,7 +41,7 @@ class PixiJSRenderer{
 		this.bonusTexture = new PIXI.Texture( atlas, new Rectangle( 0, 192, 64, 64 ) );
 	};
 
-	inits( target ){
+	init( target ){
 		this.app = new PIXI.Application( { width: this.width,
 																				height: this.height,
 																				antialias: true,

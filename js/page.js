@@ -5,12 +5,14 @@
 	var screens = {
 	  'menuScreen': {
 	    onShow: function(){ },
+	    afterShow: function(){
+	    	$(document).trigger( 'game:menu' ); },
 	    onHide: function(){ }
 	  },
 	  'gameScreen': {
-	    onShow: function(){ },
+	    onShow: function(){ 
+	    	$(document).trigger( 'game:start' ); },
 	    afterShow: function(){
-	    	$(document).trigger( 'game:start' );
 	    	$('canvas:first').focus(); },
 	    onHide: function(){ },
 
@@ -56,7 +58,7 @@
 		  onShow: function(){ $(document).trigger( 'game:pause' ); },
 	    onHide: function(){ },
 	    afterHide: function() {
-	    	$(document).trigger( 'game:playing' );
+	    	$(document).trigger( 'game:start' );
 	    },
 	    'showDuration': 500,
 	    'hideDuration': 500
@@ -84,6 +86,15 @@
 		  {src:"assets/Ground.png", id:"ground"},
 		  {src:"assets/Wall.png", id:"wall"},
 		  {src:"assets/snake-graphics.png", id:"snake-graphics"},
+		  // {src:"assets/high_resolution_image.jpg", id:"cosmos1"},
+		  // {src:"assets/high_resolution_image.jpg", id:"cosmos2"},
+		  // {src:"assets/high_resolution_image.jpg", id:"cosmos3"},
+		  // {src:"assets/high_resolution_image.jpg", id:"cosmos4"},
+		  // {src:"assets/high_resolution_image.jpg", id:"cosmos5"},
+		  // {src:"assets/high_resolution_image.jpg", id:"cosmos6"},
+		  // {src:"assets/high_resolution_image.jpg", id:"cosmos7"},
+		  // {src:"assets/high_resolution_image.jpg", id:"cosmos8"},
+		  // {src:"assets/high_resolution_image.jpg", id:"cosmos9"},
 		  {src:"assets/bonus.mp3", id:"bonus_mp3"},
 		  {src:"assets/game over.mp3", id:"game_over_mp3"},
 		  {src:"assets/music.mp3", id:"music_mp3"}

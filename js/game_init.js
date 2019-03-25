@@ -94,18 +94,18 @@ $(window).on( 'preloader:complete', function( e, data ){
 		
 	  blockColor: "rgba(143, 255, 143, 1)",
 	  wallColor: "rgba(68, 119, 68, 1)" ,
-	  areaX: 21,
-	  areaY: 15,
+	  areaX: 15,
+	  areaY: 9,
 	  blockSize: 20,
 
 	  headColor: "rgba(124, 112, 96, 1)",
 	  bodyColor: "rgba(204, 177, 156, 1)",
-	  startPos: { x: 10, y: 8 },
+	  startPos: { x: 6, y: 5 },
 	  startLength: 3,
 
 	  bonusColor: "rgba(200, 70, 150, 1)",
 
-	  stepTime: 150
+	  stepTime: 200
 	};
 
 	var snakeGame = new Game( config, params, data.queue );

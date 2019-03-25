@@ -30,6 +30,7 @@ class Game{
 		this.gameState = {};
 
 		this.renderer = new Renderer( config.render, this.params, preloader );
+		this.renderer.isEnable = true;
 		//
 		this.inputController = new InputController( config.input );
 		this.inputController.attach( this.renderer.getActiveElement() );
@@ -39,25 +40,33 @@ class Game{
 
 		var scope = this;
 
-
-
 		var states = {
 			'STATE_LOADING': {
-				states: null,
+				states: [ 'STATE_LOSED', undefined ],
 				onSet: function(){
+
+					scope.resetGame();
 				}
 			},
 			'STATE_PLAYING': {
-				states: [ 'STATE_LOADING', 'STATE_FINISHED' ],
-				onSet: function(){
-					scope.renderer.isEnable = true;
-	    		scope.startGameState();
-				}
+				states: [ 'STATE_LOADING', 'STATE_LOSED', 'STATE_PAUSE' ],
+				onSet: function(){ }
 			},
-			'STATE_FINISHED': {
+			'STATE_PAUSE': {
+				states: [ 'STATE_PLAYING' ],
+				onSet: function(){ }
+			},
+			'STATE_LOSED': {
 				states: [ 'STATE_PLAYING' ],
 				onSet: function(){
-					scope.allert();
+
+					$(document).trigger( 'show-screen', 'endScreen' );
+					scope.isPlaying = false;
+
+				},
+				onDisable: function(){
+					scope.resetGame();
+					
 				}
 			}
 		}
@@ -66,17 +75,10 @@ class Game{
 
 		this.stateMachine.setState( 'STATE_LOADING' );
 
-		// 
 		this.addListeners();
 
-		// launch game
 	  this.startGame();
-	  this.menuState();
 	};
-
-	allert(){
-		console.log("wow");
-	}
 
 	setDefaultParams(){
 		if ( !this.params.blockColor ) this.params.blockColor = '#0ff';
@@ -98,7 +100,6 @@ class Game{
 	addListeners(){
 		let scope = this;
 
-	  // events from InpuController
 		$( document ).on( scope.inputController.ACTION_ACTIVATED, function(e, param) {
 	    switch( param.detail.action_name ){
 	    		case 'right':
@@ -122,44 +123,16 @@ class Game{
 	  });
 
 	  $( document ).on( 'game:pause', function(e) {
-	    // scope.pauseState();
+			scope.stateMachine.setState( 'STATE_PAUSE' )
 	  });
 
 	  $( document ).on( 'game:menu', function(e) {
+			scope.stateMachine.setState( 'STATE_LOADING' )
 	    // scope.menuState();
 	  });
-
-	  $( document ).on( 'game:playing', function(e) {
-	    // scope.playingState();
-	  });
 	};
 
 
-
-	// >>> GAME STATE >>>
-	menuState(){
-		this.resetGame();
-		this.isPlaying = false;
-	};
-
-	startGameState(){
-		this.resetGame();
-		this.isPlaying = true;
-	};
-
-	playingState(){
-		this.isPlaying = true;
-	};
-
-	pauseState(){
-		this.isPlaying = false;
-	};
-
-	loseState(){
-		$(document).trigger( 'show-screen', 'endScreen' );
-		this.isPlaying = false;
-	};
-	// <<< GAME STATE <<<
 
 	startGame(){
 		this.mainStep();
@@ -218,10 +191,12 @@ class Game{
 
 		}
 		else if ( this.snakeCollision() ){
-			this.loseState();
+
+			this.stateMachine.setState( 'STATE_LOSED' );
 		}
 		else if ( this.wallCollision() ){
-			this.loseState();
+
+			this.stateMachine.setState( 'STATE_LOSED' );
 		}
 		else{
 			this.snake.update( this.currentDirection );

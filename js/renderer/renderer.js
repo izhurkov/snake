@@ -42,7 +42,7 @@ class Renderer {
 
 	setActiveRenderer( renderName ){
 		if ( !this.renders[renderName].isInitialized ){
-			this.renders[renderName].inits( this.parentElement );
+			this.renders[renderName].init( this.parentElement );
 		}
 		this.activeRender = this.renders[renderName];
 	};
