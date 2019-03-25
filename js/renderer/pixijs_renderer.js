@@ -77,6 +77,68 @@ class PixiJSRenderer{
 
 		$( target ).append( this.app.view );
 
+		var scope = this;
+
+		$(document).on('game:lose', function(){
+
+			let seconds = 3.0;
+			var elapsed = 0;
+
+			(function update(){
+						
+				var updateId = requestAnimationFrame(update);
+				var now = Date.now();
+				var delta = (now - elapsed) * 0.001;
+				elapsed = now;
+				seconds -= delta;
+				console.log(seconds, delta);
+
+
+				// if (seconds > 1){
+				// 	scope.app.stage.scale.x = 2.0;
+				// 	scope.app.stage.scale.y = 2.0;
+				// }
+				// else{
+
+				// 	scope.app.stage.scale.x = 1.0;
+				// 	scope.app.stage.scale.y = 1.0;
+				// }
+			}());
+
+
+			// var seconds = 5;
+			// var elapsed = 0;
+
+			// console.log(seconds)
+			// function update(){
+				
+			// 	if ( seconds < 0) return;
+			// 	var updateId = requestAnimationFrame(update);
+			// 	var now = Date.now();
+			// 	// var delta = now - elapsed;
+			// 	elapsed = now;
+			// 	// console.log(delta, elapsed, now, now-elapsed);
+			// 	// console.log(seconds);
+
+			// 	seconds = seconds-now;
+				
+			// 	if (seconds > 1){
+			// 		scope.app.stage.scale.x = 2.0;
+			// 		scope.app.stage.scale.y = 2.0;
+			// 	}
+			// 	else{
+
+			// 		scope.app.stage.scale.x = 1.0;
+			// 		scope.app.stage.scale.y = 1.0;
+			// 	}
+
+			// };
+			// console.log(seconds)
+
+			// update();
+			
+		})
+
 
 		this.initArea();
 		this.initBonus();

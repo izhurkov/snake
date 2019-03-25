@@ -20,7 +20,7 @@ class CanvasRenderer{
 
 		this.evenFrame = true;
 
-		// this.inits( renderConfig.elementId );
+		
 	};
 
 	init( target ){
