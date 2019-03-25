@@ -109,11 +109,14 @@ $(window).on( 'preloader:complete', function( e, data ){
 		audio: {
 			sounds: {
 				bonus_mp3: {
+					volume: 0.6
 				},
 				game_over_mp3: {
+					volume: 0.6
 				},
 				music_mp3: {
-					_volume: 0.1
+					volume: 0.3,
+					loop: true
 				}
 			}
 		}

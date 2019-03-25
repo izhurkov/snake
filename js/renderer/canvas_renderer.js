@@ -12,6 +12,9 @@ class CanvasRenderer{
 		this.bodyColor = params.bodyColor !== undefined ? params.bodyColor : '#9f0';
 		this.bonusColor = params.bonusColor !== undefined ? params.bonusColor : '#f90';
 
+
+		this.blockSize = params.blockSize !== undefined ? params.blockSize : 25;
+
 		this.height = params.blockSize * (params.areaY + 2);
 		this.width = params.blockSize * (params.areaX + 2);
 
