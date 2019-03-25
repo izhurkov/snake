@@ -65,112 +65,13 @@ class PixiJSRenderer{
 		$( target ).append( this.app.view );
 
 
-
 		this.initArea();
 		this.initBonus();
 		this.initSnake();
 
-		this.cccont = new PIXI.Container();
-
-		this.app.stage.addChild( this.cccont );
-
-		this.emitter = new PIXI.particles.Emitter(
-
-			// The PIXI.Container to put the emitter in
-			// if using blend modes, it's important to put this
-			// on top of a bitmap, and not use the root stage Container
-			this.cccont,
-		  
-			// The collection of particle images to use
-			[PIXI.Texture.from('assets/CartoonSmoke.png')],
-		  
-			// Emitter configuration, edit this to change the look
-			// of the emitter
-			{
-				"alpha": {
-					"start": 0.8,
-					"end": 0
-				},
-				"scale": {
-					"start": 0.2,
-					"end": 0.5,
-					"minimumScaleMultiplier": 2
-				},
-				"color": {
-					"start": "#ffe44c",
-					"end": "#fc633c"
-				},
-				"speed": {
-					"start": 20,
-					"end": 0,
-					"minimumSpeedMultiplier": 1
-				},
-				"acceleration": {
-					"x": 1,
-					"y": 1
-				},
-				"maxSpeed": 0,
-				"startRotation": {
-					"min": 0,
-					"max": 360
-				},
-				"noRotation": false,
-				"rotationSpeed": {
-					"min": 0,
-					"max": 40
-				},
-				"lifetime": {
-					"min": 1,
-					"max": 3
-				},
-				"blendMode": "normal",
-				"frequency": 0.001,
-				"emitterLifetime": 0.1,
-				"maxParticles": 13,
-				"pos": {
-					"x": 100,
-					"y": 100
-				},
-				"addAtBack": false,
-				"spawnType": "point"
-			}
-		);
-
-		var elapsed = 0;
-
-		var scope = this
-
-		var update = function(){
-					
-			var updateId = requestAnimationFrame(update);
-			var now = Date.now();
-			var delta = (now - elapsed) * 0.001;
-			elapsed = now;
-
-			scope.emitter.update(delta);
-			
-		};
-
-		update();
-
-		console.log(this.emitter)
-
-		$( document ).on( 'game:lose', function(e, param){
-			scope.emitter.spawnPos.x = param.x;
-			scope.emitter.spawnPos.y = param.y;
-			scope.emitter.emit = true;
-
-			update();
-		})
-		$( document ).on( 'game:bonusUp', function(e, param){
-			scope.emitter.spawnPos.x = param.x;
-			scope.emitter.spawnPos.y = param.y;
-			scope.emitter.emit = true;
-
-			update();
-		})
-
     this.isInitialized = true;
+
+		this.emitterManager = new EmitterManager( this.app.stage );
 	};
 
 	initArea(){
