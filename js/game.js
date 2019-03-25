@@ -11,6 +11,10 @@ class Game{
 
 		this.params.stepTime = this.stepTime = params.stepTime !== undefined ? params.stepTime : 1000;
 
+		this.assetManager = new AssetManager();
+
+		this.assetManager.addEntity();
+
 		this.area = new Area( this.params );
 		this.snake = new Snake( this.params );
 		this.bonus = new Bonus( this.params );
@@ -95,8 +99,6 @@ class Game{
 						scope.currentDirection = param.detail.action_name;
 	          break;
 	        case 'touchup':
-	        // console.log(scope.renderer.activeRender.emitter);
-	        	// scope.renderer.activeRender.emitter.emit = false;
 	        	scope.setDirectionFromTouch( param.detail.cursor_pos );
 	        	break;
 	    };
@@ -208,7 +210,6 @@ class Game{
       if (snakeMovement.y < 0) this.currentDirection = 'up';
       else this.currentDirection = 'down';
     }
-
 	};
 
 	getNewBonusPosition(){
