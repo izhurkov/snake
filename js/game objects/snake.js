@@ -76,8 +76,7 @@ class Snake{
 			'0_1_1_0': 'top_right',
 			'0_-1_1_0': 'bottom_right'
 		}
-
-		// the castyl`
+		
 		for ( var i = new_pos.length-1; i > 0; i-- ){
 			var v1 = Vector.subtract( new_pos[i], old_pos[i] );
 			var v2 = Vector.subtract( new_pos[i-1], new_pos[i],  );
@@ -87,6 +86,7 @@ class Snake{
 			this.cellDirections[i] = directions[vectorString];
 		};
 
+		if ( new_pos.length < 2 ) return;
 		if ( new_pos[new_pos.length-1].x > new_pos[new_pos.length-2].x ){
 				this.cellDirections[new_pos.length-1] = 'left';
 		} else if ( new_pos[new_pos.length-1].x < new_pos[new_pos.length-2].x ){

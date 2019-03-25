@@ -16,29 +16,40 @@ class PixiJSRenderer{
 
 		this.area;
 		this.snake = [];
-		this.oldCellPositions;
 		this.bonus;
 	};
 
 
 	initTextures( configRender, preloader ){
 
-		this.groundBlockTexture = PIXI.Texture.from( preloader.queue.getResult("ground") );
+		console.log( configRender )
 
-		this.wallBlockTexture = PIXI.Texture.from( preloader.queue.getResult("wall") );
+		for ( var textureName in configRender.textures ){
+			var texture = configRender.textures[textureName];
 
-		this.snakeTextures = {};
+			console.log( texture )
 
-		var snakeSprites = configRender.snakeSprites;
+			var atlas;
 
-    var atlas = PIXI.Texture.from( preloader.queue.getResult("snake-graphics") );
+			if ( texture.path !== undefined ){
+				atlas = PIXI.Texture.from( preloader.queue.getResult( texture.path ) );
+			}
+			else{
+				console.log( textureName + " path not exsist" );
+				continue;
+			}
 
-		for ( var spriteName in snakeSprites ){
-			var sprite = snakeSprites[spriteName];
-			this.snakeTextures[spriteName] = new PIXI.Texture( atlas, new Rectangle( sprite.x, sprite.y, sprite.w, sprite.h ) );
+			if ( texture.sprites !== undefined ){
+				for ( var spriteName in texture.sprites ){
+					var sprite = texture.sprites[spriteName];
+					this.textures[spriteName] = new PIXI.Texture( atlas, new Rectangle( sprite.x, sprite.y, sprite.w, sprite.h ) );
+				}
+			}
+			else{
+				this.textures[textureName] = atlas;
+			}
 		}
 
-		this.bonusTexture = new PIXI.Texture( atlas, new Rectangle( 0, 192, 64, 64 ) );
 	};
 
 	init( target ){
@@ -53,9 +64,112 @@ class PixiJSRenderer{
 
 		$( target ).append( this.app.view );
 
+
+
 		this.initArea();
 		this.initBonus();
 		this.initSnake();
+
+		this.cccont = new PIXI.Container();
+
+		this.app.stage.addChild( this.cccont );
+
+		this.emitter = new PIXI.particles.Emitter(
+
+			// The PIXI.Container to put the emitter in
+			// if using blend modes, it's important to put this
+			// on top of a bitmap, and not use the root stage Container
+			this.cccont,
+		  
+			// The collection of particle images to use
+			[PIXI.Texture.from('assets/CartoonSmoke.png')],
+		  
+			// Emitter configuration, edit this to change the look
+			// of the emitter
+			{
+				"alpha": {
+					"start": 0.8,
+					"end": 0
+				},
+				"scale": {
+					"start": 0.2,
+					"end": 0.5,
+					"minimumScaleMultiplier": 2
+				},
+				"color": {
+					"start": "#ffe44c",
+					"end": "#fc633c"
+				},
+				"speed": {
+					"start": 20,
+					"end": 0,
+					"minimumSpeedMultiplier": 1
+				},
+				"acceleration": {
+					"x": 1,
+					"y": 1
+				},
+				"maxSpeed": 0,
+				"startRotation": {
+					"min": 0,
+					"max": 360
+				},
+				"noRotation": false,
+				"rotationSpeed": {
+					"min": 0,
+					"max": 40
+				},
+				"lifetime": {
+					"min": 1,
+					"max": 3
+				},
+				"blendMode": "normal",
+				"frequency": 0.001,
+				"emitterLifetime": 0.1,
+				"maxParticles": 13,
+				"pos": {
+					"x": 100,
+					"y": 100
+				},
+				"addAtBack": false,
+				"spawnType": "point"
+			}
+		);
+
+		var elapsed = 0;
+
+		var scope = this
+
+		var update = function(){
+					
+			var updateId = requestAnimationFrame(update);
+			var now = Date.now();
+			var delta = (now - elapsed) * 0.001;
+			elapsed = now;
+
+			scope.emitter.update(delta);
+			
+		};
+
+		update();
+
+		console.log(this.emitter)
+
+		$( document ).on( 'game:lose', function(e, param){
+			scope.emitter.spawnPos.x = param.x;
+			scope.emitter.spawnPos.y = param.y;
+			scope.emitter.emit = true;
+
+			update();
+		})
+		$( document ).on( 'game:bonusUp', function(e, param){
+			scope.emitter.spawnPos.x = param.x;
+			scope.emitter.spawnPos.y = param.y;
+			scope.emitter.emit = true;
+
+			update();
+		})
+
     this.isInitialized = true;
 	};
 
@@ -67,9 +181,9 @@ class PixiJSRenderer{
 			for (var j = 0; j < this.params.areaY + 2; j++) {
 				var block;
 				if ( i != 0 && i != this.params.areaX + 1 && j != 0 && j != this.params.areaY + 1 )
-					block = new PIXI.Sprite(this.wallBlockTexture);
+					block = new PIXI.Sprite(this.textures['groundBlock']);
 				else
-					block = new PIXI.Sprite(this.groundBlockTexture);
+					block = new PIXI.Sprite(this.textures['wallBlock']);
 		    block.x = i * this.blockSize;
 		    block.y = j * this.blockSize;
 		    block.width = this.blockSize;
@@ -85,19 +199,19 @@ class PixiJSRenderer{
 		this.snakeContainer = new PIXI.Container();
 		var container =  this.snakeContainer;
 
-  	var cell = new PIXI.Sprite(this.snakeTextures['snakeHead_right']);
+  	var cell = new PIXI.Sprite(this.textures['snakeHead_right']);
 	  cell.width = this.blockSize;
 	  cell.height = this.blockSize;
 		container.addChild(cell);
 
     for (var i = 1; i < this.params.startLength - 1; i++){
-    	cell = new PIXI.Sprite(this.snakeTextures['snakeBody_horizontal']);
+    	cell = new PIXI.Sprite(this.textures['snakeBody_horizontal']);
 		  cell.width = this.blockSize;
 		  cell.height = this.blockSize;
 			container.addChild(cell);
     }
 
-  	cell = new PIXI.Sprite(this.snakeTextures['snakeTail_right']);
+  	cell = new PIXI.Sprite(this.textures['snakeTail_right']);
 	  cell.width = this.blockSize;
 	  cell.height = this.blockSize;
 		container.addChild(cell);
@@ -106,7 +220,7 @@ class PixiJSRenderer{
 	};
 
 	initBonus(){
-		this.bonus = new PIXI.Sprite(this.bonusTexture);
+		this.bonus = new PIXI.Sprite(this.textures['bonus']);
 		var bonus = this.bonus;
 		bonus.width = this.blockSize;
     bonus.height = this.blockSize;
@@ -134,7 +248,7 @@ class PixiJSRenderer{
 
 	updateSnake( cellPositions, cellDirections ){
 
-    var textures = this.snakeTextures;
+    var textures = this.textures;
     var container = this.snakeContainer;
     var blockSize = this.blockSize;
 

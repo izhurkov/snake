@@ -6,6 +6,12 @@ class CanvasRenderer{
     this.isInitialized = false;
 		this.params = params;
 
+		this.blockColor = params.blockColor !== undefined ? params.blockColor : '#0ff';
+		this.wallColor = params.wallColor !== undefined ? params.wallColor : '#09f';
+		this.headColor = params.headColor !== undefined ? params.headColor : '#9f0';
+		this.bodyColor = params.bodyColor !== undefined ? params.bodyColor : '#9f0';
+		this.bonusColor = params.bonusColor !== undefined ? params.bonusColor : '#f90';
+
 		this.height = params.blockSize * (params.areaY + 2);
 		this.width = params.blockSize * (params.areaX + 2);
 
@@ -14,7 +20,7 @@ class CanvasRenderer{
 		// this.inits( renderConfig.elementId );
 	};
 
-	inits( target ){
+	init( target ){
 
 		var newCanvas = $('<canvas/>',{
                    'class':'radHuhddd',
@@ -53,26 +59,26 @@ class CanvasRenderer{
 	}
 
 	drawArea(){
-		this.ctx.fillStyle = this.params.wallColor || '#0ff';
+		this.ctx.fillStyle = this.wallColor;
 		this.ctx.fillRect( 0, 0, this.width, this.height );
 
-		this.ctx.fillStyle = this.params.blockColor || '#0ff';;
+		this.ctx.fillStyle = this.blockColor;
 		this.ctx.fillRect( this.params.blockSize, this.params.blockSize, this.width - 2 * this.params.blockSize, this.height - 2 * this.params.blockSize );
 	};
 
 	drawSnake( cellPositions ){
-		this.ctx.fillStyle = this.params.bodyColor || '#ff0';;
+		this.ctx.fillStyle = this.bodyColor;
 		for ( var i = 1; i < cellPositions.length; i++ ){
 			var kf = this.params.blockSize * i / cellPositions.length / 4 + 2;
 			this.drawBlockSizeRect( cellPositions[i].x, cellPositions[i].y, kf, kf );
 		}
 
-		this.ctx.fillStyle = this.params.headColor || '#ff0';;
+		this.ctx.fillStyle = this.headColor;
 		this.drawBlockSizeRect( cellPositions[0].x, cellPositions[0].y, 0, 0 );
 	};
 
 	drawBonus( position ){
-		this.ctx.fillStyle = this.params.bonusColor || '#0ff';;
+		this.ctx.fillStyle = this.bonusColor;
 		var offset = (this.evenFrame) ? 1 : 3;
 		this.drawBlockSizeRect( position.x, position.y, offset || 5, offset || 5 );
 	};	

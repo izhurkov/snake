@@ -15,11 +15,10 @@
 	    afterShow: function(){
 	    	$('canvas:first').focus(); },
 	    onHide: function(){ },
-
 	    'showAnimation': 'fadeIn',
 	    'showDuration': 400,
 	    'hideAnimation': 'fadeOut',
-	    'hideDuration': 1000
+	    'hideDuration': 3000
 	  },
 	  'endScreen': {
 	    onShow: function(){ },
@@ -35,6 +34,7 @@
 	  			value: "continue",
 	  			onClick: function(){
 	  				$(document).trigger( 'hide-modal', 'pauseModal' );
+	    			$(document).trigger( 'game:start' );
 	    			$('canvas:first').focus();
 	  			}
 	  		},
@@ -58,7 +58,6 @@
 		  onShow: function(){ $(document).trigger( 'game:pause' ); },
 	    onHide: function(){ },
 	    afterHide: function() {
-	    	$(document).trigger( 'game:start' );
 	    },
 	    'showDuration': 500,
 	    'hideDuration': 500
@@ -71,6 +70,7 @@
 	  			onClick: function(){
 	  				$(document).trigger( 'hide-modal', 'pauseModal' );
 	  				$(document).trigger( 'hide-modal', 'testModal' );
+	    			$(document).trigger( 'game:start' );
 	    			$('canvas:first').focus();
 	  			}
 	  		}

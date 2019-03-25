@@ -4,7 +4,6 @@ class Renderer {
 
 	constructor ( configRender, params, preloader_queue ){
 		this.params = params;
-		this.isEnable = false;
 		this.evenFrame = true;
 
 		this.parentElement = configRender.parentElement;
@@ -34,6 +33,8 @@ class Renderer {
 		};
 
 		this.setActiveRenderer( configRender.activeRender );
+
+		this.isEnable = true;
 	};
 
 	getActiveElement(){

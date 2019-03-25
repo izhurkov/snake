@@ -48,40 +48,58 @@ $(window).on( 'preloader:complete', function( e, data ){
 			renders: {
 				'canvas': { },
 				'pixi': {
-					snakeSprites: {
-						'snakeHead_up': 
-						{ "x":192,"y":0,"w":64,"h":64 },
-						'snakeHead_right': 
-						{ "x":256,"y":0,"w":64,"h":64 },
-						'snakeHead_left': 
-						{ "x":192,"y":64,"w":64,"h":64 },
-						'snakeHead_down': 
-						{ "x":256,"y":64,"w":64,"h":64 },
+					textures: {
+						groundBlock:{
+							path: "ground",
+						},
+						wallBlock:{
+							path: "wall",
+						},
+						snake:{
+							path: "snake-graphics",
+							sprites: {
+								'snakeHead_up': 
+								{ "x":192,"y":0,"w":64,"h":64 },
+								'snakeHead_right': 
+								{ "x":256,"y":0,"w":64,"h":64 },
+								'snakeHead_left': 
+								{ "x":192,"y":64,"w":64,"h":64 },
+								'snakeHead_down': 
+								{ "x":256,"y":64,"w":64,"h":64 },
 
 
-						'snakeBody_top_left': 
-						{ "x":128,"y":128,"w":64,"h":64 },
-						'snakeBody_top_right': 
-						{ "x":0,"y":64,"w":64,"h":64 },
+								'snakeBody_top_left': 
+								{ "x":128,"y":128,"w":64,"h":64 },
+								'snakeBody_top_right': 
+								{ "x":0,"y":64,"w":64,"h":64 },
 
-						'snakeBody_horizontal': 
-						{ "x":64,"y":0,"w":64,"h":64 },
-						'snakeBody_vertical': 
-						{ "x":128,"y":64,"w":64,"h":64 },
+								'snakeBody_horizontal': 
+								{ "x":64,"y":0,"w":64,"h":64 },
+								'snakeBody_vertical': 
+								{ "x":128,"y":64,"w":64,"h":64 },
 
-						'snakeBody_bottom_left': 
-						{ "x":128,"y":0,"w":64,"h":64 },
-						'snakeBody_bottom_right': 
-						{ "x":0,"y":0,"w":64,"h":64 },
+								'snakeBody_bottom_left': 
+								{ "x":128,"y":0,"w":64,"h":64 },
+								'snakeBody_bottom_right': 
+								{ "x":0,"y":0,"w":64,"h":64 },
 
-						'snakeTail_up': 
-						{ "x":192,"y":128,"w":64,"h":64 },
-						'snakeTail_right': 
-						{ "x":256,"y":128,"w":64,"h":64 },
-						'snakeTail_left': 
-						{ "x":192,"y":192,"w":64,"h":64 },
-						'snakeTail_down': 
-						{ "x":256,"y":192,"w":64,"h":64 }
+								'snakeTail_up': 
+								{ "x":192,"y":128,"w":64,"h":64 },
+								'snakeTail_right': 
+								{ "x":256,"y":128,"w":64,"h":64 },
+								'snakeTail_left': 
+								{ "x":192,"y":192,"w":64,"h":64 },
+								'snakeTail_down': 
+								{ "x":256,"y":192,"w":64,"h":64 }
+							}
+						},
+						bonus:{
+							path: "snake-graphics",
+							sprites: {
+								'bonus': 
+								{ "x":0,"y":192,"w":64,"h":64 },
+							}
+						}
 					}
 				}
 			},
@@ -95,12 +113,12 @@ $(window).on( 'preloader:complete', function( e, data ){
 	  blockColor: "rgba(143, 255, 143, 1)",
 	  wallColor: "rgba(68, 119, 68, 1)" ,
 	  areaX: 15,
-	  areaY: 9,
+	  areaY: 11,
 	  blockSize: 20,
 
 	  headColor: "rgba(124, 112, 96, 1)",
 	  bodyColor: "rgba(204, 177, 156, 1)",
-	  startPos: { x: 6, y: 5 },
+	  startPos: { x: 5, y: 6 },
 	  startLength: 3,
 
 	  bonusColor: "rgba(200, 70, 150, 1)",

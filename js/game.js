@@ -6,10 +6,11 @@ class Game{
 
 		this.params = params ? Object.assign({},params) : {};
 
-		// this.blockColor = params.blockColor || true;
-		// this.blockColor = params.blockColor !== undefined ? params.blockColor || '#0ff';
-		///////////////////// fix
-	 	this.setDefaultParams();
+		this.params.areaX = this.areaX = params.areaX !== undefined ? params.areaX : 50;
+		this.params.areaY = this.areaY = params.areaY !== undefined ? params.areaY : 5;
+		this.params.blockSize = this.blockSize = params.blockSize !== undefined ? params.blockSize : 15;
+
+		this.params.stepTime = this.stepTime = params.stepTime !== undefined ? params.stepTime : 1000;
 
 		this.area = new Area( this.params );
 		this.snake = new Snake( this.params );
@@ -21,16 +22,13 @@ class Game{
 		this.STATE_LOADING = 'STATE_LOADING';
 		this.STATE_PLAYING = 'STATE_PLAYING';
 		this.STATE_FINISHED = 'STATE_FINISHED';
-		this.STATE_ANIMATION = 'STATE_ANIMATION';
+		this.STATE_PAUSE = 'STATE_PAUSE';
 
 		this.maxSnakeLenght = this.params.areaX * this.params.areaY - this.params.startLength;
-
-		this.stepTime = this.params.stepTime;
 
 		this.gameState = {};
 
 		this.renderer = new Renderer( config.render, this.params, preloader );
-		this.renderer.isEnable = true;
 		//
 		this.inputController = new InputController( config.input );
 		this.inputController.attach( this.renderer.getActiveElement() );
@@ -42,7 +40,7 @@ class Game{
 
 		var states = {
 			'STATE_LOADING': {
-				states: [ 'STATE_LOSED', undefined ],
+				states: [ 'STATE_LOSED', 'STATE_PAUSE', undefined ],
 				onSet: function(){
 
 					scope.resetGame();
@@ -61,12 +59,13 @@ class Game{
 				onSet: function(){
 
 					$(document).trigger( 'show-screen', 'endScreen' );
+					$(document).trigger( 'game:lose', { x: scope.snake.head.x * scope.blockSize + scope.blockSize / 2,
+																							y: scope.snake.head.y * scope.blockSize + scope.blockSize / 2 } );
 					scope.isPlaying = false;
-
 				},
 				onDisable: function(){
+
 					scope.resetGame();
-					
 				}
 			}
 		}
@@ -80,23 +79,6 @@ class Game{
 	  this.startGame();
 	};
 
-	setDefaultParams(){
-		if ( !this.params.blockColor ) this.params.blockColor = '#0ff';
-		if ( !this.params.wallColor ) this.params.wallColor = '#09f';
-		if ( !this.params.areaX ) this.params.areaX = 50;
-		if ( !this.params.areaY ) this.params.areaY = 5;
-		if ( !this.params.blockSize ) this.params.blockSize = 15;
-
-		if ( !this.params.headColor ) this.params.headColor = '#9f0';
-		if ( !this.params.bodyColor ) this.params.bodyColor = '#9f0';
-		if ( !this.params.startPos ) this.params.startPos = { x: 1, y: 1 };
-		if ( !this.params.startLength ) this.params.startLength = 1;
-
-		if ( !this.params.bonusColor ) this.params.bonusColor = '#f90';
-
-		if ( !this.params.stepTime ) this.params.stepTime = 100;
-	}
-
 	addListeners(){
 		let scope = this;
 
@@ -109,6 +91,8 @@ class Game{
 						scope.currentDirection = param.detail.action_name;
 	          break;
 	        case 'touchup':
+	        // console.log(scope.renderer.activeRender.emitter);
+	        	// scope.renderer.activeRender.emitter.emit = false;
 	        	scope.setDirectionFromTouch( param.detail.cursor_pos );
 	        	break;
 	    };
@@ -116,10 +100,7 @@ class Game{
 
 	  ////////////////////
 	  $( document ).on( 'game:start', function(e) {
-	  	// console.log("saf");
 			scope.stateMachine.setState( 'STATE_PLAYING' )
-			// scope.renderer.isEnable = true;
-	    // scope.startGameState();
 	  });
 
 	  $( document ).on( 'game:pause', function(e) {
@@ -128,7 +109,6 @@ class Game{
 
 	  $( document ).on( 'game:menu', function(e) {
 			scope.stateMachine.setState( 'STATE_LOADING' )
-	    // scope.menuState();
 	  });
 	};
 
@@ -171,7 +151,6 @@ class Game{
 	};
 
 	updateGame(){
-		console.log(this.stateMachine.getState());
 
 		if ( this.stateMachine.getState() !== this.STATE_PLAYING )
 			return;
@@ -182,20 +161,21 @@ class Game{
 
 			this.maxSnakeLenght--;
 			if ( this.maxSnakeLenght <= 0 ){
-				this.loseState();
+				this.stateMachine.setState( 'STATE_LOSED' );
 				return;
 			}
 
 			this.snake.addBlock( this.currentDirection );
 			this.bonus.position = this.getNewBonusPosition();
 
+			$(document).trigger( 'game:bonusUp', { x: this.snake.head.x * this.blockSize + this.blockSize / 2,
+																					y: this.snake.head.y * this.blockSize + this.blockSize / 2 } );
+
 		}
 		else if ( this.snakeCollision() ){
-
 			this.stateMachine.setState( 'STATE_LOSED' );
 		}
 		else if ( this.wallCollision() ){
-
 			this.stateMachine.setState( 'STATE_LOSED' );
 		}
 		else{
@@ -206,8 +186,8 @@ class Game{
 	
 	setDirectionFromTouch( cursor_pos ){
 		if ( !cursor_pos ) return;
-		var cursor = new Vector( Math.floor( cursor_pos.x  / this.params.blockSize ),
-															Math.floor( cursor_pos.y / this.params.blockSize ) );
+		var cursor = new Vector( Math.floor( cursor_pos.x  / this.blockSize ),
+															Math.floor( cursor_pos.y / this.blockSize ) );
 		if ( !cursor ) return;
 
 		var snakeMovement = {  x:(cursor.x-this.snake.head.x),
@@ -228,7 +208,7 @@ class Game{
 	};
 
 	getNewBonusPosition(){
-		var newPos = new Vector( randomInteger( 1, this.params.areaX ), randomInteger( 1, this.params.areaY ) );
+		var newPos = new Vector( randomInteger( 1, this.areaX ), randomInteger( 1, this.areaY ) );
 		for ( var cellPositions in this.snake.cellPositions )
 			if ( Vector.equals( newPos, this.snake.cellPositions[cellPositions] ) ) return this.getNewBonusPosition();
 		return newPos;
