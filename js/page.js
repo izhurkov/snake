@@ -91,11 +91,11 @@
 		  {src:"assets/music.mp3", id:"music_mp3"}
 		];
 
-	$(".muted").on('click', function() {
+	$("#muted").on('click', function() {
     var muted = PIXI.sound.toggleMuteAll();
     $('canvas').focus();
     var tmp = muted ? "unmute" : "mute";
-    $(".muted").attr( { 'value': tmp } );
+    $("#muted").attr( { 'value': tmp } );
 	});
 
 	PIXI.utils.sayHello("Hello world!");

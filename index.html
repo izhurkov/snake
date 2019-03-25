@@ -57,17 +57,16 @@
 	<div id="game-container">
 
 		<div id="interface">
+			<input type="button" id="muted" value="mute">
 
 			<div class="screen" id="menuScreen">
 				<strong>Snake</strong>
 				<input type="button" class="startButton" id="start" value="Start Game" data-event="show-screen:gameScreen" >
-				<input type="button" class="muted" value="mute">
 			</div>
 
 			<div class="screen" id="gameScreen">
 				<strong>Points: </strong> <strong class="scoreCounter">0</strong>
 				<input type="button" id="pause" value="Pause" data-event="show-modal:pauseModal">
-				<input type="button" class="muted" value="mute">
 
 				<div id="renderer-container">
 					<!-- <canvas id="canvas" tabindex="0" oncontextmenu="return false">canvas not suppoгtęd</canvas> -->
@@ -78,7 +77,6 @@
 				<strong>Game Over! Your points: </strong> <strong class="scoreCounter">0</strong>
 				<input type="button" id="start" value="Start Game" data-event="show-screen:gameScreen">
 				<input type="button" id="menu" value="Main Menu" data-event="show-screen:menuScreen">
-				<input type="button" class="muted" value="mute">
 			</div>
 
 		</div>

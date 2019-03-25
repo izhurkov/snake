@@ -23,6 +23,12 @@ canvas:focus{
   display: none;
 }
 
+#muted{
+  position: absolute;
+  right: 0px;
+  padding: 4px 8px 2px;
+}
+
 #outerProgressBar{
   position: absolute;
   top: 100px;

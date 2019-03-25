@@ -109,7 +109,7 @@ $(window).on( 'preloader:complete', function( e, data ){
 		audio: {
 			sounds: {
 				bonus_mp3: {
-					volume: 0.6
+					volume: 0.5
 				},
 				game_over_mp3: {
 					volume: 0.6
@@ -126,8 +126,8 @@ $(window).on( 'preloader:complete', function( e, data ){
 		
 	  blockColor: "rgba(143, 255, 143, 1)",
 	  wallColor: "rgba(68, 119, 68, 1)" ,
-	  areaX: 120,
-	  areaY: 60,
+	  areaX: 100,
+	  areaY: 50,
 	  blockSize: 20,
 
 	  headColor: "rgba(124, 112, 96, 1)",
@@ -137,7 +137,7 @@ $(window).on( 'preloader:complete', function( e, data ){
 
 	  bonusColor: "rgba(200, 70, 150, 1)",
 
-	  stepTime: 30
+	  stepTime: 60
 	};
 
 	var snakeGame = new Game( config, params, data.queue );
