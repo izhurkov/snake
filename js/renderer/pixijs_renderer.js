@@ -171,7 +171,9 @@ class PixiJSRenderer{
 		  cell.width = blockSize;
 		  cell.height = blockSize;
 			container.addChild(cell);
-    }
+    } else if ( cellDirections.length < container.children.length ){
+    	container.children.length = 3;
+    } 
 
     // update positions
     for (var i = 0; i < cellPositions.length; i++ ){
