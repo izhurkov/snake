@@ -4,10 +4,6 @@ class EmitterManager{
 
 	constructor( stage ){
 
-		this.container = new PIXI.Container();
-
-		stage.addChild( this.container );
-
 		var EMITTER_SMOKE = {
 			"alpha": {
 				"start": 0.8,
@@ -72,8 +68,8 @@ class EmitterManager{
 				"end": "#B22222"
 			},
 			"speed": {
-				"start": 100,
-				"end": 50,
+				"start": 80,
+				"end": 40,
 				"minimumSpeedMultiplier": 1
 			},
 			"acceleration": {
@@ -106,6 +102,9 @@ class EmitterManager{
 			"spawnType": "point"
 		};
 
+		this.container = new PIXI.Container();
+
+		stage.addChild( this.container );
 
 		var scope = this;
 
@@ -114,6 +113,7 @@ class EmitterManager{
 			[PIXI.Texture.from('assets/CartoonSmoke.png')],
 			EMITTER_SMOKE
 		);
+
 		this.emitterBonus = new PIXI.particles.Emitter(
 			scope.container,
 			[PIXI.Texture.from('assets/Particle.png')],
@@ -141,6 +141,7 @@ class EmitterManager{
 			scope.emitterSmoke.emit = true;
 			update();
 		});
+		
 		$( document ).on( 'game:bonusUp', function(e, param){
 			scope.emitterBonus.spawnPos = param;
 			scope.emitterBonus.emit = true;
