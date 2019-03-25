@@ -105,6 +105,17 @@ $(window).on( 'preloader:complete', function( e, data ){
 			},
 			activeRender: 'pixi',
 			parentElement: '#renderer-container'
+		},
+		audio: {
+			sounds: {
+				bonus_mp3: {
+				},
+				game_over_mp3: {
+				},
+				music_mp3: {
+					_volume: 0.1
+				}
+			}
 		}
 	};
 

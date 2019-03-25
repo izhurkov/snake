@@ -30,6 +30,9 @@ class Game{
 		this.renderer = new Renderer( config.render, this.params, preloader );
 
 		this.blockSize = this.renderer.activeRender.blockSize;
+
+		this.soundManager = new SoundManager( config.audio, preloader );
+
 		//
 		this.inputController = new InputController( config.input );
 		this.inputController.attach( this.renderer.getActiveElement() );
