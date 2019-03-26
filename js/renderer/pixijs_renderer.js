@@ -23,6 +23,10 @@ class PixiJSRenderer{
 		this.bonus;
 	};
 
+	getActiveElement(){
+		return this.app.view;
+	};
+
 	setBlockSize( areaX, areaY ){
 		var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 		var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
@@ -109,40 +113,7 @@ class PixiJSRenderer{
 
 				scope.app.stage.scale.x = 1.0 + 0.05 * seconds;
 				scope.app.stage.scale.y = 1.0 + 0.05 * seconds;
-			}());
-
-
-			// var seconds = 5;
-			// var elapsed = 0;
-
-			// console.log(seconds)
-			// function update(){
-				
-			// 	if ( seconds < 0) return;
-			// 	var updateId = requestAnimationFrame(update);
-			// 	var now = Date.now();
-			// 	// var delta = now - elapsed;
-			// 	elapsed = now;
-			// 	// console.log(delta, elapsed, now, now-elapsed);
-			// 	// console.log(seconds);
-
-			// 	seconds = seconds-now;
-				
-			// 	if (seconds > 1){
-			// 		scope.app.stage.scale.x = 2.0;
-			// 		scope.app.stage.scale.y = 2.0;
-			// 	}
-			// 	else{
-
-			// 		scope.app.stage.scale.x = 1.0;
-			// 		scope.app.stage.scale.y = 1.0;
-			// 	}
-
-			// };
-			// console.log(seconds)
-
-			// update();
-			
+			}());			
 		})
 
 
@@ -212,20 +183,10 @@ class PixiJSRenderer{
 		this.app.stage.addChild(bonus);
 	}
 
-	getActiveElement(){
-		return this.app.view;
-	}
-
+	// >>> DRAW >>>
 	drawFrame( gameState ){
 		this.updateSnake( gameState.snake, gameState.head );
 		this.updateBonus( gameState.bonus );
-	};
-
-	clearFrame(){
-		var stage = this.app.stage;
-		while(stage.children[0]) {
-			stage.removeChild(stage.children[0]);
-		};
 	};
 
 	updateSnake( cellPositions, cellDirections ){
@@ -260,4 +221,5 @@ class PixiJSRenderer{
 		this.bonus.x = position.x * this.blockSize;
 		this.bonus.y = position.y * this.blockSize;
 	};
+	// <<< DRAW <<<
 }

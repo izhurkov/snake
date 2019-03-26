@@ -48,9 +48,8 @@ class Game{
 
 		var states = {
 			'STATE_LOADING': {
-				states: [ 'STATE_LOSED', 'STATE_PAUSE', undefined ],
+				states: [ 'STATE_PAUSE', undefined ],
 				onSet: function(){
-
 					scope.resetGame();
 				}
 			},

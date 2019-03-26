@@ -10,8 +10,8 @@ class EmitterManager{
 				"end": 0
 			},
 			"scale": {
-				"start": 0.2,
-				"end": 0.5,
+				"start": 0.3,
+				"end": 0.6,
 				"minimumScaleMultiplier": 2
 			},
 			"color": {
@@ -19,7 +19,7 @@ class EmitterManager{
 				"end": "#fc633c"
 			},
 			"speed": {
-				"start": 20,
+				"start": 30,
 				"end": 0,
 				"minimumSpeedMultiplier": 1
 			},
@@ -38,13 +38,13 @@ class EmitterManager{
 				"max": 40
 			},
 			"lifetime": {
-				"min": 1,
-				"max": 3
+				"min": 0.8,
+				"max": 1.2
 			},
 			"blendMode": "normal",
 			"frequency": 0.001,
 			"emitterLifetime": 0.1,
-			"maxParticles": 13,
+			"maxParticles": 6,
 			"pos": {
 				"x": 100,
 				"y": 100

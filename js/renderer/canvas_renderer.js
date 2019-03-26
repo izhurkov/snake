@@ -19,8 +19,6 @@ class CanvasRenderer{
 		this.width = params.blockSize * (params.areaX + 2);
 
 		this.evenFrame = true;
-
-		
 	};
 
 	init( target ){
@@ -37,8 +35,7 @@ class CanvasRenderer{
 		$( target ).append( newCanvas );
 		
 		this.canvas = $( newCanvas )[0];
-		// $( this.canvas ).attr( { width : this.width, 
-														// height : this.height } );
+		
 		this.ctx = this.canvas.getContext( "2d" );
     this.isInitialized = true;
 	};

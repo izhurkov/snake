@@ -17,7 +17,7 @@ class Snake{
 		this._cellPositions = []; // old position
 
 		this.cellDirections = [];
-		this.direction = new Vector( 1, 0 );
+		this.direction = new Vector( 0, 0 );
 
 		for ( var i = 0; i < this.startLength; i++ ){
 			this.cellPositions.push( new Vector( this.startPos.x - i, this.startPos.y ) )

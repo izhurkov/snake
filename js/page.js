@@ -94,10 +94,6 @@
 
 	new ScreenManager( screens, modals );
 
-
-
-	
-
 	var manifest = [
 		  {src:"assets/Ground.png", id:"ground"},
 		  {src:"assets/Wall.png", id:"wall"},
