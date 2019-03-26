@@ -4,20 +4,20 @@ class Game{
 
 	constructor( config, params, preloader ){
 
+		// настройка параметров
 		this.params = params ? Object.assign({},params) : {};
-
 		this.params.areaX = this.areaX = params.areaX !== undefined ? params.areaX : 50;
 		this.params.areaY = this.areaY = params.areaY !== undefined ? params.areaY : 5;
-
 		this.params.stepTime = this.stepTime = params.stepTime !== undefined ? params.stepTime : 1000;
+		this.maxSnakeLength = this.params.areaX * this.params.areaY - this.params.startLength;
 
 		this.assetManager = new AssetManager();
-
 		this.assetManager.addEntity();
 
 		this.area = new Area( this.params );
 		this.snake = new Snake( this.params );
 		this.bonus = new Bonus( this.params );
+
 		this.score = 0;
 		this.currentDirection = null;
 		this.isPlaying = false;
@@ -27,17 +27,17 @@ class Game{
 		this.STATE_FINISHED = 'STATE_FINISHED';
 		this.STATE_PAUSE = 'STATE_PAUSE';
 
-		this.maxSnakeLenght = this.params.areaX * this.params.areaY - this.params.startLength;
 
 		this.gameState = {};
 
+		// отрисовка
 		this.renderer = new Renderer( config.render, this.params, preloader );
+		this.blockSize = this.renderer.getBlockSize();
 
-		this.blockSize = this.renderer.activeRender.blockSize;
-
+		// музыка
 		this.soundManager = new SoundManager( config.audio, preloader );
 
-		//
+		// управление
 		this.inputController = new InputController( config.input );
 		this.inputController.attach( this.renderer.getActiveElement() );
 
@@ -160,12 +160,14 @@ class Game{
 		if ( this.stateMachine.getState() !== this.STATE_PLAYING )
 			return;
 
+		this.snake.update( this.currentDirection );
+
 		if ( Vector.equals( this.snake.head, this.bonus.position ) ){
 
 			this.score++;
 
-			this.maxSnakeLenght--;
-			if ( this.maxSnakeLenght <= 0 ){
+			this.maxSnakeLength--;
+			if ( this.maxSnakeLength <= 0 ){
 				this.stateMachine.setState( 'STATE_LOSED' );
 				return;
 			}
@@ -182,9 +184,6 @@ class Game{
 		}
 		else if ( this.wallCollision() ){
 			this.stateMachine.setState( 'STATE_LOSED' );
-		}
-		else{
-			this.snake.update( this.currentDirection );
 		}
 	};
 	// <<< GAME LOOPS <<<

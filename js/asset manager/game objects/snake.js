@@ -38,14 +38,12 @@ class Snake{
 
 	// добавление блока в змейку (рост змеи)
 	addBlock( currentVelocity ){
-		this.changeVelocity( currentVelocity );
+		// this.changeVelocity( currentVelocity );
 		var length = this.cellPositions.length;
 
 		this.cellPositions.push( new Vector( this.cellPositions[length-1].x, this.cellPositions[length-1].y));
 		this._cellPositions.push( new Vector( this._cellPositions[length-1].x, this._cellPositions[length-1].y));
 		this.cellDirections.push( this.cellDirections[length-1] );
-
-		this.moveSnake( this.direction );
 	};
 
 	// движение змейки на один блок

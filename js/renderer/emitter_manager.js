@@ -2,105 +2,9 @@
 
 class EmitterManager{
 
-	constructor( stage ){
+	constructor( config, preloader, stage ){
 
-		var EMITTER_SMOKE = {
-			"alpha": {
-				"start": 0.8,
-				"end": 0
-			},
-			"scale": {
-				"start": 0.3,
-				"end": 0.6,
-				"minimumScaleMultiplier": 2
-			},
-			"color": {
-				"start": "#ffe44c",
-				"end": "#fc633c"
-			},
-			"speed": {
-				"start": 30,
-				"end": 0,
-				"minimumSpeedMultiplier": 1
-			},
-			"acceleration": {
-				"x": 1,
-				"y": 1
-			},
-			"maxSpeed": 0,
-			"startRotation": {
-				"min": 0,
-				"max": 360
-			},
-			"noRotation": false,
-			"rotationSpeed": {
-				"min": 0,
-				"max": 40
-			},
-			"lifetime": {
-				"min": 0.8,
-				"max": 1.2
-			},
-			"blendMode": "normal",
-			"frequency": 0.001,
-			"emitterLifetime": 0.1,
-			"maxParticles": 6,
-			"pos": {
-				"x": 100,
-				"y": 100
-			},
-			"addAtBack": false,
-			"spawnType": "point"
-		};
-
-		var EMITTER_BONUS = {
-			"alpha": {
-				"start": 1,
-				"end": 0.18
-			},
-			"scale": {
-				"start": 0.4	,
-				"end": 0.05,
-				"minimumScaleMultiplier": 1
-			},
-			"color": {
-				"start": "#D13C2C",
-				"end": "#FC968B"
-			},
-			"speed": {
-				"start": 80,
-				"end": 40,
-				"minimumSpeedMultiplier": 1
-			},
-			"acceleration": {
-				"x": 1,
-				"y": 1
-			},
-			"maxSpeed": 0,
-			"startRotation": {
-				"min": 0,
-				"max": 360
-			},
-			"noRotation": false,
-			"rotationSpeed": {
-				"min": 0,
-				"max": 360
-			},
-			"lifetime": {
-				"min": 0.5,
-				"max": 0.7
-			},
-			"blendMode": "normal",
-			"frequency": 0.001,
-			"emitterLifetime": 0.1,
-			"maxParticles": 20,
-			"pos": {
-				"x": 100,
-				"y": 100
-			},
-			"addAtBack": false,
-			"spawnType": "point"
-		};
+		console.log(config);
 
 		this.container = new PIXI.Container();
 
@@ -110,14 +14,14 @@ class EmitterManager{
 
 		this.emitterSmoke = new PIXI.particles.Emitter(
 			scope.container,
-			[PIXI.Texture.from('assets/CartoonSmoke.png')],
-			EMITTER_SMOKE
+			[PIXI.Texture.from( preloader.queue.getResult( "cartoonSmoke" ) )],
+			config.EMITTER_SMOKE
 		);
 
 		this.emitterBonus = new PIXI.particles.Emitter(
 			scope.container,
-			[PIXI.Texture.from('assets/Bubbles.png')],
-			EMITTER_BONUS
+			[PIXI.Texture.from( preloader.queue.getResult( 'bubbles' ) )], 
+			config.EMITTER_BONUS
 		);
 
 		var elapsed = 0;

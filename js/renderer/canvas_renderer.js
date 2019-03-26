@@ -19,9 +19,6 @@ class CanvasRenderer{
 		this.width = params.blockSize * (params.areaX + 2);
 
 		this.evenFrame = true;
-	};
-
-	init( target ){
 
 		var newCanvas = $('<canvas/>',{
                    'class':'radHuhddd',
@@ -32,22 +29,26 @@ class CanvasRenderer{
                     height: this.height
                 });
 
-		$( target ).append( newCanvas );
+		$( renderConfig.parentElement ).append( newCanvas );
 		
 		this.canvas = $( newCanvas )[0];
-		
 		this.ctx = this.canvas.getContext( "2d" );
-    this.isInitialized = true;
+		this.drawArea();
 	};
 
 	getActiveElement(){
 		return this.canvas;
 	};
 
-	drawFrame( gameState ){
-		this.clearFrame();
+	getBlockSize(){
+		return this.blockSize;
+	};
 
-		this.drawArea();
+	// >>> DRAW >>>
+	drawFrame( gameState ){
+		// this.clearFrame();
+
+		// this.drawArea();
 		this.drawSnake( gameState.snake );
 		this.drawBonus( gameState.bonus );
 
@@ -90,4 +91,6 @@ class CanvasRenderer{
 											 blockSize - 2 * offsetX,
 											 blockSize - 2 * offsetY );
 	};
-}
+	// <<< DRAW <<<
+	
+};

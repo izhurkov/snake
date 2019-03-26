@@ -4,7 +4,6 @@ class Renderer {
 
 	constructor ( configRender, params, preloader_queue ){
 		this.params = params;
-		this.evenFrame = true;
 
 		this.parentElement = configRender.parentElement;
 
@@ -21,35 +20,33 @@ class Renderer {
 
 		this.renders = {};
 
-		for ( var renderName in configRender.renders ){
-			var renderConfig = configRender.renders[renderName];
-			var renderDefault = this.defaultRender.renders[renderName];
+		var renderName =configRender.activeRender;
+		var renderConfig = configRender.renders[renderName];
+		var renderDefault = this.defaultRender.renders[renderName];
 
-			if( renderDefault && typeof(renderDefault.renderClass) !== undefined ){
-				for ( var configName in renderConfig )
-					this.defaultRender.renders[renderName][configName] = renderConfig[configName];
-				this.renders[renderName] = new renderDefault.renderClass( params, renderDefault, preloader_queue );
-			}
-		};
+		if( renderDefault && typeof(renderDefault.renderClass) !== undefined ){
+			for ( var configName in renderConfig )
+				this.defaultRender.renders[renderName][configName] = renderConfig[configName];
+			this.renders[renderName] = new renderDefault.renderClass( params, renderDefault, preloader_queue );
+		}
 
 		this.setActiveRenderer( configRender.activeRender );
+	};
 
-		this.isEnable = true;
+	setActiveRenderer( renderName ){
+		if ( !this.renders[renderName] ) return;
+		this.activeRender = this.renders[renderName];
 	};
 
 	getActiveElement(){
 		return this.activeRender.getActiveElement();
 	};
 
-	setActiveRenderer( renderName ){
-		if ( !this.renders[renderName].isInitialized ){
-			this.renders[renderName].init( this.parentElement );
-		}
-		this.activeRender = this.renders[renderName];
+	getBlockSize(){
+		return this.activeRender.getBlockSize();
 	};
 
 	drawFrame( gameState ){
-		if ( !this.isEnable ) return;
 		this.activeRender.drawFrame( gameState );
 	};
 }

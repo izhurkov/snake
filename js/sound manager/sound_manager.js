@@ -38,9 +38,7 @@ class SoundManager{
 				scope.sounds['bonus_mp3'].play();
 			});
 
-		// this.sounds['bonus_mp3'].play();
-
-
-		console.log( this.sounds )
+		var muted = PIXI.sound.toggleMuteAll();
 	};
+
 };

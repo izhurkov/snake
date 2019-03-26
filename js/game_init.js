@@ -46,8 +46,11 @@ $(window).on( 'preloader:complete', function( e, data ){
 		},
 		render: {
 			renders: {
-				'canvas': { },
+				'canvas': {
+					parentElement: '#renderer-container'
+				},
 				'pixi': {
+					parentElement: '#renderer-container',
 					textures: {
 						groundBlock:{
 							path: "ground",
@@ -100,11 +103,15 @@ $(window).on( 'preloader:complete', function( e, data ){
 								{ "x":0,"y":192,"w":64,"h":64 },
 							}
 						}
+					},
+					emitters: {
+						EMITTER_SMOKE: {"alpha":{"start":0.8,"end":0},"scale":{"start":0.3,"end":0.6,"minimumScaleMultiplier":2},"color":{"start":"#ffe44c","end":"#fc633c"},"speed":{"start":30,"end":0,"minimumSpeedMultiplier":1},"acceleration":{"x":1,"y":1},"maxSpeed":0,"startRotation":{"min":0,"max":360},"noRotation":false,"rotationSpeed":{"min":0,"max":40},"lifetime":{"min":0.8,"max":1.2},"blendMode":"normal","frequency":0.001,"emitterLifetime":0.1,"maxParticles":6,"pos":{"x":100,"y":100},"addAtBack":false,"spawnType":"point"}
+						,
+						EMITTER_BONUS: {"alpha":{"start":1,"end":0.18},"scale":{"start":0.4,"end":0.05,"minimumScaleMultiplier":1},"color":{"start":"#D13C2C","end":"#FC968B"},"speed":{"start":80,"end":40,"minimumSpeedMultiplier":1},"acceleration":{"x":1,"y":1},"maxSpeed":0,"startRotation":{"min":0,"max":360},"noRotation":false,"rotationSpeed":{"min":0,"max":360},"lifetime":{"min":0.5,"max":0.7},"blendMode":"normal","frequency":0.001,"emitterLifetime":0.1,"maxParticles":20,"pos":{"x":100,"y":100},"addAtBack":false,"spawnType":"point"}
 					}
 				}
 			},
-			activeRender: 'pixi',
-			parentElement: '#renderer-container'
+			activeRender: 'pixi'
 		},
 		audio: {
 			sounds: {
@@ -126,8 +133,8 @@ $(window).on( 'preloader:complete', function( e, data ){
 		
 	  blockColor: "rgba(143, 255, 143, 1)",
 	  wallColor: "rgba(68, 119, 68, 1)" ,
-	  areaX: 30,
-	  areaY: 20,
+	  areaX: 10,
+	  areaY: 22,
 	  blockSize: 20,
 
 	  headColor: "rgba(124, 112, 96, 1)",
@@ -137,7 +144,7 @@ $(window).on( 'preloader:complete', function( e, data ){
 
 	  bonusColor: "rgba(200, 70, 150, 1)",
 
-	  stepTime: 120
+	  stepTime: 100
 	};
 
 	var snakeGame = new Game( config, params, data.queue );

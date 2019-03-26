@@ -18,7 +18,7 @@
 	    'showAnimation': 'fadeIn',
 	    'showDuration': 400,
 	    'hideAnimation': 'fadeOut',
-	    'hideDuration': 1000
+	    'hideDuration': 2000
 	  },
 	  'endScreen': {
 	    onShow: function(){ },
@@ -98,6 +98,8 @@
 		  {src:"assets/Ground.png", id:"ground"},
 		  {src:"assets/Wall.png", id:"wall"},
 		  {src:"assets/snake-graphics.png", id:"snake-graphics"},
+		  {src:"assets/CartoonSmoke.png", id:"cartoonSmoke"},
+		  {src:"assets/Bubbles.png", id:"bubbles"},
 		  {src:"assets/bonus.mp3", id:"bonus_mp3"},
 		  {src:"assets/game over.mp3", id:"game_over_mp3"},
 		  {src:"assets/music.mp3", id:"music_mp3"}
