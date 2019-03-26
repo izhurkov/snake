@@ -59,13 +59,13 @@ class EmitterManager{
 				"end": 0.18
 			},
 			"scale": {
-				"start": 0.24	,
+				"start": 0.4	,
 				"end": 0.05,
 				"minimumScaleMultiplier": 1
 			},
 			"color": {
-				"start": "#FF6347",
-				"end": "#B22222"
+				"start": "#D13C2C",
+				"end": "#FC968B"
 			},
 			"speed": {
 				"start": 80,
@@ -116,7 +116,7 @@ class EmitterManager{
 
 		this.emitterBonus = new PIXI.particles.Emitter(
 			scope.container,
-			[PIXI.Texture.from('assets/Particle.png')],
+			[PIXI.Texture.from('assets/Bubbles.png')],
 			EMITTER_BONUS
 		);
 

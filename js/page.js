@@ -18,7 +18,7 @@
 	    'showAnimation': 'fadeIn',
 	    'showDuration': 400,
 	    'hideAnimation': 'fadeOut',
-	    'hideDuration': 3000
+	    'hideDuration': 1000
 	  },
 	  'endScreen': {
 	    onShow: function(){ },

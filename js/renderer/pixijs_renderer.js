@@ -79,30 +79,36 @@ class PixiJSRenderer{
 
 		var scope = this;
 
+		console.log(scope.app.stage);
+
 		$(document).on('game:lose', function(){
 
-			let seconds = 3.0;
-			var elapsed = 0;
+			var seconds = 0.5;
+			var time;
 
 			(function update(){
-						
+
+				if ( seconds < 0 ){
+
+					scope.app.stage.scale.x = 1.0;
+					scope.app.stage.scale.y = 1.0;
+					scope.app.stage.position.x = 0;
+					scope.app.stage.position.y = 0;
+					return;
+				}
+
 				var updateId = requestAnimationFrame(update);
-				var now = Date.now();
-				var delta = (now - elapsed) * 0.001;
-				elapsed = now;
+
+				var now = Date.now(),
+        delta = (now - (time || now)) * 0.001;
+    		time = now;
 				seconds -= delta;
-				console.log(seconds, delta);
 
+				scope.app.stage.position.x = 0 - randomInteger(0, 10 * seconds);
+				scope.app.stage.position.y = 0 - randomInteger(0, 10 * seconds);
 
-				// if (seconds > 1){
-				// 	scope.app.stage.scale.x = 2.0;
-				// 	scope.app.stage.scale.y = 2.0;
-				// }
-				// else{
-
-				// 	scope.app.stage.scale.x = 1.0;
-				// 	scope.app.stage.scale.y = 1.0;
-				// }
+				scope.app.stage.scale.x = 1.0 + 0.05 * seconds;
+				scope.app.stage.scale.y = 1.0 + 0.05 * seconds;
 			}());
 
 
