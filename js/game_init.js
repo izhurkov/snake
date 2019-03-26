@@ -133,18 +133,18 @@ $(window).on( 'preloader:complete', function( e, data ){
 		
 	  blockColor: "rgba(143, 255, 143, 1)",
 	  wallColor: "rgba(68, 119, 68, 1)" ,
-	  areaX: 10,
-	  areaY: 22,
+	  areaX: 25,
+	  areaY: 15,
 	  blockSize: 20,
 
 	  headColor: "rgba(124, 112, 96, 1)",
 	  bodyColor: "rgba(204, 177, 156, 1)",
-	  startPos: { x: 5, y: 6 },
+	  startPos: { x: 4, y: 7 },
 	  startLength: 3,
 
 	  bonusColor: "rgba(200, 70, 150, 1)",
 
-	  stepTime: 100
+	  stepTime: 150
 	};
 
 	var snakeGame = new Game( config, params, data.queue );

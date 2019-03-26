@@ -4,8 +4,6 @@ class EmitterManager{
 
 	constructor( config, preloader, stage ){
 
-		console.log(config);
-
 		this.container = new PIXI.Container();
 
 		stage.addChild( this.container );

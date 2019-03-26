@@ -38,7 +38,6 @@ class Snake{
 
 	// добавление блока в змейку (рост змеи)
 	addBlock( currentVelocity ){
-		// this.changeVelocity( currentVelocity );
 		var length = this.cellPositions.length;
 
 		this.cellPositions.push( new Vector( this.cellPositions[length-1].x, this.cellPositions[length-1].y));

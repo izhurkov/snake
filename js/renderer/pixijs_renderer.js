@@ -2,7 +2,7 @@
 
 class PixiJSRenderer{
 
-	constructor ( params, renderConfig, preloader ){
+	constructor ( params, renderConfig, preloader, gameState ){
 		this.params = params;
 
 		this.areaX = params.areaX !== undefined ? params.areaX : 50;
@@ -23,17 +23,18 @@ class PixiJSRenderer{
 																		  } );
 
 		this.app.view.setAttribute('tabindex', 0);
-		console.log(renderConfig);
 
 		$( renderConfig.parentElement ).append( this.app.view );
 		// <<< SETUP CANVAS <<<
 
 		this.texture = {};
-		this.initTexture( renderConfig, preloader );
+		this.initTexture( renderConfig, preloader, gameState );
 
-		this.emitterManager = new EmitterManager( renderConfig.emitters, preloader, this.app.stage );
+		// тряска экрана
+		this.setScreenShake( 0.8, 0.05, 20 );
 
-		this.setScreenShake( 0.8, 0.05, 15 );
+		// частицы
+		new EmitterManager( renderConfig.emitters, preloader, this.app.stage );
 
 	};
 
@@ -56,7 +57,7 @@ class PixiJSRenderer{
 	};
 
 	// >>> SET TEXTURE >>>
-	initTexture( configRender, preloader ){
+	initTexture( configRender, preloader, gameState ){
 
 		for ( var textureName in configRender.textures ){
 			var texture = configRender.textures[textureName];
@@ -82,19 +83,19 @@ class PixiJSRenderer{
 			}
 		}
 
-		this.initArea();
+		this.initArea(gameState);
 		this.initBonus();
 		this.initSnake();
 	};
 
-	initArea(){
+	initArea(gameState){
 		this.container = new PIXI.Container();
 		var container =  this.container;
 
 		for (var i = 0; i < this.areaX + 2; i++) {
 			for (var j = 0; j < this.areaY + 2; j++) {
-				var block;
-				if ( i != 0 && i != this.areaX + 1 && j != 0 && j != this.areaY + 1 )
+				var block = gameState.area[i][j];
+				if ( block != 0 )
 					block = new PIXI.Sprite(this.texture['groundBlock']);
 				else
 					block = new PIXI.Sprite(this.texture['wallBlock']);

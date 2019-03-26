@@ -20,18 +20,13 @@ class Game{
 
 		this.score = 0;
 		this.currentDirection = null;
-		this.isPlaying = false;
 
-		this.STATE_LOADING = 'STATE_LOADING';
-		this.STATE_PLAYING = 'STATE_PLAYING';
-		this.STATE_FINISHED = 'STATE_FINISHED';
-		this.STATE_PAUSE = 'STATE_PAUSE';
-
-
-		this.gameState = {};
+		this.gameState = {
+			area: this.area.blocks
+		};
 
 		// отрисовка
-		this.renderer = new Renderer( config.render, this.params, preloader );
+		this.renderer = new Renderer( config.render, this.params, preloader, this.gameState );
 		this.blockSize = this.renderer.getBlockSize();
 
 		// музыка
@@ -44,18 +39,26 @@ class Game{
 		//
 		this.interfaceController = new InterfaceController();
 
+		this.STATE_LOADING = 'STATE_LOADING';
+		this.STATE_PLAYING = 'STATE_PLAYING';
+		this.STATE_FINISHED = 'STATE_FINISHED';
+		this.STATE_PAUSE = 'STATE_PAUSE';
+
 		var scope = this;
 
 		var states = {
 			'STATE_LOADING': {
-				states: [ 'STATE_PAUSE', undefined ],
+				states: [ undefined ],
 				onSet: function(){
 					scope.resetGame();
 				}
 			},
 			'STATE_PLAYING': {
 				states: [ 'STATE_LOADING', 'STATE_LOSED', 'STATE_PAUSE' ],
-				onSet: function(){ }
+				onSet: function(){ 
+					scope.resetGame();
+					scope.playSound('music_mp3')
+				}
 			},
 			'STATE_PAUSE': {
 				states: [ 'STATE_PLAYING' ],
@@ -68,7 +71,6 @@ class Game{
 					$(document).trigger( 'show-screen', 'endScreen' );
 					$(document).trigger( 'game:lose', { x: scope.snake.head.x * scope.blockSize + scope.blockSize / 2,
 																							y: scope.snake.head.y * scope.blockSize + scope.blockSize / 2 } );
-					scope.isPlaying = false;
 				},
 				onDisable: function(){
 
@@ -78,16 +80,14 @@ class Game{
 		}
 
 		this.stateMachine = new StateMachine( states );
-
 		this.stateMachine.setState( 'STATE_LOADING' );
 
 		this.addListeners();
-
 	  this.startGame();
 	};
 
 	addListeners(){
-		let scope = this;
+		var scope = this;
 
 		$( document ).on( scope.inputController.ACTION_ACTIVATED, function(e, param) {
 	    switch( param.detail.action_name ){
@@ -104,17 +104,22 @@ class Game{
 	  });
 
 	  ////////////////////
-	  $( document ).on( 'game:start', function(e) {
-			scope.stateMachine.setState( 'STATE_PLAYING' )
-	  });
-
-	  $( document ).on( 'game:pause', function(e) {
-			scope.stateMachine.setState( 'STATE_PAUSE' )
-	  });
-
-	  $( document ).on( 'game:menu', function(e) {
-			scope.stateMachine.setState( 'STATE_LOADING' )
-	  });
+	  $( document )
+	  .on( 'game:start', function(e) {
+			scope.setState( 'STATE_PLAYING' );
+	  })
+	  .on( 'game:pause', function(e) {
+			scope.setState( 'STATE_PAUSE' )
+	  })
+	 	.on( 'game:menu', function(e) {
+			scope.setState( 'STATE_LOADING' )
+	  })
+	  .on( "game:lose", function(e){
+			scope.playSound('game_over_mp3');
+		})
+		.on( "game:bonusUp", function(e){
+			scope.playSound('bonus_mp3')
+		})
 	};
 
 
@@ -131,6 +136,23 @@ class Game{
 		this.currentDirection = null;
 	};
 
+	setState( state ){
+		this.stateMachine.setState( state );
+	};
+
+	getState(){
+		return this.stateMachine.getState();
+	}
+
+	isState( state ){
+		return this.stateMachine.isState( state );
+	};
+
+	playSound( sound ){
+		this.soundManager.playSound( sound );
+	}
+
+
 	// >>> GAME LOOPS >>>
 	mainStep(){
 	  let scope = this;
@@ -144,7 +166,6 @@ class Game{
 		this.updateGame();
 
 		this.gameState = {
-			isPlaying: this.isPlaying,
 			snake: this.snake.cellPositions,
 			head: this.snake.cellDirections,
 			bonus: this.bonus.position
@@ -157,18 +178,19 @@ class Game{
 
 	updateGame(){
 
-		if ( this.stateMachine.getState() !== this.STATE_PLAYING )
+		if ( !this.isState( this.STATE_PLAYING ) )
 			return;
-
+		// move snake
 		this.snake.update( this.currentDirection );
 
+		// meeting with bonus
 		if ( Vector.equals( this.snake.head, this.bonus.position ) ){
 
 			this.score++;
 
 			this.maxSnakeLength--;
 			if ( this.maxSnakeLength <= 0 ){
-				this.stateMachine.setState( 'STATE_LOSED' );
+				this.setState( 'STATE_LOSED' );
 				return;
 			}
 
@@ -178,16 +200,19 @@ class Game{
 			$(document).trigger( 'game:bonusUp', { x: this.snake.head.x * this.blockSize + this.blockSize / 2,
 																					y: this.snake.head.y * this.blockSize + this.blockSize / 2 } );
 
-		}
+		} // meeting with body
 		else if ( this.snakeCollision() ){
-			this.stateMachine.setState( 'STATE_LOSED' );
-		}
+			this.setState( 'STATE_LOSED' );
+		} // meeting with wall blocks
 		else if ( this.wallCollision() ){
-			this.stateMachine.setState( 'STATE_LOSED' );
+			this.setState( 'STATE_LOSED' );
 		}
 	};
 	// <<< GAME LOOPS <<<
 	
+
+
+	// >>> GAME LOGIC >>>
 	setDirectionFromTouch( cursor_pos ){
 		if ( !cursor_pos ) return;
 		var cursor = new Vector( Math.floor( cursor_pos.x  / this.blockSize ),
@@ -230,5 +255,6 @@ class Game{
 		}
 		return false;
 	};
+	// <<< GAME LOGIC <<<
 
 };
