@@ -25,6 +25,13 @@ class SoundManager{
 			};
 		};
 
+	// sound control
+	$("#muted").on('click', function() {
+    var muted = PIXI.sound.toggleMuteAll();
+    $('canvas').focus();
+    $("#muted").attr( { 'value': muted ? "unmute" : "mute" } );
+	});
+
 		// var muted = PIXI.sound.toggleMuteAll();
 	};
 

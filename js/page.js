@@ -68,13 +68,6 @@
 		}
 	};
 
-	// sound control
-	$("#muted").on('click', function() {
-    var muted = PIXI.sound.toggleMuteAll();
-    $('canvas').focus();
-    $("#muted").attr( { 'value': muted ? "unmute" : "mute" } );
-	});
-
 	PIXI.utils.sayHello("Hello world!");
 	
 	new ProgressBar();
