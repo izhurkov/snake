@@ -41,10 +41,10 @@ class CanvasRenderer{
 		var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 		var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 
-		var screenRatio = ( width - 20 ) / ( height - 40 );
+		var screenRatio = ( width - 20 ) / ( height - 60 );
 		var gameRatio = ( areaX + 2 ) / ( areaY + 2 );
 
-		return ( screenRatio > gameRatio ) ? ( height - 40 ) / ( areaY + 2 ) : ( width - 20 ) / ( areaX + 2 );
+		return ( screenRatio > gameRatio ) ? ( height - 60 ) / ( areaY + 2 ) : ( width - 20 ) / ( areaX + 2 );
 	};
 
 	getActiveElement(){

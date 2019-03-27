@@ -50,10 +50,10 @@ class PixiJSRenderer{
 		var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 		var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 
-		var screenRatio = ( width - 20 ) / ( height - 40 );
+		var screenRatio = ( width - 20 ) / ( height - 60 );
 		var gameRatio = ( this.areaX + 2 ) / ( this.areaY + 2 );
 
-		this.blockSize = ( screenRatio > gameRatio ) ? ( height - 40 ) / ( this.areaY + 2 ) : ( width - 20 ) / ( this.areaX + 2 );
+		this.blockSize = ( screenRatio > gameRatio ) ? ( height - 60 ) / ( this.areaY + 2 ) : ( width - 20 ) / ( this.areaX + 2 );
 	};
 
 	// >>> SET TEXTURE >>>

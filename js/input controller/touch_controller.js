@@ -44,18 +44,20 @@ class TouchDevice extends Controller{
         deviceMovement = {  x:(cursor_pos.x-deviceMovement.x),
                             y: (cursor_pos.y-deviceMovement.y) };
 
-        var action = device.actions_by_gestures[ 'touchup' ];
         scope.setActionActive(action, true, cursor_pos);
         scope.setActionActive(action, false, cursor_pos);
 
-        var minSwipeLengthTmp = device.minSwipeLength;
+
+        var minSwipeLengthTmp = device.minSwipeLength || 0;
 
         var absDeviceMovementX = Math.abs(deviceMovement.x);
         var absDeviceMovementY = Math.abs(deviceMovement.y);
 
         // CHECK LENGTH
-        if (absDeviceMovementX < minSwipeLengthTmp && absDeviceMovementY < minSwipeLengthTmp)
+        if (absDeviceMovementX < minSwipeLengthTmp && absDeviceMovementY < minSwipeLengthTmp){
           return;
+        }
+        var action = device.actions_by_gestures[ 'touchup' ];
         // if (minSwipeLengthTmp * minSwipeLengthTmp > (deviceMovement.x * deviceMovement.x + deviceMovement.y * deviceMovement.y)
         //   return;
 

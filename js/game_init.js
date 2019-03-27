@@ -12,10 +12,12 @@ $(window).on( 'preloader:complete', function( e, data ){
 		      device_class: KeyboardInputDevice
 		    },
 		    mouse: {
+		    	minSwipeLength: 40,
 		      enabled: true,
 		      device_class: MouseInputDevice
 		    },
 		    touchscreen: {
+		    	minSwipeLength: 40,
 		      enabled: true,
 		      device_class: TouchscreenInputDevice
 		    }
