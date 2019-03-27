@@ -86,6 +86,8 @@ class Game{
 
 		this.stateMachine = new StateMachine( states );
 
+		this.even = true;
+
 		this.addListeners();
 	  this.startGame();
 	};
@@ -175,6 +177,12 @@ class Game{
 	  let scope = this;
 		setTimeout( function(){
 			requestAnimationFrame( () => { scope.mainStep() } );
+
+			// var tmp = scope.even ? 'pixi' : 'canvas';
+			// scope.renderer.setActiveRenderer( tmp );
+			// scope.inputController.attach( scope.renderer.getActiveElement() );
+			// scope.even = !scope.even;
+			
 			scope.gameStep();
 		}, this.stepTime );
 	};

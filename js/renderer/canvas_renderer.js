@@ -105,12 +105,10 @@ class CanvasRenderer{
 	// <<< DRAW <<<
 	
 	hide(){
-		console.log( "hide:", $( this.canvas ) );
 		$( this.canvas ).hide();
 	}
 	
 	show( gameState ){
-		console.log( "show:", $( this.canvas ) );
 		$( this.canvas ).show();
 		this.drawFrame( gameState );
 	}

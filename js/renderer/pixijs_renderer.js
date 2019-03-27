@@ -187,6 +187,7 @@ class PixiJSRenderer{
 	};
 	// <<< DRAW <<<
 	
+	// тряска экрана
 	setScreenShake( duration, scaleShakeValue, positionShakeValue ){
 
 		var scope = this;
@@ -213,7 +214,6 @@ class PixiJSRenderer{
     		time = now;
 				seconds -= delta;
 
-				// тряска экрана
 				stage.position.x = 0 - randomInteger(0, positionShakeValue * seconds);
 				stage.position.y = 0 - randomInteger(0, positionShakeValue * seconds);
 				stage.scale.x = 1.0 + scaleShakeValue * seconds;
@@ -223,12 +223,10 @@ class PixiJSRenderer{
 	};
 
 	hide(){
-		console.log( "hide:", $(this.app.view) );
 		$(this.app.view).hide();
 	}
 
 	show( gameState ){
-		console.log( "show:", $(this.app.view) );
 		$(this.app.view).show();
 		this.drawFrame( gameState );
 	}
