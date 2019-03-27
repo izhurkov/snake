@@ -5,6 +5,7 @@
 	var screens = {
 	  'menuScreen': {
 	    onShow: function(){ 
+	    	$(document).trigger( 'game:ready' );
 	  		$(document).trigger( 'hide-modal' ); },
 	    afterShow: function(){ },
 	    onHide: function(){ }
@@ -29,7 +30,6 @@
 	  },
 	  'endScreen': {
 	    onShow: function(){
-	    	// $(document).trigger( 'game:ready' );
 	  		$(document).trigger( 'hide-modal' ); },
 	  		
 	    onHide: function(){ }
@@ -44,7 +44,6 @@
 	  			value: "continue",
 	  			onClick: function(){
 	  				$(document).trigger( 'hide-modal', 'pauseModal' );
-  					$(document).trigger( 'game:start' );
 	  			}
 	  		},
 	  		'menu': {
@@ -62,9 +61,10 @@
 
 	    onHide: function(){ },
 	    afterHide: function() {
+  			$(document).trigger( 'game:start' );
 	    },
 	    'showDuration': 500,
-	    'hideDuration': 500
+	    'hideDuration': 800
 		}
 	};
 

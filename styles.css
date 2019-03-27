@@ -51,7 +51,7 @@ canvas:focus{
 input{
   font-family: "Trebuchet MS", sans-serif;
   font-size: 18px;
-  margin: 8px 24px 8px;
+  margin: 0px 12px 8px;
   border-radius: 5px;
   border: 1px solid #a1a1a1;  
   background: #fff;

@@ -53,10 +53,9 @@ class Game{
 		var states = {
 
 			'STATE_READY': {
-				states: [ scope.STATE_FINISHED, scope.STATE_PAUSE, undefined ],
+				states: [ scope.STATE_FINISHED, scope.STATE_PAUSE, scope.STATE_PLAYING, undefined ],
 				onSet: function(){
 					scope.resetGame();
-					scope.playSound('music_mp3');
 				}
 			},
 
@@ -64,6 +63,7 @@ class Game{
 				states: [ scope.STATE_READY, scope.STATE_PAUSE ],
 				onSet: function(){ 
 					$( scope.renderer.getActiveElement() ).focus();
+					scope.playSound('music_mp3');
 				},
 
 				onDisable: function(){ }
@@ -133,9 +133,8 @@ class Game{
 		.on( "game:pause", function(e){
 			scope.setState( scope.STATE_PAUSE );
 		})
-
 	 	.on( "game:bonusUp", function(e){
-			scope.playSound('bonus_mp3')
+			scope.playSound('bonus_mp3');
 		})
 	};
 
@@ -177,12 +176,6 @@ class Game{
 	  let scope = this;
 		setTimeout( function(){
 			requestAnimationFrame( () => { scope.mainStep() } );
-
-			// var tmp = scope.even ? 'pixi' : 'canvas';
-			// scope.renderer.setActiveRenderer( tmp );
-			// scope.inputController.attach( scope.renderer.getActiveElement() );
-			// scope.even = !scope.even;
-			
 			scope.gameStep();
 		}, this.stepTime );
 	};
@@ -202,9 +195,11 @@ class Game{
 	};
 
 	updateGame(){
+		// console.log( this.getState() );	
 
 		if ( !this.isState( this.STATE_PLAYING ) )
 			return;
+
 		// move snake
 		this.snake.update( this.currentDirection );
 

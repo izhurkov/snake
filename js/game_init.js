@@ -141,8 +141,8 @@ $(window).on( 'preloader:complete', function( e, data ){
 		
 	  blockColor: "rgba(143, 255, 143, 1)",
 	  wallColor: "rgba(68, 119, 68, 1)" ,
-	  areaX: 17,
-	  areaY: 13,
+	  areaX: 25,
+	  areaY: 17,
 	  blockSize: 24,
 
 	  headColor: "rgba(124, 112, 96, 1)",

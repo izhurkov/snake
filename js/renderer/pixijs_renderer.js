@@ -31,7 +31,7 @@ class PixiJSRenderer{
 		this.initTexture( renderConfig, preloader, gameState );
 
 		// тряска экрана
-		this.setScreenShake( 0.8, 0.05, 20 );
+		this.setScreenShake( .8, 0.05, 10 );
 
 		// частицы
 		new EmitterManager( this.blockSize, renderConfig.emitters, preloader, this.app.stage );
@@ -96,9 +96,9 @@ class PixiJSRenderer{
 			for (var j = 0; j < this.areaY + 2; j++) {
 				var block = gameState.area[i][j];
 				if ( block != 0 )
-					block = new PIXI.Sprite(this.texture['groundBlock']);
-				else
 					block = new PIXI.Sprite(this.texture['wallBlock']);
+				else
+					block = new PIXI.Sprite(this.texture['groundBlock']);
 		    block.x = i * this.blockSize;
 		    block.y = j * this.blockSize;
 		    block.width = this.blockSize;
