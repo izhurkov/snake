@@ -125,6 +125,8 @@ class InputController {
       device.attach( target, scope );
     }
 
+    $( target ).focus();
+
   };
 
   detach(){

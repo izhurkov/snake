@@ -4,8 +4,6 @@ var count = 0;
 
 $(window).on( 'preloader:complete', function( e, data ){
 
-	$(document).trigger('show-screen', 'menuScreen');
-
 	var config = {
 		input: {
 			devices:{
@@ -38,6 +36,14 @@ $(window).on( 'preloader:complete', function( e, data ){
 		    'down': {
 		      keyCodes:[40],
         	gestures: ['swipe-down']
+		    },
+		    'setCanvas': {
+		      keyCodes:[79],
+        	gestures: ['setCanvas']
+		    },
+		    'setPixi': {
+		      keyCodes:[80],
+        	gestures: ['setPixi']
 		    },
 		    'touchup': {
         	gestures: ['touchup']
@@ -133,9 +139,9 @@ $(window).on( 'preloader:complete', function( e, data ){
 		
 	  blockColor: "rgba(143, 255, 143, 1)",
 	  wallColor: "rgba(68, 119, 68, 1)" ,
-	  areaX: 25,
+	  areaX: 20,
 	  areaY: 15,
-	  blockSize: 20,
+	  blockSize: 24,
 
 	  headColor: "rgba(124, 112, 96, 1)",
 	  bodyColor: "rgba(204, 177, 156, 1)",
@@ -144,9 +150,11 @@ $(window).on( 'preloader:complete', function( e, data ){
 
 	  bonusColor: "rgba(200, 70, 150, 1)",
 
-	  stepTime: 150
+	  stepTime: 100
 	};
 
 	var snakeGame = new Game( config, params, data.queue );
+
+	$(document).trigger('show-screen', 'menuScreen');
 
 });

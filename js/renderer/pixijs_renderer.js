@@ -34,7 +34,7 @@ class PixiJSRenderer{
 		this.setScreenShake( 0.8, 0.05, 20 );
 
 		// частицы
-		new EmitterManager( renderConfig.emitters, preloader, this.app.stage );
+		new EmitterManager( this.blockSize, renderConfig.emitters, preloader, this.app.stage );
 
 	};
 
@@ -158,13 +158,14 @@ class PixiJSRenderer{
     var container = this.snakeContainer;
     var blockSize = this.blockSize;
 
-    if ( cellDirections.length > container.children.length ){
+    while ( cellDirections.length > container.children.length ){
     	let cell = new PIXI.Sprite(textures['snakeBody_horizontal']);
 		  cell.width = blockSize;
 		  cell.height = blockSize;
 			container.addChild(cell);
-    } else if ( cellDirections.length < container.children.length ){
-    	container.children.length = this.params.startLength;
+    }
+    if ( cellDirections.length < container.children.length ){
+    	container.children.length = cellDirections.length;
     } 
 
     // update positions
@@ -189,7 +190,7 @@ class PixiJSRenderer{
 	setScreenShake( duration, scaleShakeValue, positionShakeValue ){
 
 		var scope = this;
-		$(document).on('game:lose', function(){
+		$(document).on('game:finished', function(){
 
 			var seconds = duration;
 			var time;
@@ -220,5 +221,16 @@ class PixiJSRenderer{
 			}());			
 		});
 	};
+
+	hide(){
+		console.log( "hide:", $(this.app.view) );
+		$(this.app.view).hide();
+	}
+
+	show( gameState ){
+		console.log( "show:", $(this.app.view) );
+		$(this.app.view).show();
+		this.drawFrame( gameState );
+	}
 
 };

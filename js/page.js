@@ -4,24 +4,34 @@
 
 	var screens = {
 	  'menuScreen': {
-	    onShow: function(){ },
-	    afterShow: function(){
-	    	$(document).trigger( 'game:menu' ); },
+	    onShow: function(){ 
+	  		$(document).trigger( 'hide-modal' ); },
+	    afterShow: function(){ },
 	    onHide: function(){ }
 	  },
 	  'gameScreen': {
+
 	    onShow: function(){ 
-	    	$(document).trigger( 'game:start' ); },
+	    	$(document).trigger( 'game:ready' );
+	  		$(document).trigger( 'hide-modal' ); },
+
 	    afterShow: function(){
-	    	$('canvas:first').focus(); },
-	    onHide: function(){ },
+	    	$(document).trigger( 'game:start' ); },
+
+	    onHide: function(){  },
+	    afterHide: function(){
+	    	$(document).trigger( 'game:ready' ); },
+
 	    'showAnimation': 'fadeIn',
-	    'showDuration': 400,
+	    'showDuration': 300,
 	    'hideAnimation': 'fadeOut',
-	    'hideDuration': 2000
+	    'hideDuration': 1000
 	  },
 	  'endScreen': {
-	    onShow: function(){ },
+	    onShow: function(){
+	    	// $(document).trigger( 'game:ready' );
+	  		$(document).trigger( 'hide-modal' ); },
+	  		
 	    onHide: function(){ }
 	  }
 	};
@@ -34,14 +44,7 @@
 	  			value: "continue",
 	  			onClick: function(){
 	  				$(document).trigger( 'hide-modal', 'pauseModal' );
-	    			$(document).trigger( 'game:start' );
-	    			$('canvas:first').focus();
-	  			}
-	  		},
-	  		'showTest': {
-	  			value: "show second modal",
-	  			onClick: function(){
-	  				$(document).trigger( 'show-modal', 'testModal' );
+  					$(document).trigger( 'game:start' );
 	  			}
 	  		},
 	  		'menu': {
@@ -49,13 +52,14 @@
 	  			// data-event: 'game:menu;show-screen>menuScreen;hide-modal>pauseModal',
 	  			//////////////////////// data-event: 'game:menu;show-screen>menuScreen;hide-modal>pauseModal'
 	  			onClick: function(){
-	  				$(document).trigger( 'game:menu' );
   					$(document).trigger( 'show-screen', 'menuScreen' );
 	  				$(document).trigger( 'hide-modal', 'pauseModal' );
 	  			}
 	  		}
 		  },
-		  onShow: function(){ $(document).trigger( 'game:pause' ); },
+		  onShow: function(){
+		  	$(document).trigger( 'game:pause' ); },
+
 	    onHide: function(){ },
 	    afterHide: function() {
 	    },

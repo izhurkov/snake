@@ -57,6 +57,13 @@ class ScreenManager {
 
     if ( !screen ) return;
 
+    if ( this.current_screen === screen ){
+      if( screen.data.afterShow )
+        var afterShow = function(){ screen.data.afterShow() };
+      screen.show( afterShow );
+      return;
+    }
+
     if( this.current_screen ) {
       this.hideScreen( function(){ scope.showScreen(screen_name); } );
       return;
@@ -73,6 +80,7 @@ class ScreenManager {
   };
 
   hideScreen( onComplete ){
+    
     if( !this.current_screen ) return;
 
     var screen = this.current_screen;
@@ -83,6 +91,7 @@ class ScreenManager {
   };
 
   showModal ( modal_name ){
+
     var modal = this.modals[modal_name];
 
     if ( !modal ) return;
@@ -93,6 +102,13 @@ class ScreenManager {
   };
 
   hideModal ( modal_name ){
+
+    if ( !modal_name ){
+      for( var modal_name in this.modals )
+          this.modals[modal_name].hide();
+      return;
+    }
+
     var modal = this.modals[modal_name];
 
     if ( !modal ) return;

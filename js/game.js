@@ -22,7 +22,10 @@ class Game{
 		this.currentDirection = null;
 
 		this.gameState = {
-			area: this.area.blocks
+			area: this.area.blocks,
+			snake: this.snake.cellPositions,
+			head: this.snake.cellDirections,
+			bonus: this.bonus.position
 		};
 
 		// отрисовка
@@ -39,7 +42,8 @@ class Game{
 		//
 		this.interfaceController = new InterfaceController();
 
-		this.STATE_LOADING = 'STATE_LOADING';
+		// 
+		this.STATE_READY = 'STATE_READY';
 		this.STATE_PLAYING = 'STATE_PLAYING';
 		this.STATE_FINISHED = 'STATE_FINISHED';
 		this.STATE_PAUSE = 'STATE_PAUSE';
@@ -47,40 +51,40 @@ class Game{
 		var scope = this;
 
 		var states = {
-			'STATE_LOADING': {
-				states: [ undefined ],
-				onSet: function(){
-					scope.resetGame();
-				}
-			},
-			'STATE_PLAYING': {
-				states: [ 'STATE_LOADING', 'STATE_LOSED', 'STATE_PAUSE' ],
-				onSet: function(){ 
-					scope.resetGame();
-					scope.playSound('music_mp3')
-				}
-			},
-			'STATE_PAUSE': {
-				states: [ 'STATE_PLAYING' ],
-				onSet: function(){ }
-			},
-			'STATE_LOSED': {
-				states: [ 'STATE_PLAYING' ],
-				onSet: function(){
 
-					$(document).trigger( 'show-screen', 'endScreen' );
-					$(document).trigger( 'game:lose', { x: scope.snake.head.x * scope.blockSize + scope.blockSize / 2,
-																							y: scope.snake.head.y * scope.blockSize + scope.blockSize / 2 } );
+			'STATE_READY': {
+				states: [ scope.STATE_FINISHED, scope.STATE_PAUSE, undefined ],
+				onSet: function(){
+					scope.resetGame();
+					scope.playSound('music_mp3');
+				}
+			},
+
+			'STATE_PLAYING': {
+				states: [ scope.STATE_READY, scope.STATE_PAUSE ],
+				onSet: function(){ 
+					$( scope.renderer.getActiveElement() ).focus();
+				},
+
+				onDisable: function(){ }
+			},
+
+			'STATE_PAUSE':{
+				states: [ scope.STATE_PLAYING ]
+			},
+
+			'STATE_FINISHED': {
+				states: [ scope.STATE_PLAYING ],
+				onSet: function(){
+					scope.playSound('game_over_mp3');
 				},
 				onDisable: function(){
 
-					scope.resetGame();
 				}
 			}
 		}
 
 		this.stateMachine = new StateMachine( states );
-		this.stateMachine.setState( 'STATE_LOADING' );
 
 		this.addListeners();
 	  this.startGame();
@@ -100,24 +104,35 @@ class Game{
 	        case 'touchup':
 	        	scope.setDirectionFromTouch( param.detail.cursor_pos );
 	        	break;
+	        case 'setCanvas':
+	        	scope.renderer.setActiveRenderer('canvas');
+						scope.inputController.attach( scope.renderer.getActiveElement() );
+
+	        	break;
+	        case 'setPixi':
+	        	scope.renderer.setActiveRenderer('pixi');
+						scope.inputController.attach( scope.renderer.getActiveElement() );
+	        	break;
 	    };
 	  });
 
 	  ////////////////////
 	  $( document )
+	  .on( 'game:ready', function(e) {
+			scope.setState( scope.STATE_READY )
+	  })
 	  .on( 'game:start', function(e) {
-			scope.setState( 'STATE_PLAYING' );
+			scope.setState( scope.STATE_PLAYING );
 	  })
-	  .on( 'game:pause', function(e) {
-			scope.setState( 'STATE_PAUSE' )
-	  })
-	 	.on( 'game:menu', function(e) {
-			scope.setState( 'STATE_LOADING' )
-	  })
-	  .on( "game:lose", function(e){
-			scope.playSound('game_over_mp3');
+	  .on( "game:finished", function(e){
+			scope.setState( scope.STATE_FINISHED );
+	  	$( document ).trigger('show-screen', 'endScreen')
 		})
-		.on( "game:bonusUp", function(e){
+		.on( "game:pause", function(e){
+			scope.setState( scope.STATE_PAUSE );
+		})
+
+	 	.on( "game:bonusUp", function(e){
 			scope.playSound('bonus_mp3')
 		})
 	};
@@ -126,6 +141,7 @@ class Game{
 
 	startGame(){
 		this.mainStep();
+		this.inputController.attach( this.renderer.getActiveElement() );
 	};
 
 	resetGame(){
@@ -134,6 +150,7 @@ class Game{
 
 		this.score = 0;
 		this.currentDirection = null;
+		this.inputController.attach( this.renderer.getActiveElement() );
 	};
 
 	setState( state ){
@@ -190,22 +207,21 @@ class Game{
 
 			this.maxSnakeLength--;
 			if ( this.maxSnakeLength <= 0 ){
-				this.setState( 'STATE_LOSED' );
+				$(document).trigger( 'game:finished', { x: this.snake.head.x, y: this.snake.head.y } );
 				return;
 			}
 
 			this.snake.addBlock( this.currentDirection );
 			this.bonus.position = this.getNewBonusPosition();
 
-			$(document).trigger( 'game:bonusUp', { x: this.snake.head.x * this.blockSize + this.blockSize / 2,
-																					y: this.snake.head.y * this.blockSize + this.blockSize / 2 } );
+			$(document).trigger( 'game:bonusUp', { x: this.snake.head.x, y: this.snake.head.y } );
 
 		} // meeting with body
 		else if ( this.snakeCollision() ){
-			this.setState( 'STATE_LOSED' );
+				$(document).trigger( 'game:finished', { x: this.snake.head.x, y: this.snake.head.y } );
 		} // meeting with wall blocks
 		else if ( this.wallCollision() ){
-			this.setState( 'STATE_LOSED' );
+				$(document).trigger( 'game:finished', { x: this.snake.head.x, y: this.snake.head.y } );
 		}
 	};
 	// <<< GAME LOOPS <<<

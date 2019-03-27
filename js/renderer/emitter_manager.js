@@ -2,11 +2,13 @@
 
 class EmitterManager{
 
-	constructor( config, preloader, stage ){
+	constructor( blockSize, config, preloader, stage ){
 
 		this.container = new PIXI.Container();
 
 		stage.addChild( this.container );
+
+		this.blockSize = blockSize;
 
 		var scope = this;
 
@@ -22,30 +24,33 @@ class EmitterManager{
 			config.EMITTER_BONUS
 		);
 
-		var elapsed = 0;
+		var time;
 
 		function update(){
 					
 			var updateId = requestAnimationFrame(update);
-			var now = Date.now();
-			var delta = (now - elapsed) * 0.001;
-			elapsed = now;
+			var now = Date.now(),
+			delta = (now - (time || now)) * 0.001;
+			time = now;
 
 			scope.emitterSmoke.update(delta);
 			scope.emitterBonus.update(delta);
 			
 		};
 
-		update();
+		this.emitterSmoke.emit = false;
+		this.emitterBonus.emit = false;
 
-		$( document ).on( 'game:lose', function(e, param){
-			scope.emitterSmoke.spawnPos = param;
+		$( document ).on( 'game:finished', function(e, param){
+			scope.emitterSmoke.spawnPos.x = param.x * blockSize + blockSize / 2;
+			scope.emitterSmoke.spawnPos.y = param.y * blockSize + blockSize / 2;
 			scope.emitterSmoke.emit = true;
 			update();
 		});
 		
 		$( document ).on( 'game:bonusUp', function(e, param){
-			scope.emitterBonus.spawnPos = param;
+			scope.emitterBonus.spawnPos.x = param.x * blockSize + blockSize / 2;
+			scope.emitterBonus.spawnPos.y = param.y * blockSize + blockSize / 2;
 			scope.emitterBonus.emit = true;
 			update();
 		});
