@@ -41,6 +41,7 @@ class ScreenManager {
   };
 
   createScreen( target, data ){
+    
     var screen = new Screen( document.getElementById( target ), data );
     this.screens[target] = screen;
   };
@@ -80,7 +81,7 @@ class ScreenManager {
   };
 
   hideScreen( onComplete ){
-    
+
     if( !this.current_screen ) return;
 
     var screen = this.current_screen;
