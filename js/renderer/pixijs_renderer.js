@@ -88,7 +88,7 @@ class PixiJSRenderer{
 		this.initSnake();
 	};
 
-	initArea(gameState){
+	initArea( gameState ){
 		this.container = new PIXI.Container();
 		var container =  this.container;
 
