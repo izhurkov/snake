@@ -47,8 +47,20 @@ $(window).on( 'preloader:complete', function( e, data ){
 		      keyCodes:[80],
         	gestures: ['setPixi']
 		    },
+		    'setThree': {
+		      keyCodes:[84],
+        	gestures: ['setThree']
+		    },
 		    'touchup': {
         	gestures: ['touchup']
+		    },
+		    'turn-right': {
+		      keyCodes:[39],
+        	gestures: ['swipe-right']
+		    },
+		    'turn-left': {
+		      keyCodes:[37],
+        	gestures: ['swipe-left']
 		    }
 		  }
 		},
@@ -137,6 +149,20 @@ $(window).on( 'preloader:complete', function( e, data ){
 					loop: true
 				}
 			}
+		},
+		assets: {
+			'area' : {
+				assetClass: Area,
+				updatable: false				
+			},
+			'snake' : {
+				assetClass: Snake,
+				updatable: true				
+			},
+			'bonus' : {
+				assetClass: Bonus,
+				updatable: false				
+			}
 		}
 	};
 
@@ -145,17 +171,17 @@ $(window).on( 'preloader:complete', function( e, data ){
 	  blockColor: "rgba(143, 255, 143, 1)",
 	  wallColor: "rgba(68, 119, 68, 1)" ,
 	  areaX: 15,
-	  areaY: 11,
+	  areaY: 19,
 	  blockSize: 24,
 
 	  headColor: "rgba(124, 112, 96, 1)",
 	  bodyColor: "rgba(204, 177, 156, 1)",
-	  startPos: { x: 4, y: 6 },
+	  startPos: { x: 4, y: 19 },
 	  startLength: 3,
 
 	  bonusColor: "rgba(200, 70, 150, 1)",
 
-	  stepTime: 180
+	  stepTime: 350
 	};
 
 	var snakeGame = new Game( config, params, data.queue );

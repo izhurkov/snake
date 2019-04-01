@@ -11,8 +11,9 @@ class Game{
 		this.params.stepTime = this.stepTime = params.stepTime !== undefined ? params.stepTime : 1000;
 		this.maxSnakeLength = this.params.areaX * this.params.areaY - this.params.startLength;
 
-		this.assetManager = new AssetManager();
-		this.assetManager.addEntity();
+		// this.assetManager = new AssetManager( this.params);
+		// this.assetManager.addEntity( config.assets );
+		// this.assetManager.cloneEntity( 'bonus', 3 );
 
 		this.area = new Area( this.params );
 		this.snake = new Snake( this.params );
@@ -24,8 +25,10 @@ class Game{
 		this.gameState = {
 			area: this.area.blocks,
 			snake: this.snake.cellPositions,
-			head: this.snake.cellDirections,
+			direction: this.snake.direction,
 			bonus: this.bonus.position
+			// snake: this.assetManager.getData( 'snake' ),
+			// bonus: this.assetManager.getData( 'bonus' )
 		};
 
 		// отрисовка
@@ -106,13 +109,28 @@ class Game{
 	        case 'touchup':
 	        	scope.setDirectionFromTouch( param.detail.cursor_pos );
 	        	break;
+
+
+	        case 'turn-left':
+	        	console.log('turn-left');
+	        	break;
+
+	        case 'turn-right':
+	        	console.log('turn-right');
+	        	break;
+
 	        case 'setCanvas':
 	        	scope.renderer.setActiveRenderer('canvas');
 						scope.inputController.attach( scope.renderer.getActiveElement() );
-
 	        	break;
+
 	        case 'setPixi':
 	        	scope.renderer.setActiveRenderer('pixi');
+						scope.inputController.attach( scope.renderer.getActiveElement() );
+	        	break;
+
+	        case 'setThree':
+	        	scope.renderer.setActiveRenderer('three');
 						scope.inputController.attach( scope.renderer.getActiveElement() );
 	        	break;
 	    };
@@ -185,8 +203,10 @@ class Game{
 
 		this.gameState = {
 			snake: this.snake.cellPositions,
-			head: this.snake.cellDirections,
+			direction: this.snake.direction,
 			bonus: this.bonus.position
+			// snake: this.assetManager.getData( 'snake' ),
+			// bonus: this.assetManager.getData( 'bonus' )
 		};
 
 		this.renderer.drawFrame( this.gameState );
@@ -195,13 +215,15 @@ class Game{
 	};
 
 	updateGame(){
-		// console.log( this.getState() );	
 
 		if ( !this.isState( this.STATE_PLAYING ) )
 			return;
 
 		// move snake
 		this.snake.update( this.currentDirection );
+
+		// this.assetManager.setData( 'snake', this.currentDirection )
+		// this.assetManager.update( this.currentDirection );
 
 		// meeting with bonus
 		if ( Vector.equals( this.snake.head, this.bonus.position ) ){
