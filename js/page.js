@@ -68,7 +68,7 @@
 		}
 	};
 
-	PIXI.utils.sayHello("Hello world!");
+	PIXI.utils.skipHello();
 	
 	new ProgressBar();
 

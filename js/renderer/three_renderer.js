@@ -83,6 +83,32 @@ class ThreeRenderer{
 
 	initArea( preloader ){ // 0x575965
 
+		function CustomSinCurve( scale ) {
+
+			THREE.Curve.call( this );
+
+			this.scale = ( scale === undefined ) ? 1 : scale;
+
+		}
+
+		CustomSinCurve.prototype = Object.create( THREE.Curve.prototype );
+		CustomSinCurve.prototype.constructor = CustomSinCurve;
+
+		CustomSinCurve.prototype.getPoint = function ( t ) {
+
+			var tx = Math.cos( t * Math.PI / 2 + Math.PI / 2 );
+			var ty = Math.sin( t * Math.PI / 2 + Math.PI / 2 );
+			var tz = 1;
+
+			return new THREE.Vector3( tx, ty, tz ).multiplyScalar( this.scale );
+		};
+
+		var path = new CustomSinCurve( 1 );
+		var geometry = new THREE.TubeGeometry( path, 20, 0.1, 8, false );
+		var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+		var mesh = new THREE.Mesh( geometry, material );
+		this.scene.add( mesh );
+
 		var bgGeometry = new THREE.PlaneGeometry( this.areaX + 1.5, this.areaY + 1.5, 1 );
 		var bgMaterial = new THREE.ShadowMaterial(  );
 		bgMaterial.opacity = 0.1;
@@ -102,13 +128,16 @@ class ThreeRenderer{
 		bgGeometry.applyMatrix( new THREE.Matrix4().makeTranslation( this.newCenter.x, -this.newCenter.y, 0 ) );
 		this.bg2 = new THREE.Mesh( bgGeometry, bgMaterial );
 
+		var mesh = new THREE.Mesh( geometry, bgMaterial );
+		this.scene.add( mesh );
+
 		var group = new THREE.Group();
 
 		console.log(  preloader.queue )
 
 		texture = new THREE.TextureLoader().load(
 			'assets/Wall.png',
-			function(e){ console.log( e ) },
+			function(e){ },
 			undefined,
 			function ( err ) { console.error( 'An error happened.', err.path ); }
 		);
@@ -236,7 +265,6 @@ class ThreeRenderer{
 		// }
 		// var camera_pivot = new THREE.Object3D()
 
-		console.log( direction );
 
 		this.camera.position.x = cellPositions[0].x + 0.5 - 2 * direction.x;
 		this.camera.position.y = -cellPositions[0].y - 0.5 + 2 * direction.y;
@@ -262,16 +290,20 @@ class ThreeRenderer{
 
 		var snake = this.snake.children;
 
-		if ( snake.length > cellPositions.length )
+		if ( snake.length > cellPositions.length ){
 			snake.length = cellPositions.length
+			console.log( snake )
+		}
 		while ( cellPositions.length > snake.length ){
 			var cubeGeometry = new THREE.BoxGeometry( 0.7, 0.7, 0.4 );
 			var cubeMaterial = new THREE.MeshLambertMaterial( { color: 0xfefefe } );
 
 			var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
 
+
 			cube.castShadow = true;
 			this.snake.add( cube );
+			console.log( snake );
 		}
 
 		for ( var i = 0; i < snake.length; i++){

@@ -169,7 +169,6 @@ class PixiJSRenderer{
     }
     if ( cellDirections.length < container.children.length ){
     	container.children.length = cellDirections.length;
-    	console.log( container.children );
     } 
 
     // update positions
