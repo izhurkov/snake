@@ -47,20 +47,8 @@ $(window).on( 'preloader:complete', function( e, data ){
 		      keyCodes:[80],
         	gestures: ['setPixi']
 		    },
-		    'setThree': {
-		      keyCodes:[84],
-        	gestures: ['setThree']
-		    },
 		    'touchup': {
         	gestures: ['touchup']
-		    },
-		    'turn-right': {
-		      keyCodes:[39],
-        	gestures: ['swipe-right']
-		    },
-		    'turn-left': {
-		      keyCodes:[37],
-        	gestures: ['swipe-left']
 		    }
 		  }
 		},
@@ -130,7 +118,7 @@ $(window).on( 'preloader:complete', function( e, data ){
 					emitters: {
 						EMITTER_SMOKE: {"alpha":{"start":0.8,"end":0},"scale":{"start":0.3,"end":0.6,"minimumScaleMultiplier":2},"color":{"start":"#ffe44c","end":"#fc633c"},"speed":{"start":30,"end":0,"minimumSpeedMultiplier":1},"acceleration":{"x":1,"y":1},"maxSpeed":0,"startRotation":{"min":0,"max":360},"noRotation":false,"rotationSpeed":{"min":0,"max":40},"lifetime":{"min":0.8,"max":1.2},"blendMode":"normal","frequency":0.001,"emitterLifetime":0.1,"maxParticles":6,"pos":{"x":100,"y":100},"addAtBack":false,"spawnType":"point"}
 						,
-						EMITTER_BONUS: {"alpha":{"start":1,"end":0.18},"scale":{"start":0.4,"end":0.05,"minimumScaleMultiplier":1},"color":{"start":"#D13C2C","end":"#FC968B"},"speed":{"start":80,"end":40,"minimumSpeedMultiplier":1},"acceleration":{"x":1,"y":1},"maxSpeed":0,"startRotation":{"min":0,"max":360},"noRotation":false,"rotationSpeed":{"min":0,"max":360},"lifetime":{"min":0.5,"max":0.7},"blendMode":"normal","frequency":0.001,"emitterLifetime":0.1,"maxParticles":20,"pos":{"x":100,"y":100},"addAtBack":false,"spawnType":"point"}
+						EMITTER_BONUS: {"alpha":{"start":1,"end":0.18},"scale":{"start":0.6,"end":0.2,"minimumScaleMultiplier":1},"color":{"start":"#D13C2C","end":"#FC968B"},"speed":{"start":80,"end":40,"minimumSpeedMultiplier":1},"acceleration":{"x":1,"y":1},"maxSpeed":0,"startRotation":{"min":0,"max":360},"noRotation":false,"rotationSpeed":{"min":0,"max":360},"lifetime":{"min":0.5,"max":0.7},"blendMode":"normal","frequency":0.001,"emitterLifetime":0.1,"maxParticles":20,"pos":{"x":100,"y":100},"addAtBack":false,"spawnType":"point"}
 					}
 				}
 			},
@@ -149,20 +137,6 @@ $(window).on( 'preloader:complete', function( e, data ){
 					loop: true
 				}
 			}
-		},
-		assets: {
-			'area' : {
-				assetClass: Area,
-				updatable: false				
-			},
-			'snake' : {
-				assetClass: Snake,
-				updatable: true				
-			},
-			'bonus' : {
-				assetClass: Bonus,
-				updatable: false				
-			}
 		}
 	};
 
@@ -170,18 +144,18 @@ $(window).on( 'preloader:complete', function( e, data ){
 		
 	  blockColor: "rgba(143, 255, 143, 1)",
 	  wallColor: "rgba(68, 119, 68, 1)" ,
-	  areaX: 15,
-	  areaY: 19,
+	  areaX: 11,
+	  areaY: 9,
 	  blockSize: 24,
 
 	  headColor: "rgba(124, 112, 96, 1)",
 	  bodyColor: "rgba(204, 177, 156, 1)",
-	  startPos: { x: 4, y: 19 },
+	  startPos: { x: 4, y: 2 },
 	  startLength: 3,
 
 	  bonusColor: "rgba(200, 70, 150, 1)",
 
-	  stepTime: 350
+	  stepTime: 200
 	};
 
 	var snakeGame = new Game( config, params, data.queue );

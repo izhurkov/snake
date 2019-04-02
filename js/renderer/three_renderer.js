@@ -18,7 +18,7 @@ class ThreeRenderer{
 
 		// >>> SETUP CANVAS >>>
 		this.scene = new THREE.Scene()
-		this.camera = new THREE.PerspectiveCamera( 90, this.width / this.height, 0.1, 10000 )
+		this.camera = new THREE.PerspectiveCamera( 45, this.width / this.height, 0.1, 10000 )
 		this.renderer = new THREE.WebGLRenderer( { antialias: true} )
 
 		this.renderer.setSize( this.width, this.height );
@@ -39,7 +39,7 @@ class ThreeRenderer{
 
 		this.camera.position.x = this.newCenter.x + 0;
 		this.camera.position.y = - 1.5 * this.areaY ;
-		this.camera.position.z = 30;
+		this.camera.position.z = 18;
 		this.camera.lookAt( new THREE.Vector3( this.newCenter.x, -this.newCenter.y, this.newCenter.z ) );
 		// <<< SETUP CAMERA <<<
 
@@ -83,13 +83,11 @@ class ThreeRenderer{
 
 	initArea( preloader ){ // 0x575965
 
-		// var geometry = new THREE.PlaneGeometry( this.areaX + 2, this.areaY + 2, 1 );
-
-		this.bgGeometry = new THREE.PlaneGeometry( this.areaX + 1.5, this.areaY + 1.5, 1 );
-		this.bgMaterial = new THREE.ShadowMaterial(  );
-		this.bgMaterial.opacity = 0.1;
-		this.bgGeometry.applyMatrix( new THREE.Matrix4().makeTranslation( this.newCenter.x, -this.newCenter.y, 0 ) );
-		this.bg = new THREE.Mesh( this.bgGeometry, this.bgMaterial );
+		var bgGeometry = new THREE.PlaneGeometry( this.areaX + 1.5, this.areaY + 1.5, 1 );
+		var bgMaterial = new THREE.ShadowMaterial(  );
+		bgMaterial.opacity = 0.1;
+		bgGeometry.applyMatrix( new THREE.Matrix4().makeTranslation( this.newCenter.x, -this.newCenter.y, 0 ) );
+		this.bg = new THREE.Mesh( bgGeometry, bgMaterial );
 		this.bg.receiveShadow = true;
 
 		var texture = new THREE.TextureLoader().load( 'assets/Ground.png' , function ( texture ) {
@@ -99,43 +97,33 @@ class ThreeRenderer{
 
 		} );
 
-		// var texture = 
-
-
-		this.bgGeometry = new THREE.PlaneGeometry( this.areaX + 1.5, this.areaY + 1.5, 1 );
-		this.bgMaterial = new THREE.MeshLambertMaterial( { map: texture } ); // 447744
-		this.bgGeometry.applyMatrix( new THREE.Matrix4().makeTranslation( this.newCenter.x, -this.newCenter.y, 0 ) );
-		this.bg2 = new THREE.Mesh( this.bgGeometry, this.bgMaterial );
-
-
+		bgGeometry = new THREE.PlaneGeometry( this.areaX + 1.5, this.areaY + 1.5, 1 );
+		bgMaterial = new THREE.MeshLambertMaterial( { map: texture } ); // 447744
+		bgGeometry.applyMatrix( new THREE.Matrix4().makeTranslation( this.newCenter.x, -this.newCenter.y, 0 ) );
+		this.bg2 = new THREE.Mesh( bgGeometry, bgMaterial );
 
 		var group = new THREE.Group();
 
 		console.log(  preloader.queue )
 
 		texture = new THREE.TextureLoader().load(
-			// preloader.queue.getResult( 'wall' ).src,
 			'assets/Wall.png',
 			function(e){ console.log( e ) },
 			undefined,
 			function ( err ) { console.error( 'An error happened.', err.path ); }
 		);
 
-		var cubeMaterial = new THREE.MeshLambertMaterial( { map: texture } );
+		var material = new THREE.MeshLambertMaterial( { map: texture } );
 
 		for ( var i = 0; i < this.areaY + 2; i++ ){
 			var maxRand = randomInteger( 80, 110 ) / 100;
-			var cubeGeometry = new THREE.BoxBufferGeometry( maxRand, maxRand, maxRand * 0.8, 7, 7, 7 );
+			var geometry = new THREE.BoxBufferGeometry( maxRand, maxRand, maxRand * 0.8, 7, 7, 7 );
 
-			var divisions = 1;
-    	var modifier = new THREE.SubdivisionModifier( divisions );
-    	var smooth = modifier.modify( cubeGeometry )
-
-			var cube = new THREE.Mesh( smooth, cubeMaterial );
+			var cube = new THREE.Mesh( geometry, material );
 			cube.position.x = 0;
 			cube.position.y = -i;
 
-			var cube2 = new THREE.Mesh( cubeGeometry, cubeMaterial );
+			var cube2 = new THREE.Mesh( geometry, material );
 			cube2.position.x = this.areaX + 1;
 			cube2.position.y = - this.areaY + i - 1;
 
@@ -145,17 +133,13 @@ class ThreeRenderer{
 
 		for ( var i = 1; i < this.areaX + 1; i++ ){
 			var maxRand = randomInteger( 80, 110 ) / 100;
-			var cubeGeometry = new THREE.BoxGeometry( maxRand, maxRand, maxRand * 0.8, 7, 7, 7 );
+			var geometry = new THREE.BoxGeometry( maxRand, maxRand, maxRand * 0.8, 7, 7, 7 );
 
-    	var divisions = 1;
-    	var modifier = new THREE.SubdivisionModifier( divisions );
-    	var smooth = modifier.modify( cubeGeometry )
-
-			var cube = new THREE.Mesh( smooth, cubeMaterial );
+			var cube = new THREE.Mesh( geometry, material );
 			cube.position.y = 0;
 			cube.position.x = i;
 
-			var cube2 = new THREE.Mesh( cubeGeometry, cubeMaterial );
+			var cube2 = new THREE.Mesh( geometry, material );
 			cube2.position.y = -this.areaY - 1;
 			cube2.position.x = this.areaX + 1 - i;;
 
@@ -178,31 +162,22 @@ class ThreeRenderer{
 		this.scene.add(this.snake);
 
 		// init snake`s head
-		this.cubeGeometry = new THREE.BoxGeometry( 0.8, 0.8, 0.4, 7, 7, 7 );
-		this.cubeMaterial = new THREE.MeshLambertMaterial( { color: 0xf5cc5a } );
-		var divisions = 1;
-    	var modifier = new THREE.SubdivisionModifier( divisions );
-    	var smooth = modifier.modify( this.cubeGeometry )
+		var geometry = new THREE.BoxGeometry( 0.8, 0.8, 0.4, 7, 7, 7 );
+		var material = new THREE.MeshLambertMaterial( { color: 0xf5cc5a } );
 
+		// var divisions = 1;
+		// var modifier = new THREE.SubdivisionModifier( divisions );
+		// var smooth = modifier.modify( geometry )
 
-		this.cube = new THREE.Mesh( smooth, this.cubeMaterial );
+		var cube = new THREE.Mesh( geometry, material );
 
-		this.cube.castShadow = true;
-		this.snake.add( this.cube );
+		cube.castShadow = true;
+		this.snake.add( cube );
 	};
 
 	initBonus(){
 		var geometry = new THREE.BoxGeometry( 0.8, 0.8, 0.4, 3, 3, 3 );
 		geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.21 ) );
-
-		// var smooth = geometry.clone( );
-		// // smooth.mergeVertices();
-		// // smooth.computeVertexNormals();
-
-  //   var divisions = 3;
-  //   var modifier = new THREE.SubdivisionModifier( divisions );
-  //   smooth = modifier.modify( smooth );
-  //   	// modifier.supportUVs = false
 
 		var material = new THREE.MeshLambertMaterial( { color: 0x2e2528 } );
 
@@ -214,10 +189,10 @@ class ThreeRenderer{
 
 	initLights(){
 		
-		this.scene.add( createLight( 0xfefefe, 0.4, 0, 0, 12, false ) );
-		this.scene.add( createLight( 0xfefefe, 0.6, this.areaX + 2, 0, 12, true ) );
-		this.scene.add( createLight( 0xfefefe, 0.2, 0, - this.areaY - 4, 12, false )  );
-		this.scene.add( createLight( 0xfefefe, 0.4, this.areaX + 2, - this.areaY - 4, 12, false )  );
+		this.scene.add( createLight( 0xfefefe, 0.3, 0, 0, 12, false ) );
+		this.scene.add( createLight( 0xfefefe, 0.5, this.areaX + 2, 0, 12, true ) );
+		this.scene.add( createLight( 0xfefefe, 0.1, 0, - this.areaY - 4, 12, false )  );
+		this.scene.add( createLight( 0xfefefe, 0.3, this.areaX + 2, - this.areaY - 4, 12, false )  );
 
 
 		function createLight( color, intensity, x, y, z, castShadow ){
@@ -240,7 +215,7 @@ class ThreeRenderer{
 	// >>> DRAW >>>
 	drawFrame( gameState ){
 
-		this.updateCamera( gameState.snake, gameState.direction );
+		// this.updateCamera( gameState.snake, gameState.direction );
 		this.updateSnake( gameState.snake );
 		this.updateBonus( gameState.bonus );
 		this.renderer.render( this.scene, this.camera );
@@ -285,22 +260,24 @@ class ThreeRenderer{
 
 	updateSnake( cellPositions ){
 
-		if ( this.snake.children.length > cellPositions.length )
-			this.snake.children.length = cellPositions.length
-		while ( cellPositions.length > this.snake.children.length ){
-			this.cubeGeometry = new THREE.BoxGeometry( 0.7, 0.7, 0.4 );
-			this.cubeMaterial = new THREE.MeshLambertMaterial( { color: 0xfefefe } );
+		var snake = this.snake.children;
 
-			this.cube = new THREE.Mesh( this.cubeGeometry, this.cubeMaterial );
+		if ( snake.length > cellPositions.length )
+			snake.length = cellPositions.length
+		while ( cellPositions.length > snake.length ){
+			var cubeGeometry = new THREE.BoxGeometry( 0.7, 0.7, 0.4 );
+			var cubeMaterial = new THREE.MeshLambertMaterial( { color: 0xfefefe } );
 
-			this.cube.castShadow = true;
-			this.snake.add( this.cube );
+			var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
+
+			cube.castShadow = true;
+			this.snake.add( cube );
 		}
 
-		for ( var i = 0; i < this.snake.children.length; i++){
+		for ( var i = 0; i < snake.length; i++){
 
-			this.snake.children[i].position.x = cellPositions[i].x;
-			this.snake.children[i].position.y = -cellPositions[i].y;
+			snake[i].position.x = cellPositions[i].x;
+			snake[i].position.y = -cellPositions[i].y;
 		}
 	};
 

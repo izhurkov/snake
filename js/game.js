@@ -25,7 +25,7 @@ class Game{
 		this.gameState = {
 			area: this.area.blocks,
 			snake: this.snake.cellPositions,
-			direction: this.snake.direction,
+			direction: this.snake.cellDirections,
 			bonus: this.bonus.position
 			// snake: this.assetManager.getData( 'snake' ),
 			// bonus: this.assetManager.getData( 'bonus' )
@@ -110,15 +110,6 @@ class Game{
 	        	scope.setDirectionFromTouch( param.detail.cursor_pos );
 	        	break;
 
-
-	        case 'turn-left':
-	        	console.log('turn-left');
-	        	break;
-
-	        case 'turn-right':
-	        	console.log('turn-right');
-	        	break;
-
 	        case 'setCanvas':
 	        	scope.renderer.setActiveRenderer('canvas');
 						scope.inputController.attach( scope.renderer.getActiveElement() );
@@ -128,32 +119,24 @@ class Game{
 	        	scope.renderer.setActiveRenderer('pixi');
 						scope.inputController.attach( scope.renderer.getActiveElement() );
 	        	break;
-
-	        case 'setThree':
-	        	scope.renderer.setActiveRenderer('three');
-						scope.inputController.attach( scope.renderer.getActiveElement() );
-	        	break;
 	    };
 	  });
 
 	  ////////////////////
-	  $( document )
-	  .on( 'game:ready', function(e) {
-			scope.setState( scope.STATE_READY )
-	  })
-	  .on( 'game:start', function(e) {
-			scope.setState( scope.STATE_PLAYING );
-	  })
-	  .on( "game:finished", function(e){
-			scope.setState( scope.STATE_FINISHED );
-	  	$( document ).trigger('show-screen', 'endScreen')
-		})
-		.on( "game:pause", function(e){
-			scope.setState( scope.STATE_PAUSE );
-		})
-	 	.on( "game:bonusUp", function(e){
-			scope.playSound('bonus_mp3');
-		})
+	  //
+	  EventBus.addEvent('game:ready', function(){
+	  	scope.setState( scope.STATE_READY );
+	  } );
+	  EventBus.addEvent('game:start', function(){
+	  	scope.setState( scope.STATE_PLAYING );
+	  } );
+	  EventBus.addEvent('game:finished', function(){
+	  	scope.setState( scope.STATE_FINISHED );
+	  	$( document ).trigger('show-screen', 'endScreen');
+	  } );
+	  EventBus.addEvent('game:pause', function(){
+	  	scope.setState( scope.STATE_PAUSE );
+	  } );
 	};
 
 
@@ -203,10 +186,8 @@ class Game{
 
 		this.gameState = {
 			snake: this.snake.cellPositions,
-			direction: this.snake.direction,
+			direction: this.snake.cellDirections,
 			bonus: this.bonus.position
-			// snake: this.assetManager.getData( 'snake' ),
-			// bonus: this.assetManager.getData( 'bonus' )
 		};
 
 		this.renderer.drawFrame( this.gameState );
@@ -222,9 +203,6 @@ class Game{
 		// move snake
 		this.snake.update( this.currentDirection );
 
-		// this.assetManager.setData( 'snake', this.currentDirection )
-		// this.assetManager.update( this.currentDirection );
-
 		// meeting with bonus
 		if ( Vector.equals( this.snake.head, this.bonus.position ) ){
 
@@ -239,7 +217,7 @@ class Game{
 			this.snake.addBlock( this.currentDirection );
 			this.bonus.position = this.getNewBonusPosition();
 
-			$(document).trigger( 'game:bonusUp', { x: this.snake.head.x, y: this.snake.head.y } );
+			$(document).trigger( 'game:bonusTaken', { x: this.snake.head.x, y: this.snake.head.y } );
 
 		} // meeting with body
 		else if ( this.snakeCollision() ){
@@ -299,3 +277,10 @@ class Game{
 	// <<< GAME LOGIC <<<
 
 };
+
+
+function EventBus(){}
+
+EventBus.addEvent = function( eventName, atEvent ){
+	$(document).on( eventName, atEvent )
+}

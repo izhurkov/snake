@@ -31,21 +31,25 @@ class TouchDevice extends Controller{
           return;
         var cursor_pos = device.getCursorPositionFromEvent(e);
         deviceMovement = { x: cursor_pos.x , y: cursor_pos.y };
+        var action = device.actions_by_gestures[ 'touchup' ];
+        scope.setActionActive(action, true, cursor_pos);
         // console.log(deviceMovement);
       };
 
       this.onTouchUp = function(e){
+        var cursor_pos = device.getCursorPositionFromEvent(e);
         if (e.cancelable) {
           e.preventDefault();
         }
         if (!device.enabled)
           return;
-        var cursor_pos = device.getCursorPositionFromEvent(e);
         deviceMovement = {  x:(cursor_pos.x-deviceMovement.x),
                             y: (cursor_pos.y-deviceMovement.y) };
 
-        scope.setActionActive(action, true, cursor_pos);
-        scope.setActionActive(action, false, cursor_pos);
+        // scope.setActionActive(action, true, cursor_pos);
+        // scope.setActionActive(action, false, cursor_pos);
+        
+        // console.log( cursor_pos );
 
 
         var minSwipeLengthTmp = device.minSwipeLength || 0;
@@ -53,11 +57,15 @@ class TouchDevice extends Controller{
         var absDeviceMovementX = Math.abs(deviceMovement.x);
         var absDeviceMovementY = Math.abs(deviceMovement.y);
 
+        var action = device.actions_by_gestures[ 'touchup' ];
+
         // CHECK LENGTH
         if (absDeviceMovementX < minSwipeLengthTmp && absDeviceMovementY < minSwipeLengthTmp){
+          scope.setActionActive(action, false, cursor_pos);
           return;
         }
-        var action = device.actions_by_gestures[ 'touchup' ];
+
+
         // if (minSwipeLengthTmp * minSwipeLengthTmp > (deviceMovement.x * deviceMovement.x + deviceMovement.y * deviceMovement.y)
         //   return;
 

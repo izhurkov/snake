@@ -31,7 +31,12 @@ class SoundManager{
 	    $("#muted").attr( { 'value': muted ? "Unmute" : "Mute" } );
 		});
 
-		// var muted = PIXI.sound.toggleMuteAll();
+		var scope = this;
+
+		$( document )
+			.on( 'game:bonusTaken', function(){
+				scope.playSound( 'bonus_mp3' )
+			});
 	};
 
 	playSound( soundName ){

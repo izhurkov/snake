@@ -48,7 +48,7 @@ class EmitterManager{
 			update();
 		});
 		
-		$( document ).on( 'game:bonusUp', function(e, param){
+		$( document ).on( 'game:bonusTaken', function(e, param){
 			scope.emitterBonus.spawnPos.x = param.x * blockSize + blockSize / 2;
 			scope.emitterBonus.spawnPos.y = param.y * blockSize + blockSize / 2;
 			scope.emitterBonus.emit = true;

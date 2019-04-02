@@ -31,7 +31,7 @@ class PixiJSRenderer{
 		this.initTexture( renderConfig, preloader, gameState );
 
 		// тряска экрана
-		this.setScreenShake( .8, 0.05, 10 );
+		this.setScreenShake( 1.2, 0.05, 15 );
 
 		// частицы
 		new EmitterManager( this.blockSize, renderConfig.emitters, preloader, this.app.stage );
@@ -50,10 +50,13 @@ class PixiJSRenderer{
 		var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 		var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 
-		var screenRatio = ( width - 20 ) / ( height - 60 );
+		width -= 20;
+		height -= 60
+
+		var screenRatio = ( width ) / ( height );
 		var gameRatio = ( this.areaX + 2 ) / ( this.areaY + 2 );
 
-		this.blockSize = ( screenRatio > gameRatio ) ? ( height - 60 ) / ( this.areaY + 2 ) : ( width - 20 ) / ( this.areaX + 2 );
+		this.blockSize = ( screenRatio > gameRatio ) ? ( height ) / ( this.areaY + 2 ) : ( width ) / ( this.areaX + 2 );
 	};
 
 	// >>> SET TEXTURE >>>
@@ -148,7 +151,7 @@ class PixiJSRenderer{
 
 	// >>> DRAW >>>
 	drawFrame( gameState ){
-		this.updateSnake( gameState.snake, gameState.head );
+		this.updateSnake( gameState.snake, gameState.direction );
 		this.updateBonus( gameState.bonus );
 	};
 
@@ -166,6 +169,7 @@ class PixiJSRenderer{
     }
     if ( cellDirections.length < container.children.length ){
     	container.children.length = cellDirections.length;
+    	console.log( container.children );
     } 
 
     // update positions
@@ -201,7 +205,6 @@ class PixiJSRenderer{
 			(function update(){
 
 				if ( seconds < 0 ){
-
 					stage.scale = { x: 1, y: 1 };
 					stage.position = { x: 0, y:0 };
 					return;
