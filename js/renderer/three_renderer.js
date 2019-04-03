@@ -63,8 +63,6 @@ class ThreeRenderer{
 
 		this.pos = new THREE.Vector3();
 
-		var emitter;
-		var pool;
     var emitterSettings = {
         type: SPE.distributions.SPHERE,
         position: {
@@ -93,18 +91,30 @@ class ThreeRenderer{
 
   	this.particleGroup = new SPE.Group({
   		texture: {
-              value: THREE.ImageUtils.loadTexture('assets/CartoonSmoke.png')
-          },
-          blending: THREE.NormalBlending
+          value: THREE.ImageUtils.loadTexture('assets/CartoonSmoke.png')
+      },
+      blending: THREE.NormalBlending
   	});
     this.particleGroup.addPool( 10, emitterSettings, false );
   	this.scene.add( this.particleGroup.mesh );
+
+  	this.particleBonusGroup = new SPE.Group({
+  		texture: {
+          value: THREE.ImageUtils.loadTexture('assets/CartoonSmoke.png')
+      },
+      blending: THREE.NormalBlending
+  	});
+    this.particleBonusGroup.addPool( 10, emitterSettings, false );
+  	this.scene.add( this.particleBonusGroup.mesh );
 		
 
 		var scope = this;
 
+		$( document ).on( 'game:finished', function( e, param ){
+			scope.createExplosionBonus( param );
+		});
+
 		$( document ).on( 'game:bonusTaken', function( e, param ){
-			console.log( param )
 			scope.createExplosion( param );
 
 			var seconds = 0.001 * scope.game.stepTime ;
@@ -144,7 +154,11 @@ class ThreeRenderer{
 
 	createExplosion( position ) {
       this.particleGroup.triggerPoolEmitter( 1, (this.pos.set( position.x + 0.5, - position.y - 0.5, 0.5 )) );
-  }
+  };
+
+  createExplosionBonus( position ) {
+      this.particleBonusGroup.triggerPoolEmitter( 1, (this.pos.set( position.x + 0.5, - position.y - 0.5, 0.5 )) );
+  };
 
 	getActiveElement(){
 		return this.renderer.domElement;
