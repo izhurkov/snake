@@ -2,7 +2,7 @@
 
 class Renderer {
 
-	constructor ( configRender, params, preloader_queue, gameState ){
+	constructor ( configRender, params, preloader_queue, gameState, game ){
 		this.params = params;
 
 		this.parentElement = configRender.parentElement;
@@ -34,7 +34,7 @@ class Renderer {
 			if( renderDefault && typeof(renderDefault.renderClass) !== undefined ){
 				for ( var configName in renderConfig )
 					this.defaultRender.renders[renderName][configName] = renderConfig[configName];
-				this.renders[renderName] = new renderDefault.renderClass( params, renderDefault, preloader_queue, gameState );
+				this.renders[renderName] = new renderDefault.renderClass( params, renderDefault, preloader_queue, gameState, game );
 			}
 			this.renders[renderName].hide();
 		};
@@ -64,6 +64,7 @@ class Renderer {
 
 	drawFrame( gameState ){
 		this.gameState = gameState;
-		this.activeRender.drawFrame( gameState );
+		// console.log("drawFrame", gameState)
+		// this.activeRender.drawFrame(  );
 	};
 }

@@ -2,7 +2,7 @@
 
 class PixiJSRenderer{
 
-	constructor ( params, renderConfig, preloader, gameState ){
+	constructor ( params, renderConfig, preloader, gameState, game ){
 		this.params = params;
 
 		this.areaX = params.areaX !== undefined ? params.areaX : 50;
@@ -211,8 +211,8 @@ class PixiJSRenderer{
 
 				var updateId = requestAnimationFrame(update);
 
-				var now = Date.now(),
-        delta = (now - (time || now)) * 0.001;
+				var now = Date.now();
+        var delta = (now - (time || now)) * 0.001;
     		time = now;
 				seconds -= delta;
 

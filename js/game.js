@@ -31,8 +31,11 @@ class Game{
 			// bonus: this.assetManager.getData( 'bonus' )
 		};
 
+
+		var scope = this;
+
 		// отрисовка
-		this.renderer = new Renderer( config.render, this.params, preloader, this.gameState );
+		this.renderer = new Renderer( config.render, this.params, preloader, this.gameState, scope );
 		this.blockSize = this.renderer.getBlockSize();
 
 		// музыка
@@ -51,7 +54,6 @@ class Game{
 		this.STATE_FINISHED = 'STATE_FINISHED';
 		this.STATE_PAUSE = 'STATE_PAUSE';
 
-		var scope = this;
 
 		var states = {
 
@@ -190,7 +192,7 @@ class Game{
 			bonus: this.bonus.position
 		};
 
-		this.renderer.drawFrame( this.gameState );
+		// this.renderer.drawFrame( this.gameState );
 
 		this.interfaceController.update( this.score );
 	};
@@ -255,6 +257,7 @@ class Game{
 	};
 
 	getNewBonusPosition(){
+		// var newPos = new Vector( this.bonus.position.x+1, this.bonus.position.y );
 		var newPos = new Vector( randomInteger( 1, this.areaX ), randomInteger( 1, this.areaY ) );
 		for ( var cellPositions in this.snake.cellPositions )
 			if ( Vector.equals( newPos, this.snake.cellPositions[cellPositions] ) ) return this.getNewBonusPosition();

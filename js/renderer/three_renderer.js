@@ -2,7 +2,7 @@
 
 class ThreeRenderer{
 
-	constructor ( params, renderConfig, preloader, gameState ){
+	constructor ( params, renderConfig, preloader, gameState, game ){
 		this.params = params;
 
 		this.areaX = params.areaX !== undefined ? params.areaX : 50;
@@ -14,11 +14,13 @@ class ThreeRenderer{
 		this.height = this.blockSize * (this.areaY + 2);
 		this.width = this.blockSize * (this.areaX + 2);
 
+		this.game = game;
+
 
 
 		// >>> SETUP CANVAS >>>
 		this.scene = new THREE.Scene()
-		this.camera = new THREE.PerspectiveCamera( 45, this.width / this.height, 0.1, 10000 )
+		this.camera = new THREE.PerspectiveCamera( 45, this.width / this.height, 0.1, 1000 )
 		this.renderer = new THREE.WebGLRenderer( { antialias: true} )
 
 		this.renderer.setSize( this.width, this.height );
@@ -56,7 +58,93 @@ class ThreeRenderer{
 
 		this.down = true;
 
+		// this.drawFrame();
+		
+
+		this.pos = new THREE.Vector3();
+
+		var emitter;
+		var pool;
+    var emitterSettings = {
+        type: SPE.distributions.SPHERE,
+        position: {
+            spread: new THREE.Vector3(1),
+            radius: 0.1,
+        },
+        velocity: {
+            value: new THREE.Vector3( 3, 3, 0 )
+        },
+        size: {
+            value: [ 1, 4 ]
+        },
+        opacity: {
+            value: [1, 0]
+        },
+        color: {
+            value: [new THREE.Color('red'),new THREE.Color('yellow')]
+        },
+        particleCount: 15,
+        alive: false,
+        duration: 0.1,
+        maxAge: {
+            value: 0.5
+        }
+    };
+
+  	this.particleGroup = new SPE.Group({
+  		texture: {
+              value: THREE.ImageUtils.loadTexture('assets/CartoonSmoke.png')
+          },
+          blending: THREE.NormalBlending
+  	});
+    this.particleGroup.addPool( 10, emitterSettings, false );
+  	this.scene.add( this.particleGroup.mesh );
+		
+
+		var scope = this;
+
+		$( document ).on( 'game:bonusTaken', function( e, param ){
+			console.log( param )
+			scope.createExplosion( param );
+
+			var seconds = 0.001 * scope.game.stepTime ;
+			var duration = seconds;
+			var time;
+			console.log( seconds, duration );
+
+			(function update(){
+
+				var updateId = requestAnimationFrame(update);
+
+				var now = Date.now();
+        var delta = (now - (time || now)) * 0.001;
+    		time = now;
+				seconds -= delta;
+
+				if ( seconds <= 0 ){
+
+					scope.cubeBonus.scale.set( 1, 1, 1 );
+					scope.snake.children[0].material.color.setHex( 0xf5cc5a );
+					return;
+				}
+
+				scope.snake.children[0].material.color.setHex( getRandomHexColor( '0x' ) );
+
+				var scale = ( duration - seconds ) / duration;
+
+				console.log( scale );
+				scope.cubeBonus.scale.set( scale, scale, scale );
+
+
+			}());
+
+		} );
+
 	};
+
+	createExplosion( position ) {
+      this.particleGroup.triggerPoolEmitter( 1, (this.pos.set( position.x + 0.5, - position.y - 0.5, 0.5 )) );
+  }
 
 	getActiveElement(){
 		return this.renderer.domElement;
@@ -246,8 +334,10 @@ class ThreeRenderer{
 		this.scene.add(this.snake);
 
 		// init snake`s head
-		var geometry = new THREE.BoxGeometry( 0.8, 0.8, 0.4, 7, 7, 7 );
-		var material = new THREE.MeshLambertMaterial( { color: 0xf5cc5a } );
+		var geometry = new THREE.BoxGeometry( 0.8, 0.8, 0.4 );
+		var material = new THREE.MeshLambertMaterial( {
+			color: 0xf5cc5a
+		} );
 
 		var cube = new THREE.Mesh( geometry, material );
 
@@ -256,16 +346,24 @@ class ThreeRenderer{
 	};
 
 	initBonus(){
-
-		var geometry = new THREE.BoxGeometry( 0.8, 0.8, 0.4, 3, 3, 3 );
-		geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.21 ) );
-
-		var material = new THREE.MeshLambertMaterial( {
-			color: 0x2e2528,
+		var geometry = new THREE.SphereGeometry( 0.4, 32, 32 );
+		var materials = new THREE.MeshLambertMaterial( {
+			color: 0xd62a2a
+			// envMap: this.scene.background,
 		} );
+		// this.sphere = new THREE.Mesh( geometry, material );
+		// scene.add( sphere );
 
-		this.cubeBonus = new THREE.Mesh( geometry, material );
+		// var geometry = new THREE.BoxGeometry( 0.8, 0.8, 0.4, 3, 3, 3 );
+		// // geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.21 ) );
+
+		// var material = new THREE.MeshLambertMaterial( {
+		// 	color: 0x2e2528,
+		// } );
+
+		this.cubeBonus = new THREE.Mesh( geometry, materials );
 		this.cubeBonus.castShadow = true;
+		this.cubeBonus.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.10 ) );
 
 		this.scene.add( this.cubeBonus );
 	}
@@ -295,20 +393,45 @@ class ThreeRenderer{
 		}
 	
 	}
-
-	
-	
 	// <<< SET TEXTURE <<<
 
 
 
 	// >>> DRAW >>>
-	drawFrame( gameState ){
+	drawFrame( ){
+		let scope = this;
 
+
+		this.time;
+
+		setTimeout( function(){
+
+			requestAnimationFrame( () => { scope.drawFrame() } );
+
+			var gameState = scope.game.gameState;
+
+    	// console.log( delta, now, time );
+
+			var now = new Date().getTime();
+
+			var delta = ( now - (this.time || now) ) * 0.001;
+
+    	this.time = now;
+
+    	if ( delta > 1 )
+    		console.log( delta );
+
+			scope.particleGroup.tick( delta );
+
+			scope.updateSnake( gameState.snake );
+			scope.updateBonus( gameState.bonus );
+			scope.renderer.render( scope.scene, scope.camera );
+
+		}, 1 );
+
+		
 		// this.updateCamera( gameState.snake, gameState.direction );
-		this.updateSnake( gameState.snake );
-		this.updateBonus( gameState.bonus );
-		this.renderer.render( this.scene, this.camera );
+
 		// this.composer.render();
 	};
 
@@ -375,8 +498,8 @@ class ThreeRenderer{
 	};
 
 	updateBonus( position ){
-		this.cubeBonus.position.x = position.x;
-		this.cubeBonus.position.y = -position.y;
+		this.cubeBonus.position.x = position.x + 0.5;
+		this.cubeBonus.position.y = -position.y - 0.5;
 	};
 	// <<< DRAW <<<
 	
@@ -388,7 +511,7 @@ class ThreeRenderer{
 
 	show( gameState ){
 		$( this.renderer.domElement ).show();
-		this.drawFrame( gameState );
+		this.drawFrame();
 	}
 
 };
