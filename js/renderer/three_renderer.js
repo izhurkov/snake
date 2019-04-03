@@ -128,7 +128,7 @@ class ThreeRenderer{
 					return;
 				}
 
-				scope.snake.children[0].material.color.setHex( getRandomHexColor( '0x' ) );
+				scope.snake.children[0].material.color.setHex( getRandomHexadecimalColor( '0x' ) );
 
 				var scale = ( duration - seconds ) / duration;
 

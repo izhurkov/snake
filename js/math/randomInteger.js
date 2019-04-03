@@ -6,7 +6,7 @@ function randomInteger( min, max ) {
 	return rand;
 };
 
-function getRandomHexColor( preColor ) {
+function getRandomHexadecimalColor( preColor ) {
   var letters = '012345ABCDEF';
   var color = preColor;
   for (var i = 0; i < 6; i++) {
