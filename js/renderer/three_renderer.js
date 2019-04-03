@@ -24,9 +24,12 @@ class ThreeRenderer{
 		this.renderer.setSize( this.width, this.height );
 		this.renderer.setClearColor( 0xFFFFFF, 1);
 		this.renderer.shadowMap.enabled = true;
-		this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-		this.scene.add( new THREE.AmbientLight( 0x404040, 0.5 ) );
+		this.renderer.setPixelRatio( window.devicePixelRatio );
+		this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+		// this.renderer.gammaInput = true;
+		// this.renderer.gammaOutput = true;
+
 
 		$( renderConfig.parentElement ).append( this.renderer.domElement );
 		$( this.renderer.domElement ).attr('tabindex', 0);
@@ -83,107 +86,159 @@ class ThreeRenderer{
 
 	initArea( preloader ){ // 0x575965
 
-		function CustomSinCurve( scale ) {
+		// function CustomSinCurve( scale ) {
 
-			THREE.Curve.call( this );
+		// 	THREE.Curve.call( this );
 
-			this.scale = ( scale === undefined ) ? 1 : scale;
+		// 	this.scale = ( scale === undefined ) ? 1 : scale;
 
-		}
+		// }
 
-		CustomSinCurve.prototype = Object.create( THREE.Curve.prototype );
-		CustomSinCurve.prototype.constructor = CustomSinCurve;
+		// CustomSinCurve.prototype = Object.create( THREE.Curve.prototype );
+		// CustomSinCurve.prototype.constructor = CustomSinCurve;
 
-		CustomSinCurve.prototype.getPoint = function ( t ) {
+		// CustomSinCurve.prototype.getPoint = function ( t ) {
 
-			var tx = Math.cos( t * Math.PI / 2 + Math.PI / 2 );
-			var ty = Math.sin( t * Math.PI / 2 + Math.PI / 2 );
-			var tz = 1;
+		// 	var tx = Math.cos( t * Math.PI / 2 + Math.PI / 2 );
+		// 	var ty = Math.sin( t * Math.PI / 2 + Math.PI / 2 );
+		// 	var tz = 1;
 
-			return new THREE.Vector3( tx, ty, tz ).multiplyScalar( this.scale );
-		};
+		// 	return new THREE.Vector3( tx, ty, tz ).multiplyScalar( this.scale );
+		// };
 
-		var path = new CustomSinCurve( 1 );
-		var geometry = new THREE.TubeGeometry( path, 20, 0.1, 8, false );
-		var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-		var mesh = new THREE.Mesh( geometry, material );
-		this.scene.add( mesh );
+		// var path = new CustomSinCurve( 1 );
+		// var geometry = new THREE.TubeGeometry( path, 20, 0.1, 8, false );
+		// var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+		// var mesh = new THREE.Mesh( geometry, material );
+		// this.scene.add( mesh );
+		
+		// add group
+		var groundGroup = new THREE.Group();
+		groundGroup.applyMatrix( new THREE.Matrix4().makeTranslation( this.newCenter.x, -this.newCenter.y, 0 ) );
+		this.scene.add( groundGroup );
 
-		var bgGeometry = new THREE.PlaneGeometry( this.areaX + 1.5, this.areaY + 1.5, 1 );
-		var bgMaterial = new THREE.ShadowMaterial(  );
-		bgMaterial.opacity = 0.1;
-		bgGeometry.applyMatrix( new THREE.Matrix4().makeTranslation( this.newCenter.x, -this.newCenter.y, 0 ) );
-		this.bg = new THREE.Mesh( bgGeometry, bgMaterial );
-		this.bg.receiveShadow = true;
+		// init ground`s shadow
+		var geometry = new THREE.PlaneGeometry( this.areaX + 1.5, this.areaY + 1.5, 1 );
 
+		var material = new THREE.ShadowMaterial( );
+		material.opacity = 0.2;
+
+		var groundShadow = new THREE.Mesh( geometry, material );
+		groundShadow.receiveShadow = true;
+
+		groundGroup.add( groundShadow );
+
+		var scope = this;
+		// init ground texture 
 		var texture = new THREE.TextureLoader().load( 'assets/Ground.png' , function ( texture ) {
-
-		   texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-		   texture.repeat.set( 3, 3 );
-
+			texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+		  texture.repeat.set( scope.areaX < 6 ? scope.areaX : scope.areaX - 5, scope.areaY < 6 ? scope.areaY : scope.areaY - 5 );
+			texture.anisotropy = 16;
 		} );
 
-		bgGeometry = new THREE.PlaneGeometry( this.areaX + 1.5, this.areaY + 1.5, 1 );
-		bgMaterial = new THREE.MeshLambertMaterial( { map: texture } ); // 447744
-		bgGeometry.applyMatrix( new THREE.Matrix4().makeTranslation( this.newCenter.x, -this.newCenter.y, 0 ) );
-		this.bg2 = new THREE.Mesh( bgGeometry, bgMaterial );
+		material = new THREE.MeshLambertMaterial( {
+					map: texture,
+					side: THREE.DoubleSide, 
+				} );
 
-		var mesh = new THREE.Mesh( geometry, bgMaterial );
-		this.scene.add( mesh );
+		var groundTexture = new THREE.Mesh( geometry, material );
 
-		var group = new THREE.Group();
+		var mesh = new THREE.Mesh( geometry, material );
+
+		groundGroup.add(groundTexture);
+
+
+		var wallGroup = new THREE.Group();
+		wallGroup.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0 ) );
+		this.scene.add(wallGroup);
 
 		console.log(  preloader.queue )
 
 		texture = new THREE.TextureLoader().load(
-			'assets/Wall.png',
+			'assets/Wall2.png',
 			function(e){ },
 			undefined,
 			function ( err ) { console.error( 'An error happened.', err.path ); }
 		);
 
-		var material = new THREE.MeshLambertMaterial( { map: texture } );
+		material = new THREE.MeshLambertMaterial( { map: texture } );
 
 		for ( var i = 0; i < this.areaY + 2; i++ ){
-			var maxRand = randomInteger( 80, 110 ) / 100;
-			var geometry = new THREE.BoxBufferGeometry( maxRand, maxRand, maxRand * 0.8, 7, 7, 7 );
+			var maxRand = randomInteger( 60, 95 ) / 100;
+			var height = 1 - ( maxRand - 0.5 ) * 1;
+			geometry = new THREE.BoxBufferGeometry( maxRand, maxRand, height );
+			geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, height/2 ) );
 
-			var cube = new THREE.Mesh( geometry, material );
-			cube.position.x = 0;
-			cube.position.y = -i;
+			var cube1 = new THREE.Mesh( geometry, material );
+			cube1.position.x = 0;
+			cube1.position.y = -i;
 
 			var cube2 = new THREE.Mesh( geometry, material );
 			cube2.position.x = this.areaX + 1;
 			cube2.position.y = - this.areaY + i - 1;
 
-			group.add( cube );
-			group.add( cube2 );
+			cube2.castShadow = true;
+
+			wallGroup.add( cube1 );
+			wallGroup.add( cube2 );
 		}
 
 		for ( var i = 1; i < this.areaX + 1; i++ ){
-			var maxRand = randomInteger( 80, 110 ) / 100;
-			var geometry = new THREE.BoxGeometry( maxRand, maxRand, maxRand * 0.8, 7, 7, 7 );
+			var maxRand = randomInteger( 60, 95 ) / 100;
+			var height =  1 - ( maxRand - 0.5 ) * 1;
+			geometry = new THREE.BoxBufferGeometry( maxRand, maxRand, height );
+			geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, height/2 ) );
 
-			var cube = new THREE.Mesh( geometry, material );
-			cube.position.y = 0;
-			cube.position.x = i;
+			var cube1 = new THREE.Mesh( geometry, material );
+			cube1.position.y = 0;
+			cube1.position.x = i;
 
 			var cube2 = new THREE.Mesh( geometry, material );
 			cube2.position.y = -this.areaY - 1;
-			cube2.position.x = this.areaX + 1 - i;;
+			cube2.position.x = this.areaX + 1 - i;
 
-			group.add( cube );
-			group.add( cube2 );
+			cube1.castShadow = true;
+
+			wallGroup.add( cube1 );
+			wallGroup.add( cube2 );
 		}
 
-		group.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.3 ) );
-		this.scene.add(group);
-		
-		this.scene.add(this.bg);
-		this.scene.add(this.bg2);
+			// material = new THREE.MeshLambertMaterial( { color: 0x9b7653 } );
+		// texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+		//   texture.repeat.set( scope.areaX < 6 ? scope.areaX : scope.areaX - 5, scope.areaY < 6 ? scope.areaY : scope.areaY - 5 );
+		// 	texture.anisotropy = 16;
+
+		geometry = new THREE.BoxBufferGeometry( this.areaX + 2, 1, 0.6 );
+		var cube = new THREE.Mesh( geometry, material );
+		cube.position.x = ( this.areaX + 2 ) / 2 - 0.5;
+		cube.position.y = 0;
+		cube.castShadow = true;
+		wallGroup.add( cube );
+
+		geometry = new THREE.BoxBufferGeometry( this.areaX + 2, 1, 0.6 );
+		var cube = new THREE.Mesh( geometry, material );
+		cube.position.x = ( this.areaX + 2 ) / 2 - 0.5;
+		cube.position.y =  - this.areaY - 1;
+		cube.castShadow = false;
+		wallGroup.add( cube );
+
+		geometry = new THREE.BoxBufferGeometry( 1, this.areaY, 0.6 );
+		var cube = new THREE.Mesh( geometry, material );
+		cube.position.x = 0;
+		cube.position.y = - ( this.areaY ) / 2 - 0.5;
+		cube.castShadow = false;
+		wallGroup.add( cube );
+
+		geometry = new THREE.BoxBufferGeometry( 1, this.areaY, 0.6 );
+		var cube = new THREE.Mesh( geometry, material );
+		cube.position.x = this.areaX + 1;
+		cube.position.y = - ( this.areaY ) / 2 - 0.5;
+		cube.castShadow = true;
+		wallGroup.add( cube );		
 	};
 
 	initSnake(){
+
 		// init group
 		this.snake = new THREE.Group();
 		this.snake.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.21 ) );
@@ -194,10 +249,6 @@ class ThreeRenderer{
 		var geometry = new THREE.BoxGeometry( 0.8, 0.8, 0.4, 7, 7, 7 );
 		var material = new THREE.MeshLambertMaterial( { color: 0xf5cc5a } );
 
-		// var divisions = 1;
-		// var modifier = new THREE.SubdivisionModifier( divisions );
-		// var smooth = modifier.modify( geometry )
-
 		var cube = new THREE.Mesh( geometry, material );
 
 		cube.castShadow = true;
@@ -205,10 +256,13 @@ class ThreeRenderer{
 	};
 
 	initBonus(){
+
 		var geometry = new THREE.BoxGeometry( 0.8, 0.8, 0.4, 3, 3, 3 );
 		geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.21 ) );
 
-		var material = new THREE.MeshLambertMaterial( { color: 0x2e2528 } );
+		var material = new THREE.MeshLambertMaterial( {
+			color: 0x2e2528,
+		} );
 
 		this.cubeBonus = new THREE.Mesh( geometry, material );
 		this.cubeBonus.castShadow = true;
@@ -217,25 +271,32 @@ class ThreeRenderer{
 	}
 
 	initLights(){
-		
-		this.scene.add( createLight( 0xfefefe, 0.3, 0, 0, 12, false ) );
-		this.scene.add( createLight( 0xfefefe, 0.5, this.areaX + 2, 0, 12, true ) );
-		this.scene.add( createLight( 0xfefefe, 0.1, 0, - this.areaY - 4, 12, false )  );
-		this.scene.add( createLight( 0xfefefe, 0.3, this.areaX + 2, - this.areaY - 4, 12, false )  );
 
+		this.scene.add( new THREE.AmbientLight( 0x404040, 0.2 ) );
+
+		this.scene.add( createLight( 0xfefefe, 0.4, 0, 0, 12, false ) );
+		this.scene.add( createLight( 0xfefefe, 0.6, this.areaX + 2 + 5, 0 + 5, 20, true ) );
+		this.scene.add( createLight( 0xfefefe, 0.2, 0, - this.areaY - 4, 12, false )  );
+		this.scene.add( createLight( 0xfefefe, 0.4, this.areaX + 2, - this.areaY - 4, 12, false )  );
 
 		function createLight( color, intensity, x, y, z, castShadow ){
 			var light = new THREE.PointLight( color, intensity );
-			light.position.x = x;
-			light.position.y =  y;
-			light.position.z = z;
+			light.position.set( x, y, z);
+			
 			light.castShadow = castShadow;
-			light.shadow.radius = 10;
-			light.shadow.mapSize.x = 512;
-			light.shadow.mapSize.y = 512;
+
+			light.shadow.radius = 1;
+			light.shadow.mapSize.x = 1024;
+			light.shadow.mapSize.y = 1024;
+
+		light.shadow.bias = 0.001;
+
 			return light;
-		}	
+		}
+	
 	}
+
+	
 	
 	// <<< SET TEXTURE <<<
 
