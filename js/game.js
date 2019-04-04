@@ -19,14 +19,22 @@ class Game{
 		this.snake = new Snake( this.params );
 		this.bonus = new Bonus( this.params );
 
+		this.apple = new Apple( this.params );
+		this.rock = new Rock( this.params );
+		this.rock.position = this.getNewPosition();
+
 		this.score = 0;
 		this.currentDirection = null;
+
+		console.log( this.rock, this.apple, this.bonus );
 
 		this.gameState = {
 			area: this.area.blocks,
 			snake: this.snake.cellPositions,
 			direction: this.snake.cellDirections,
-			bonus: this.bonus.position
+			bonus: this.bonus.position,
+			apple: this.apple.position,
+			rock: this.rock.position
 			// snake: this.assetManager.getData( 'snake' ),
 			// bonus: this.assetManager.getData( 'bonus' )
 		};
@@ -150,7 +158,9 @@ class Game{
 
 	resetGame(){
 		this.snake.reset();
-		this.bonus.position = this.getNewBonusPosition();
+		this.bonus.position = this.getNewPosition();
+		this.apple.position = this.getNewPosition();
+		this.rock.position = this.getNewPosition();
 
 		this.score = 0;
 		this.currentDirection = null;
@@ -189,7 +199,9 @@ class Game{
 		this.gameState = {
 			snake: this.snake.cellPositions,
 			direction: this.snake.cellDirections,
-			bonus: this.bonus.position
+			bonus: this.bonus.position,
+			apple: this.apple.position,
+			rock: this.rock.position
 		};
 
 		// this.renderer.drawFrame( this.gameState );
@@ -217,11 +229,18 @@ class Game{
 			}
 
 			this.snake.addBlock( this.currentDirection );
-			this.bonus.position = this.getNewBonusPosition();
+			this.bonus.position = this.getNewPosition();
 
 			$(document).trigger( 'game:bonusTaken', { x: this.snake.head.x, y: this.snake.head.y } );
 
-		} // meeting with body
+		}
+		else if ( Vector.equals( this.snake.head, this.apple.position ) ){
+
+			console.log("wow");
+			this.snake.removeBlock();
+			this.apple.position = this.getNewPosition();
+
+		}
 		else if ( this.snakeCollision() ){
 				$(document).trigger( 'game:finished', { x: this.snake.head.x, y: this.snake.head.y } );
 		} // meeting with wall blocks
@@ -256,16 +275,20 @@ class Game{
     }
 	};
 
-	getNewBonusPosition(){
+	getNewPosition(){
 		// var newPos = new Vector( this.bonus.position.x+1, this.bonus.position.y );
 		var newPos = new Vector( randomInteger( 1, this.areaX ), randomInteger( 1, this.areaY ) );
 		for ( var cellPositions in this.snake.cellPositions )
-			if ( Vector.equals( newPos, this.snake.cellPositions[cellPositions] ) ) return this.getNewBonusPosition();
+			if ( Vector.equals( newPos, this.snake.cellPositions[cellPositions] ) ) return this.getNewPosition();
+		if ( Vector.equals( newPos, this.bonus.position ) || 
+				Vector.equals( newPos, this.apple.position )  || 
+				Vector.equals( newPos, this.rock.position )) return this.getNewPosition();
 		return newPos;
 	};
 
 	wallCollision(){
-		if (this.area.blocks[this.snake.head.x][this.snake.head.y] != 0)
+		console.log( this.snake.head, this.rock.position )
+		if (this.area.blocks[this.snake.head.x][this.snake.head.y] != 0 || Vector.equals( this.snake.head, this.rock.position) )
 			return true;
 		return false;
 	};

@@ -1,6 +1,6 @@
 'use strict';
 
-class Bonus {
+class Apple {
 
 	constructor( params ){
 		this.params = params;

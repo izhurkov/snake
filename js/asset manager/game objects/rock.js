@@ -1,6 +1,6 @@
 'use strict';
 
-class Bonus {
+class Rock{
 
 	constructor( params ){
 		this.params = params;

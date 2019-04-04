@@ -45,6 +45,11 @@ class Snake{
 		this.cellDirections.push( this.cellDirections[length-1] );
 	};
 
+	removeBlock( ){
+		return;
+		
+	};
+
 	// движение змейки на один блок
 	moveSnake( direction ){
 
