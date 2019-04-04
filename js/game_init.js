@@ -155,7 +155,9 @@ $(window).on( 'preloader:complete', function( e, data ){
 
 	  bonusColor: "rgba(200, 70, 150, 1)",
 
-	  stepTime: 200
+	  stepTime: 200,
+	  acceleratorSpeedMultiply: 2,
+	  acceleratorDuration: 10
 	};
 
 	var snakeGame = new Game( config, params, data.queue );

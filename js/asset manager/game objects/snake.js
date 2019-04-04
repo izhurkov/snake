@@ -42,11 +42,19 @@ class Snake{
 
 		this.cellPositions.push( new Vector( this.cellPositions[length-1].x, this.cellPositions[length-1].y));
 		this._cellPositions.push( new Vector( this._cellPositions[length-1].x, this._cellPositions[length-1].y));
+
 		this.cellDirections.push( this.cellDirections[length-1] );
 	};
 
 	removeBlock( ){
-		return;
+
+		var length = this.cellPositions.length;
+		if ( length <= this.startLength ) return;	
+
+		this.cellPositions.splice( -1, 1 );
+		this._cellPositions.splice( -1, 1 );
+		this.cellDirections.splice( -1, 1 );
+		return;	
 		
 	};
 

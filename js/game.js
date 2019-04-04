@@ -14,6 +14,10 @@ class Game{
 		// this.assetManager = new AssetManager( this.params);
 		// this.assetManager.addEntity( config.assets );
 		// this.assetManager.cloneEntity( 'bonus', 3 );
+		
+		this.timerAccel = new Timer( 10, 'timer:accel' );
+
+		console.log(this.timerAccel); 
 
 		this.area = new Area( this.params );
 		this.snake = new Snake( this.params );
@@ -21,12 +25,12 @@ class Game{
 
 		this.apple = new Apple( this.params );
 		this.rock = new Rock( this.params );
-		this.rock.position = this.getNewPosition();
+		this.accelerator = new Accelerator( this.params );
+
+		console.log( "wow1", this.accelerator )
 
 		this.score = 0;
 		this.currentDirection = null;
-
-		console.log( this.rock, this.apple, this.bonus );
 
 		this.gameState = {
 			area: this.area.blocks,
@@ -34,9 +38,8 @@ class Game{
 			direction: this.snake.cellDirections,
 			bonus: this.bonus.position,
 			apple: this.apple.position,
-			rock: this.rock.position
-			// snake: this.assetManager.getData( 'snake' ),
-			// bonus: this.assetManager.getData( 'bonus' )
+			rock: this.rock.position,
+			accelerator: this.accelerator.position
 		};
 
 
@@ -147,6 +150,10 @@ class Game{
 	  EventBus.addEvent('game:pause', function(){
 	  	scope.setState( scope.STATE_PAUSE );
 	  } );
+	  EventBus.addEvent('timer:accel:end', function(){
+			scope.accelerator.position = scope.getNewPosition();
+	  	scope.stepTime = scope.params.stepTime;
+	  } );
 	};
 
 
@@ -161,6 +168,9 @@ class Game{
 		this.bonus.position = this.getNewPosition();
 		this.apple.position = this.getNewPosition();
 		this.rock.position = this.getNewPosition();
+		this.accelerator.position = this.getNewPosition();
+
+		console.log(this.accelerator.position)
 
 		this.score = 0;
 		this.currentDirection = null;
@@ -196,13 +206,12 @@ class Game{
 	gameStep(){
 		this.updateGame();
 
-		this.gameState = {
-			snake: this.snake.cellPositions,
-			direction: this.snake.cellDirections,
-			bonus: this.bonus.position,
-			apple: this.apple.position,
-			rock: this.rock.position
-		};
+		this.gameState.snake = this.snake.cellPositions;
+		this.gameState.direction = this.snake.cellDirections;
+		this.gameState.bonus = this.bonus.position;
+		this.gameState.apple = this.apple.position;
+		this.gameState.rock = this.rock.position;
+		this.gameState.accelerator = this.accelerator.position;
 
 		// this.renderer.drawFrame( this.gameState );
 
@@ -213,6 +222,19 @@ class Game{
 
 		if ( !this.isState( this.STATE_PLAYING ) )
 			return;
+
+		if ( Vector.equals( this.snake.head, this.apple.position ) ){
+
+			this.snake.removeBlock();
+			this.apple.position = this.getNewPosition();
+		}
+		else if ( Vector.equals( this.snake.head, this.accelerator.position ) && !this.timerAccel.isActive ){
+			console.log("wtf")
+			this.timerAccel.start();
+			// this.timerAccel.start();
+			this.stepTime *= 1 / this.accelerator.acceleratorSpeedMultiply;
+			this.accelerator.position = new Vector( 0, 0 );
+		}
 
 		// move snake
 		this.snake.update( this.currentDirection );
@@ -232,13 +254,6 @@ class Game{
 			this.bonus.position = this.getNewPosition();
 
 			$(document).trigger( 'game:bonusTaken', { x: this.snake.head.x, y: this.snake.head.y } );
-
-		}
-		else if ( Vector.equals( this.snake.head, this.apple.position ) ){
-
-			console.log("wow");
-			this.snake.removeBlock();
-			this.apple.position = this.getNewPosition();
 
 		}
 		else if ( this.snakeCollision() ){
@@ -287,7 +302,7 @@ class Game{
 	};
 
 	wallCollision(){
-		console.log( this.snake.head, this.rock.position )
+		// console.log( this.snake.head, this.rock.position )
 		if (this.area.blocks[this.snake.head.x][this.snake.head.y] != 0 || Vector.equals( this.snake.head, this.rock.position) )
 			return true;
 		return false;
