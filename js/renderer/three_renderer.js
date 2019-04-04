@@ -187,17 +187,17 @@ class ThreeRenderer{
 		var rockPos = this.gameState.rock;
 
 		geometry = new THREE.BoxBufferGeometry( 0.8, 0.8, 0.8 );
-		geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.4 ) );
+		// geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, 0.5, 0.4 ) );
 		material = new THREE.MeshLambertMaterial( {
 					color: 0x333333,
 					side: THREE.DoubleSide, 
 				} );
 
-		var rock = new THREE.Mesh( geometry, material );
-		rock.position.x = rockPos.x;
-		rock.position.y = -rockPos.y;
+		this.rock = new THREE.Mesh( geometry, material );
+		this.rock.position.x = rockPos.x;
+		this.rock.position.y = -rockPos.y;
 
-		this.scene.add( rock );
+		this.scene.add( this.rock );
 
 		// add group
 		var groundGroup = new THREE.Group();
@@ -410,7 +410,7 @@ class ThreeRenderer{
 			scope.particleBonusGroup.tick( delta );
 
 			scope.updateSnake( gameState.snake, gameState.direction, delta );
-			scope.updateBonus( gameState.bonus, gameState.apple );
+			scope.updateBonus( gameState.bonus, gameState.apple, gameState.rock );
 			scope.renderer.render( scope.scene, scope.camera );
 		}());
 	};
@@ -443,12 +443,15 @@ class ThreeRenderer{
 		}
 	};
 
-	updateBonus( position1, position2 ){
+	updateBonus( position1, position2, pos3 ){
 		this.cubeBonus.position.x = position1.x + 0.5;
 		this.cubeBonus.position.y = -position1.y - 0.5;
 
 		this.apple.position.x = position2.x + 0.5;
 		this.apple.position.y = -position2.y - 0.5;
+
+		this.rock.position.x = pos3.x + 0.5;
+		this.rock.position.y = -pos3.y - 0.5;
 	};
 	// <<< DRAW <<<
 	
