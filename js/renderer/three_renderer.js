@@ -15,9 +15,7 @@ class ThreeRenderer{
 		this.width = this.blockSize * (this.areaX + 2);
 
 		this.game = game;
-
-
-
+		
 		// >>> SETUP CANVAS >>>
 		this.scene = new THREE.Scene()
 		this.camera = new THREE.PerspectiveCamera( 45, this.width / this.height, 0.1, 1000 )
@@ -59,7 +57,6 @@ class ThreeRenderer{
 		this.down = true;
 
 		// this.drawFrame();
-		
 
 		this.pos = new THREE.Vector3();
 
@@ -231,6 +228,7 @@ class ThreeRenderer{
 		groundGroup.add( groundShadow );
 
 		var scope = this;
+
 		// init ground texture 
 		var texture = new THREE.TextureLoader().load( 'assets/Ground.png' , function ( texture ) {
 			texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
@@ -305,11 +303,6 @@ class ThreeRenderer{
 			wallGroup.add( cube2 );
 		}
 
-			// material = new THREE.MeshLambertMaterial( { color: 0x9b7653 } );
-		// texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-		//   texture.repeat.set( scope.areaX < 6 ? scope.areaX : scope.areaX - 5, scope.areaY < 6 ? scope.areaY : scope.areaY - 5 );
-		// 	texture.anisotropy = 16;
-
 		geometry = new THREE.BoxBufferGeometry( this.areaX + 2, 1, 0.6 );
 		var cube = new THREE.Mesh( geometry, material );
 		cube.position.x = ( this.areaX + 2 ) / 2 - 0.5;
@@ -363,17 +356,7 @@ class ThreeRenderer{
 		var geometry = new THREE.SphereGeometry( 0.4, 32, 32 );
 		var materials = new THREE.MeshLambertMaterial( {
 			color: 0xd62a2a
-			// envMap: this.scene.background,
 		} );
-		// this.sphere = new THREE.Mesh( geometry, material );
-		// scene.add( sphere );
-
-		// var geometry = new THREE.BoxGeometry( 0.8, 0.8, 0.4, 3, 3, 3 );
-		// // geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.21 ) );
-
-		// var material = new THREE.MeshLambertMaterial( {
-		// 	color: 0x2e2528,
-		// } );
 
 		this.cubeBonus = new THREE.Mesh( geometry, materials );
 		this.cubeBonus.castShadow = true;
@@ -392,16 +375,17 @@ class ThreeRenderer{
 		this.scene.add( createLight( 0xfefefe, 0.4, this.areaX + 2, - this.areaY - 4, 12, false )  );
 
 		function createLight( color, intensity, x, y, z, castShadow ){
+
 			var light = new THREE.PointLight( color, intensity );
 			light.position.set( x, y, z);
 			
-			light.castShadow = castShadow;
+			if ( !castShadow ) return light;
 
+			light.castShadow = castShadow;
 			light.shadow.radius = 1;
 			light.shadow.mapSize.x = 1024;
 			light.shadow.mapSize.y = 1024;
-
-		light.shadow.bias = 0.001;
+			light.shadow.bias = 0.001;
 
 			return light;
 		}
@@ -415,38 +399,28 @@ class ThreeRenderer{
 	drawFrame( ){
 		let scope = this;
 
+		var time;
 
-		this.time;
+		(function update(){
 
-		setTimeout( function(){
-
-			requestAnimationFrame( () => { scope.drawFrame() } );
+			var updateId = requestAnimationFrame(update);
 
 			var gameState = scope.game.gameState;
 
-    	// console.log( delta, now, time );
 
 			var now = new Date().getTime();
 
-			var delta = ( now - (this.time || now) ) * 0.001;
+			var delta = ( now - (time || now) ) * 0.001;
 
-    	this.time = now;
-
-    	if ( delta > 1 )
-    		console.log( delta );
+    	time = now;
 
 			scope.particleGroup.tick( delta );
 
-			scope.updateSnake( gameState.snake );
+			scope.updateSnake( gameState.snake, gameState.direction, delta );
 			scope.updateBonus( gameState.bonus );
 			scope.renderer.render( scope.scene, scope.camera );
 
-		}, 1 );
-
-		
-		// this.updateCamera( gameState.snake, gameState.direction );
-
-		// this.composer.render();
+		}());
 	};
 
 	updateCamera( cellPositions, direction ){
@@ -484,8 +458,47 @@ class ThreeRenderer{
 		// camera_pivot.rotateOnAxis( new THREE.Vector3(1,1,0), Math.PI / 2 );    // radi
 	}
 
-	updateSnake( cellPositions ){
+	updateSnake( cellPositions, cellDirections ){
 
+		 
+
+		var sprites = {
+			'snakeHead_up': 
+			{ dir: { x: 0, y: 1 }, "x":192,"y":0,"w":64,"h":64 },
+			'snakeHead_right': 
+			{ dir: { x: 1, y: 0 }, "x":256,"y":0,"w":64,"h":64 },
+			'snakeHead_left': 
+			{ dir: { x: -1, y: 0 }, "x":192,"y":64,"w":64,"h":64 },
+			'snakeHead_down': 
+			{ dir: { x: 0, y: -1 }, "x":256,"y":64,"w":64,"h":64 },
+
+
+			'snakeBody_top_left': 
+			{ "x":128,"y":128,"w":64,"h":64 },
+			'snakeBody_top_right': 
+			{ "x":0,"y":64,"w":64,"h":64 },
+
+			'snakeBody_horizontal': 
+			{ "x":64,"y":0,"w":64,"h":64 },
+			'snakeBody_vertical': 
+			{ "x":128,"y":64,"w":64,"h":64 },
+
+			'snakeBody_bottom_left': 
+			{ "x":128,"y":0,"w":64,"h":64 },
+			'snakeBody_bottom_right': 
+			{ "x":0,"y":0,"w":64,"h":64 },
+
+			'snakeTail_up': 
+			{ "x":192,"y":128,"w":64,"h":64 },
+			'snakeTail_right': 
+			{ "x":256,"y":128,"w":64,"h":64 },
+			'snakeTail_left': 
+			{ "x":192,"y":192,"w":64,"h":64 },
+			'snakeTail_down': 
+			{ "x":256,"y":192,"w":64,"h":64 }
+		}
+
+		// console.log( cellDirections );
 		var snake = this.snake.children;
 
 		if ( snake.length > cellPositions.length ){
@@ -502,12 +515,21 @@ class ThreeRenderer{
 			cube.castShadow = true;
 			this.snake.add( cube );
 			console.log( snake );
-		}
+		};
+
+		if ( this.upd ){
+			console.log( "wow2" )
+			snake[i].position.x = sprites['snakeHead_' + cellDirections[0]].dir.x * this.blockSize * delta;
+			snake[i].position.y = sprites['snakeHead_' + cellDirections[0]].dir.x * this.blockSize * delta;
+			return;
+		};
 
 		for ( var i = 0; i < snake.length; i++){
+			console.log( "wow" )
 
 			snake[i].position.x = cellPositions[i].x;
 			snake[i].position.y = -cellPositions[i].y;
+			this.upd = true;
 		}
 	};
 
