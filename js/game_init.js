@@ -155,7 +155,7 @@ $(window).on( 'preloader:complete', function( e, data ){
 
 	  bonusColor: "rgba(200, 70, 150, 1)",
 
-	  stepTime: 200,
+	  stepTime: 500,
 	  acceleratorSpeedMultiply: 2,
 	  acceleratorDuration: 10
 	};

@@ -21,9 +21,11 @@ class Game{
 		this.snake = new Snake( this.params );
 		this.bonus = new Bonus( this.params );
 
+
 		this.apple = new Apple( this.params );
 		this.rock = new Rock( this.params );
 		this.accelerator = new Accelerator( this.params );
+		this.frog = new Frog( this.params );
 
 		this.score = 0;
 		this.currentDirection = null;
@@ -35,7 +37,8 @@ class Game{
 			bonus: this.bonus.position,
 			apple: this.apple.position,
 			rock: this.rock.position,
-			accelerator: this.accelerator.position
+			accelerator: this.accelerator.position,
+			frog: this.frog.position
 		};
 
 
@@ -166,6 +169,7 @@ class Game{
 		this.apple.position = this.getNewPosition();
 		this.rock.position = this.getNewPosition();
 		this.accelerator.position = this.getNewPosition();
+		this.frog.position = this.getNewPosition();
 
 		this.score = 0;
 		this.currentDirection = null;
@@ -207,6 +211,7 @@ class Game{
 		this.gameState.apple = this.apple.position;
 		this.gameState.rock = this.rock.position;
 		this.gameState.accelerator = this.accelerator.position;
+		this.gameState.frog = this.frog.position
 
 		// this.renderer.drawFrame( this.gameState );
 
@@ -225,13 +230,20 @@ class Game{
 		}
 		else if ( Vector.equals( this.snake.head, this.accelerator.position ) && !this.timerAccel.isActive ){
 
-			this.timerAccel.start( 50 );
+			this.timerAccel.start( this.accelerator.acceleratorDuration );
 			this.stepTime *= 1 / this.accelerator.acceleratorSpeedMultiply;
 			this.accelerator.position = new Vector( 0, 0 );
 		}
 
 		// move snake
 		this.snake.update( this.currentDirection );
+		this.frog.jump( this.rock.position );
+
+		if ( Vector.equals( this.snake.head, this.frog.position ) ){
+			this.score+=10;
+			this.frog.position = this.getNewPosition();
+			$(document).trigger( 'game:frogEaten' );
+		}
 
 		// meeting with bonus
 		if ( Vector.equals( this.snake.head, this.bonus.position ) ){

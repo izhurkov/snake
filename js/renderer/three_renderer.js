@@ -56,10 +56,6 @@ class ThreeRenderer{
 		this.initBonus();
 		this.initLights();
 
-		this.down = true;
-
-		// this.drawFrame();
-
 		this.pos = new THREE.Vector3();
 
     var emitterSettings = {
@@ -82,7 +78,7 @@ class ThreeRenderer{
       },
       particleCount: 15,
       alive: false,
-      duration: 0.1,
+      duration: 0.2,
       maxAge: {
         value: 0.5
       }
@@ -95,7 +91,6 @@ class ThreeRenderer{
       blending: THREE.NormalBlending
   	});
     this.particleGroup.addPool( 10, emitterSettings, false );
-  	this.scene.add( this.particleGroup.mesh );
 
   	this.particleBonusGroup = new SPE.Group({
   		texture: {
@@ -104,19 +99,20 @@ class ThreeRenderer{
       blending: THREE.NormalBlending
   	});
     this.particleBonusGroup.addPool( 10, emitterSettings, false );
+
+  	this.scene.add( this.particleGroup.mesh );
   	this.scene.add( this.particleBonusGroup.mesh );
-		
 
 		var scope = this;
 
 		$( document ).on( 'game:finished', function( e, param ){
-			var position = param;
-			scope.particleGroup.triggerPoolEmitter( 1, (scope.pos.set( position.x + 0.5, - position.y - 0.5, 0.5 )) );
+			var position = scope.snake.children[0].position;
+			scope.particleGroup.triggerPoolEmitter( 1, (scope.pos.set( position.x + 0.5, -position.y - 0.5, 0.5 )) );
 		});
 
 		$( document ).on( 'game:bonusTaken', function( e, param ){
 			var position = param;
-			scope.particleBonusGroup.triggerPoolEmitter( 1, (scope.pos.set( position.x + 0.5, - position.y - 0.5, 0.5 )) );
+			scope.particleBonusGroup.triggerPoolEmitter( 1, (scope.pos.set( position.x + 0.5, -position.y - 0.5, 0.5 )) );
 
 			var seconds = 0.001 * scope.game.stepTime ;
 			var duration = seconds;
@@ -191,7 +187,6 @@ class ThreeRenderer{
 		var rockPos = this.gameState.rock;
 
 		geometry = new THREE.BoxBufferGeometry( 0.8, 0.8, 0.8 );
-		// geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, 0.5, 0.4 ) );
 		material = new THREE.MeshLambertMaterial( {
 					color: 0x333333,
 					side: THREE.DoubleSide, 
@@ -370,6 +365,17 @@ class ThreeRenderer{
 		this.accelerator.rotateX( Math.PI / 2 );
 
 		this.scene.add( this.accelerator );
+
+		geometry = new THREE.SphereGeometry( 0.34, 32, 4 );
+		materials = new THREE.MeshLambertMaterial( {
+			color: 0x33ff55
+		} );
+
+		this.frog = new THREE.Mesh( geometry, materials );
+		this.frog.castShadow = true;
+		this.frog.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.3 ) );
+
+		this.scene.add( this.frog );
 	}
 
 	initLights(){
@@ -472,6 +478,9 @@ class ThreeRenderer{
 		this.accelerator.position.x = gameState.accelerator.x + 0.5;
 		this.accelerator.position.y = -gameState.accelerator.y - 0.5;
 		this.accelerator.rotateY( 0.05 );
+
+		this.frog.position.x = gameState.frog.x + 0.5;
+		this.frog.position.y = -gameState.frog.y - 0.5;
 	};
 	// <<< DRAW <<<
 	
