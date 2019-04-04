@@ -85,7 +85,14 @@ class Game{
 			},
 
 			'STATE_PAUSE':{
-				states: [ scope.STATE_PLAYING ]
+				states: [ scope.STATE_PLAYING ],
+				onSet: function(){
+					scope.timerAccel.pause();
+				},
+
+				onDisable: function(){
+					scope.timerAccel.play();
+				}
 			},
 
 			'STATE_FINISHED': {
@@ -113,13 +120,44 @@ class Game{
 		$( document ).on( scope.inputController.ACTION_ACTIVATED, function(e, param) {
 	    switch( param.detail.action_name ){
 	    		case 'right':
+						scope.currentDirection = param.detail.action_name;
+	          break
 	        case 'left':
+						scope.currentDirection = param.detail.action_name;
+	          break
 	        case 'up':
+						scope.currentDirection = param.detail.action_name;
+	          break
 	        case 'down':
 						scope.currentDirection = param.detail.action_name;
 	          break;
 	        case 'touchup':
 	        	scope.setDirectionFromTouch( param.detail.cursor_pos );
+	        	break;
+
+	        case 'turnLeft':
+	        	var directions = {
+							"up": "left",
+							"left": "down",
+							"down": "right",
+							"right": "up",
+							"null": "right"
+						}
+	        	scope.currentDirection = directions[scope.currentDirection]
+		        console.log("left:",scope.currentDirection)
+	        	break;
+
+	        case 'turnRight':
+	        console.log("fasfa");
+	        	var directions = {
+							"up": "right",
+							"left": "up",
+							"down": "left",
+							"right": "down",
+							"null": "right"
+						}
+	        	scope.currentDirection = directions[scope.currentDirection]
+		        console.log("right:",scope.currentDirection)
 	        	break;
 
 	        case 'setCanvas':
@@ -230,7 +268,7 @@ class Game{
 		}
 		else if ( Vector.equals( this.snake.head, this.accelerator.position ) && !this.timerAccel.isActive ){
 
-			this.timerAccel.start( this.accelerator.acceleratorDuration );
+			this.timerAccel.play( this.accelerator.acceleratorDuration );
 			this.stepTime *= 1 / this.accelerator.acceleratorSpeedMultiply;
 			this.accelerator.position = new Vector( 0, 0 );
 		}

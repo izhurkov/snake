@@ -4,17 +4,22 @@ function Timer( event ){
 	this.event = event || 'wow';
 	this.isActive = false;
 	this.isStopped = false;
+	this.onPause = false;
 }
 
 Timer.prototype = {
 
-	start: function( duration) {
+	play: function( duration) {
 		$( document ).trigger( this.event + ":start" );
 
 		var seconds = duration;
 		var duration = duration;
 		var time;
 		var scope = this;
+		this.onPause = false;
+
+		if ( this.isActive ) return;
+
 		this.isActive = true;
 
 		(function update(){
@@ -31,12 +36,19 @@ Timer.prototype = {
 			var now = Date.now();
 	    var delta = (now - (time || now)) * 0.001;
 			time = now;
-			seconds -= delta;
+			if ( !scope.onPause )
+				seconds -= delta;
+
 		}());
 	},
 
 	stop: function() {
+		if ( this.isActive )
+			this.isStopped = true;
+	},
 
-		this.isStopped = true;
+	pause: function() {
+		if ( this.isActive )
+			this.onPause = true;
 	}
 }

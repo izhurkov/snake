@@ -49,6 +49,12 @@ $(window).on( 'preloader:complete', function( e, data ){
 		    },
 		    'touchup': {
         	gestures: ['touchup']
+		    },
+		    'turnRight': {
+		      keyCodes:[68]
+		    },
+		    'turnLeft': {
+		      keyCodes:[65]
 		    }
 		  }
 		},
@@ -157,7 +163,7 @@ $(window).on( 'preloader:complete', function( e, data ){
 
 	  stepTime: 500,
 	  acceleratorSpeedMultiply: 2,
-	  acceleratorDuration: 10
+	  acceleratorDuration: 5
 	};
 
 	var snakeGame = new Game( config, params, data.queue );

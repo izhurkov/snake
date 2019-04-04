@@ -11,16 +11,18 @@ class ThreeRenderer{
 		this.blockSize = null;
 		this.setBlockSize()
 
+		this.camRotation = 2;
+
 		this.gameState = gameState;
 
 		this.height = this.blockSize * (this.areaY + 2);
-		this.width = this.blockSize * (this.areaX + 2);
+		this.width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth - 20
 
 		this.game = game;
 		
 		// >>> SETUP CANVAS >>>
 		this.scene = new THREE.Scene()
-		this.camera = new THREE.PerspectiveCamera( 45, this.width / this.height, 0.1, 1000 )
+		this.camera = new THREE.PerspectiveCamera( 120, this.width / this.height, 0.1, 1000 )
 		this.renderer = new THREE.WebGLRenderer( { antialias: true} )
 
 		this.renderer.setSize( this.width, this.height );
@@ -42,10 +44,12 @@ class ThreeRenderer{
 		// >>> SETUP CAMERA >>>
 		this.newCenter = { x: ( this.areaX + 2 ) / 2, y: ( this.areaY + 2 ) / 2, z: 0 };
 
-		this.camera.position.x = this.newCenter.x + 0;
-		this.camera.position.y = - 1.5 * this.areaY ;
-		this.camera.position.z = 18;
-		this.camera.lookAt( new THREE.Vector3( this.newCenter.x, -this.newCenter.y, this.newCenter.z ) );
+		this.camera.position.x = 4//this.newCenter.x + 0;
+		this.camera.position.y = -3//- 1.5 * this.areaY ;
+		this.camera.position.z = 1;
+		this.camera.rotation.x = 1 * Math.PI / 2;
+		this.camera.rotation.z = 0 * Math.PI / 2;
+		// this.camera.lookAt( new THREE.Vector3( this.newCenter.x, -this.newCenter.y, this.newCenter.z ) );
 		// <<< SETUP CAMERA <<<
 
 		
@@ -91,6 +95,7 @@ class ThreeRenderer{
       blending: THREE.NormalBlending
   	});
     this.particleGroup.addPool( 10, emitterSettings, false );
+  	this.scene.add( this.particleGroup.mesh );
 
   	this.particleBonusGroup = new SPE.Group({
   		texture: {
@@ -99,9 +104,8 @@ class ThreeRenderer{
       blending: THREE.NormalBlending
   	});
     this.particleBonusGroup.addPool( 10, emitterSettings, false );
-
-  	this.scene.add( this.particleGroup.mesh );
   	this.scene.add( this.particleBonusGroup.mesh );
+
 
 		var scope = this;
 
@@ -140,10 +144,12 @@ class ThreeRenderer{
 
 		$( document ).on( 'timer:accel:start', function( e, param ){
 			scope.accelerator.visible = false;
+			console.log( scope.accelerator );
 		});
 
 		$( document ).on( 'timer:accel:end', function( e, param ){
 			scope.accelerator.visible = true;
+			console.log( scope.accelerator );
 		});
 
 	};
@@ -430,14 +436,49 @@ class ThreeRenderer{
 			scope.particleGroup.tick( delta );
 			scope.particleBonusGroup.tick( delta );
 
+			scope.updateCamera( gameState, delta );
 			scope.updateSnake( gameState.snake, gameState.direction, delta );
 			scope.updateBonus( gameState );
 			scope.renderer.render( scope.scene, scope.camera );
 		}());
 	};
 
-	updateCamera( cellPositions, direction ){
+	updateCamera( gameState, delta ){
 
+		var head = gameState.snake[1];
+		var direction = gameState.direction[0];
+		var stepTime = 1000 / this.game.stepTime;
+
+		var headPosition = new THREE.Vector3( head.x + 0.5, -head.y - 0.5, 1 );
+		var camPosition = this.camera.position;
+
+		if ( camPosition.x < headPosition.x )
+			camPosition.x += delta * stepTime;
+		if ( camPosition.x > headPosition.x )
+			camPosition.x -= delta * stepTime;
+
+		if ( camPosition.y < headPosition.y )
+			camPosition.y += delta * stepTime;
+		if ( camPosition.y > headPosition.y )
+			camPosition.y -= delta * stepTime;
+		camPosition.z = 1;
+
+		var directions = {
+			"up": 0,
+			"left": 1,
+			"down": 2,
+			"right": 3
+		}
+
+		var headRotation = directions[direction];
+
+		if ( this.camRotation > headRotation)
+			this.camRotation -= delta * stepTime;
+		if ( this.camRotation < headRotation)
+			this.camRotation += delta * stepTime;
+
+		// console.log( this.camRotation, headRotation );
+		this.camera.rotation.y = this.camRotation * Math.PI / 2;
 	}
 
 	updateSnake( cellPositions, cellDirections, delta ){
