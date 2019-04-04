@@ -22,7 +22,7 @@ class ThreeRenderer{
 		
 		// >>> SETUP CANVAS >>>
 		this.scene = new THREE.Scene()
-		this.camera = new THREE.PerspectiveCamera( 120, this.width / this.height, 0.1, 1000 )
+		this.camera = new THREE.PerspectiveCamera( 90, this.width / this.height, 0.1, 1000 )
 		this.renderer = new THREE.WebGLRenderer( { antialias: true} )
 
 		this.renderer.setSize( this.width, this.height );
@@ -445,7 +445,7 @@ class ThreeRenderer{
 
 	updateCamera( gameState, delta ){
 
-		var head = gameState.snake[1];
+		var head = gameState.snake[2];
 		var direction = gameState.direction[0];
 		var stepTime = 1000 / this.game.stepTime;
 
@@ -461,7 +461,7 @@ class ThreeRenderer{
 			camPosition.y += delta * stepTime;
 		if ( camPosition.y > headPosition.y )
 			camPosition.y -= delta * stepTime;
-		camPosition.z = 1;
+		camPosition.z = 1.5;
 
 		var directions = {
 			"up": 0,

@@ -160,9 +160,9 @@ class InputController {
     if ( action.active === _active ) return;
 
     action.active = _active;
-    // var event = new CustomEvent( _active ? this.ACTION_ACTIVATED : this.ACTION_DEACTIVATED, { detail: action.name } );
+    var event =  _active ? this.ACTION_ACTIVATED : this.ACTION_DEACTIVATED;
     // document.dispatchEvent( event );
-    $(document).trigger( this.ACTION_ACTIVATED, {detail: { action_name: action.name, cursor_pos: cursor_pos } } );
+    $(document).trigger( event, {detail: { action_name: action.name, cursor_pos: cursor_pos } } );
   };
 
   deactiveAllActions(){
