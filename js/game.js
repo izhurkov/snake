@@ -15,9 +15,7 @@ class Game{
 		// this.assetManager.addEntity( config.assets );
 		// this.assetManager.cloneEntity( 'bonus', 3 );
 		
-		this.timerAccel = new Timer( 10, 'timer:accel' );
-
-		console.log(this.timerAccel); 
+		this.timerAccel = new Timer( 'timer:accel' );
 
 		this.area = new Area( this.params );
 		this.snake = new Snake( this.params );
@@ -26,8 +24,6 @@ class Game{
 		this.apple = new Apple( this.params );
 		this.rock = new Rock( this.params );
 		this.accelerator = new Accelerator( this.params );
-
-		console.log( "wow1", this.accelerator )
 
 		this.score = 0;
 		this.currentDirection = null;
@@ -144,6 +140,7 @@ class Game{
 	  	scope.setState( scope.STATE_PLAYING );
 	  } );
 	  EventBus.addEvent('game:finished', function(){
+	  	scope.timerAccel.stop();
 	  	scope.setState( scope.STATE_FINISHED );
 	  	$( document ).trigger('show-screen', 'endScreen');
 	  } );
@@ -169,8 +166,6 @@ class Game{
 		this.apple.position = this.getNewPosition();
 		this.rock.position = this.getNewPosition();
 		this.accelerator.position = this.getNewPosition();
-
-		console.log(this.accelerator.position)
 
 		this.score = 0;
 		this.currentDirection = null;
@@ -229,9 +224,8 @@ class Game{
 			this.apple.position = this.getNewPosition();
 		}
 		else if ( Vector.equals( this.snake.head, this.accelerator.position ) && !this.timerAccel.isActive ){
-			console.log("wtf")
-			this.timerAccel.start();
-			// this.timerAccel.start();
+
+			this.timerAccel.start( 50 );
 			this.stepTime *= 1 / this.accelerator.acceleratorSpeedMultiply;
 			this.accelerator.position = new Vector( 0, 0 );
 		}

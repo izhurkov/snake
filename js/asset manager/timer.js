@@ -31,17 +31,18 @@
 // 	}
 // }
 
-function Timer( duration, event ){
-	this.duration = duration || 1;
+function Timer( event ){
 	this.event = event || 'wow';
 	this.isActive = false;
+	this.isStopped = false;
 }
 
 Timer.prototype = {
-	start: function() {
 
-		var seconds = this.duration;
-		var duration = this.duration;
+	start: function( duration) {
+
+		var seconds = duration;
+		var duration = duration;
 		var time;
 		var scope = this;
 		$( document ).trigger( this.event + ":start" );
@@ -49,9 +50,10 @@ Timer.prototype = {
 
 		(function update(){
 
-			if ( -seconds > 0 ){
+			if ( -seconds > 0 || scope.isStopped ){
 				$( document ).trigger( scope.event + ":end");
 				scope.isActive = false;
+				scope.isStopped = false;
 				return;
 			}
 
@@ -62,5 +64,10 @@ Timer.prototype = {
 			time = now;
 			seconds -= delta;
 		}());
+	},
+
+	stop: function() {
+
+		this.isStopped = true;
 	}
 }
