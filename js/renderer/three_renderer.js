@@ -61,29 +61,29 @@ class ThreeRenderer{
 		this.pos = new THREE.Vector3();
 
     var emitterSettings = {
-        type: SPE.distributions.SPHERE,
-        position: {
-            spread: new THREE.Vector3(1),
-            radius: 0.1,
-        },
-        velocity: {
-            value: new THREE.Vector3( 3, 3, 0 )
-        },
-        size: {
-            value: [ 1, 4 ]
-        },
-        opacity: {
-            value: [1, 0]
-        },
-        color: {
-            value: [new THREE.Color('red'),new THREE.Color('yellow')]
-        },
-        particleCount: 15,
-        alive: false,
-        duration: 0.1,
-        maxAge: {
-            value: 0.5
-        }
+      type: SPE.distributions.SPHERE,
+      position: {
+        spread: new THREE.Vector3(1),
+        radius: 0.1,
+      },
+      velocity: {
+        value: new THREE.Vector3( 3, 3, 0 )
+      },
+      size: {
+        value: [ 1, 4 ]
+      },
+      opacity: {
+        value: [1, 0]
+      },
+      color: {
+        value: [new THREE.Color('red'),new THREE.Color('yellow')]
+      },
+      particleCount: 15,
+      alive: false,
+      duration: 0.1,
+      maxAge: {
+        value: 0.5
+      }
     };
 
   	this.particleGroup = new SPE.Group({
@@ -97,7 +97,7 @@ class ThreeRenderer{
 
   	this.particleBonusGroup = new SPE.Group({
   		texture: {
-          value: THREE.ImageUtils.loadTexture('assets/CartoonSmoke.png')
+         value: THREE.ImageUtils.loadTexture('assets/Particle.png')
       },
       blending: THREE.NormalBlending
   	});
@@ -108,16 +108,16 @@ class ThreeRenderer{
 		var scope = this;
 
 		$( document ).on( 'game:finished', function( e, param ){
-			scope.createExplosionBonus( param );
+			scope.createExplosion( param );
 		});
 
 		$( document ).on( 'game:bonusTaken', function( e, param ){
-			scope.createExplosion( param );
+			scope.createExplosionBonus( param );
 
 			var seconds = 0.001 * scope.game.stepTime ;
 			var duration = seconds;
 			var time;
-			console.log( seconds, duration );
+			// console.log( seconds, duration );
 
 			(function update(){
 
@@ -131,21 +131,172 @@ class ThreeRenderer{
 				if ( seconds <= 0 ){
 
 					scope.cubeBonus.scale.set( 1, 1, 1 );
-					scope.snake.children[0].material.color.setHex( 0xf5cc5a );
 					return;
 				}
 
-				scope.snake.children[0].material.color.setHex( getRandomHexadecimalColor( '0x' ) );
-
 				var scale = ( duration - seconds ) / duration;
 
-				console.log( scale );
+				// console.log( scale );
 				scope.cubeBonus.scale.set( scale, scale, scale );
 
 
 			}());
 
 		} );
+
+		this.snakeParams = {
+			// 'snakeHead_up': 
+			// { "x":192,"y":0,"w":64,"h":64 },
+			// 'snakeHead_right': 
+			// { "x":256,"y":0,"w":64,"h":64 },
+			// 'snakeHead_left': 
+			// { "x":192,"y":64,"w":64,"h":64 },
+			// 'snakeHead_down': 
+			// { "x":256,"y":64,"w":64,"h":64 },
+
+
+			'snakeBody_top_left': 
+			{
+				'scale': 0.5,
+				"a": 3,
+				"b": 2,
+				"offsetX": 0,
+				"offsetY": 0
+			},
+			'snakeBody_top_right': 
+			{
+				'scale': 0.5,
+				"a": 1,
+				"b": 1,
+				"offsetX": 2,
+				"offsetY": 0
+			},
+
+			'snakeBody_horizontal': 
+			{
+				'scale': 1,
+				"y": -0.5,
+				"offsetX": 1,
+				"offsetY": 1
+			},
+			'snakeBody_vertical': 
+			{
+				'scale': 1,
+				"x":0.5,
+				"offsetX": 1,
+				"offsetY": -1
+			},
+
+			'snakeBody_bottom_left': 
+			{
+				'scale': 0.5,
+				"a": 0,
+				"b": 1,
+				"offsetX": 0,
+				"offsetY": -2
+			},
+			'snakeBody_bottom_right': 
+			{
+				'scale': 0.5,
+				"a": 1,
+				"b": 2,
+				"offsetX": 2,
+				"offsetY": -2
+ 			}
+
+			// 'snakeTail_up': 
+			// { "x":192,"y":128,"w":64,"h":64 },
+			// 'snakeTail_right': 
+			// { "x":256,"y":128,"w":64,"h":64 },
+			// 'snakeTail_left': 
+			// { "x":192,"y":192,"w":64,"h":64 },
+			// 'snakeTail_down': 
+			// { "x":256,"y":192,"w":64,"h":64 }
+		}
+
+		function CustomSinCurve( scale, name ) {
+			this.name = name;
+			THREE.Curve.call( this );
+			this.scale = ( scale === undefined ) ? 1 : scale;
+		};
+
+		CustomSinCurve.prototype = Object.create( THREE.Curve.prototype );
+		CustomSinCurve.prototype.constructor = CustomSinCurve;
+
+		// CustomSinCurve.prototype.getPoint = function ( t ) {
+
+		// 	var tx = 0.5;
+		// 	var ty = -t;
+		// 	var tz = 0;
+
+		// 	return new THREE.Vector3( tx, ty, tz ).multiplyScalar( this.scale );
+		// };
+
+		// var path = new CustomSinCurve( 1 );
+		// var geometry = new THREE.TubeGeometry( path, 16, 0.5, 8, false );
+		// var geometry2 = new THREE.TubeGeometry( path, 16, 0.3, 8, false );
+		// var geometry3 = new THREE.TubeGeometry( path, 16, 0.4, 8, false );
+
+		// var material = new THREE.MeshLambertMaterial( {
+		// 	color: 0x00ff00, 
+		// 	side: THREE.DoubleSide, 
+		// } );
+
+		// var mesh = new THREE.Mesh( geometry, material );
+		// var mesh2 = new THREE.Mesh( geometry2, material );
+		// var mesh3 = new THREE.Mesh( geometry3, material );
+		// mesh.position.x = 2;
+		// mesh.position.y = -2;
+		// mesh.position.z = 0;
+		// // mesh.castShadow = true
+		// this.scene.add( mesh );
+		// // this.scene.add( mesh2 );
+		// // this.scene.add( mesh3 );
+		// // this.snakeGroup[snakeName] = geometry;
+
+		CustomSinCurve.prototype.getPoint = function ( t ) {
+
+			var snakeP = scope.snakeParams[this.name];
+
+			var tx = t * snakeP.offsetX;
+			var ty = t * snakeP.offsetX;
+			var tz = 0;
+			if ( !snakeP.x && !snakeP.y ){
+				tx = Math.cos( t * Math.PI / 2 + snakeP.a * Math.PI / snakeP.b ) + snakeP.offsetX;
+				ty = Math.sin( t * Math.PI / 2 + snakeP.a * Math.PI / snakeP.b ) + snakeP.offsetY;
+			}
+			else{
+				if ( snakeP.x )
+					tx = snakeP.x;
+				if ( snakeP.y )
+					ty = snakeP.y;
+			}
+
+			return new THREE.Vector3( tx, ty, tz ).multiplyScalar( this.scale );
+		};
+
+		var material = new THREE.MeshLambertMaterial( {
+			color: 0x00ff00, 
+			side: THREE.DoubleSide, 
+		} );
+
+		var i = 1;
+
+		this.snakeGroup = {};
+
+		for ( var snakeName in this.snakeParams ){
+			var path = new CustomSinCurve( this.snakeParams[snakeName].scale, snakeName );
+			var geometry = new THREE.TubeGeometry( path, 16, 0.4, 8, false );
+
+			// var mesh = new THREE.Mesh( geometry, material );
+			// mesh.position.x = 0;
+			// mesh.position.y = 0;
+			// mesh.position.z = 0;
+			// this.scene.add( mesh );
+			this.snakeGroup[snakeName] = geometry;
+			i++
+		};
+		
 
 	};
 
@@ -185,31 +336,7 @@ class ThreeRenderer{
 
 	initArea( preloader ){ // 0x575965
 
-		// function CustomSinCurve( scale ) {
 
-		// 	THREE.Curve.call( this );
-
-		// 	this.scale = ( scale === undefined ) ? 1 : scale;
-
-		// }
-
-		// CustomSinCurve.prototype = Object.create( THREE.Curve.prototype );
-		// CustomSinCurve.prototype.constructor = CustomSinCurve;
-
-		// CustomSinCurve.prototype.getPoint = function ( t ) {
-
-		// 	var tx = Math.cos( t * Math.PI / 2 + Math.PI / 2 );
-		// 	var ty = Math.sin( t * Math.PI / 2 + Math.PI / 2 );
-		// 	var tz = 1;
-
-		// 	return new THREE.Vector3( tx, ty, tz ).multiplyScalar( this.scale );
-		// };
-
-		// var path = new CustomSinCurve( 1 );
-		// var geometry = new THREE.TubeGeometry( path, 20, 0.1, 8, false );
-		// var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-		// var mesh = new THREE.Mesh( geometry, material );
-		// this.scene.add( mesh );
 		
 		// add group
 		var groundGroup = new THREE.Group();
@@ -217,7 +344,7 @@ class ThreeRenderer{
 		this.scene.add( groundGroup );
 
 		// init ground`s shadow
-		var geometry = new THREE.PlaneGeometry( this.areaX + 1.5, this.areaY + 1.5, 1 );
+		var geometry = new THREE.PlaneGeometry( this.areaX + 2, this.areaY + 2, 1 );
 
 		var material = new THREE.ShadowMaterial( );
 		material.opacity = 0.2;
@@ -252,7 +379,7 @@ class ThreeRenderer{
 		wallGroup.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0 ) );
 		this.scene.add(wallGroup);
 
-		console.log(  preloader.queue )
+		// console.log(  preloader.queue )
 
 		texture = new THREE.TextureLoader().load(
 			'assets/Wall2.png',
@@ -263,97 +390,102 @@ class ThreeRenderer{
 
 		material = new THREE.MeshLambertMaterial( { map: texture } );
 
-		for ( var i = 0; i < this.areaY + 2; i++ ){
-			var maxRand = randomInteger( 60, 95 ) / 100;
-			var height = 1 - ( maxRand - 0.5 ) * 1;
-			geometry = new THREE.BoxBufferGeometry( maxRand, maxRand, height );
-			geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, height/2 ) );
+		// for ( var i = 0; i < this.areaY + 2; i++ ){
+		// 	var maxRand = randomInteger( 60, 95 ) / 100;
+		// 	var height = 1 - ( maxRand - 0.5 ) * 1;
+		// 	geometry = new THREE.BoxBufferGeometry( maxRand, maxRand, height );
+		// 	geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, height/2 ) );
 
-			var cube1 = new THREE.Mesh( geometry, material );
-			cube1.position.x = 0;
-			cube1.position.y = -i;
+		// 	var cube1 = new THREE.Mesh( geometry, material );
+		// 	cube1.position.x = 0;
+		// 	cube1.position.y = -i;
 
-			var cube2 = new THREE.Mesh( geometry, material );
-			cube2.position.x = this.areaX + 1;
-			cube2.position.y = - this.areaY + i - 1;
+		// 	var cube2 = new THREE.Mesh( geometry, material );
+		// 	cube2.position.x = this.areaX + 1;
+		// 	cube2.position.y = - this.areaY + i - 1;
 
-			cube2.castShadow = true;
+		// 	cube2.castShadow = true;
 
-			wallGroup.add( cube1 );
-			wallGroup.add( cube2 );
-		}
+		// 	wallGroup.add( cube1 );
+		// 	wallGroup.add( cube2 );
+		// }
 
-		for ( var i = 1; i < this.areaX + 1; i++ ){
-			var maxRand = randomInteger( 60, 95 ) / 100;
-			var height =  1 - ( maxRand - 0.5 ) * 1;
-			geometry = new THREE.BoxBufferGeometry( maxRand, maxRand, height );
-			geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, height/2 ) );
+		// for ( var i = 1; i < this.areaX + 1; i++ ){
+		// 	var maxRand = randomInteger( 60, 95 ) / 100;
+		// 	var height =  1 - ( maxRand - 0.5 ) * 1;
+		// 	geometry = new THREE.BoxBufferGeometry( maxRand, maxRand, height );
+		// 	geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, height/2 ) );
 
-			var cube1 = new THREE.Mesh( geometry, material );
-			cube1.position.y = 0;
-			cube1.position.x = i;
+		// 	var cube1 = new THREE.Mesh( geometry, material );
+		// 	cube1.position.y = 0;
+		// 	cube1.position.x = i;
 
-			var cube2 = new THREE.Mesh( geometry, material );
-			cube2.position.y = -this.areaY - 1;
-			cube2.position.x = this.areaX + 1 - i;
+		// 	var cube2 = new THREE.Mesh( geometry, material );
+		// 	cube2.position.y = -this.areaY - 1;
+		// 	cube2.position.x = this.areaX + 1 - i;
 
-			cube1.castShadow = true;
+		// 	cube1.castShadow = true;
 
-			wallGroup.add( cube1 );
-			wallGroup.add( cube2 );
-		}
+		// 	wallGroup.add( cube1 );
+		// 	wallGroup.add( cube2 );
+		// }
 
-		geometry = new THREE.BoxBufferGeometry( this.areaX + 2, 1, 0.6 );
-		var cube = new THREE.Mesh( geometry, material );
-		cube.position.x = ( this.areaX + 2 ) / 2 - 0.5;
-		cube.position.y = 0;
-		cube.castShadow = true;
-		wallGroup.add( cube );
+		// geometry = new THREE.BoxBufferGeometry( this.areaX + 2, 1, 0.6 );
+		// var cube = new THREE.Mesh( geometry, material );
+		// cube.position.x = ( this.areaX + 2 ) / 2 - 0.5;
+		// cube.position.y = 0;
+		// cube.castShadow = true;
+		// wallGroup.add( cube );
 
-		geometry = new THREE.BoxBufferGeometry( this.areaX + 2, 1, 0.6 );
-		var cube = new THREE.Mesh( geometry, material );
-		cube.position.x = ( this.areaX + 2 ) / 2 - 0.5;
-		cube.position.y =  - this.areaY - 1;
-		cube.castShadow = false;
-		wallGroup.add( cube );
+		// geometry = new THREE.BoxBufferGeometry( this.areaX + 2, 1, 0.6 );
+		// var cube = new THREE.Mesh( geometry, material );
+		// cube.position.x = ( this.areaX + 2 ) / 2 - 0.5;
+		// cube.position.y =  - this.areaY - 1;
+		// cube.castShadow = false;
+		// wallGroup.add( cube );
 
-		geometry = new THREE.BoxBufferGeometry( 1, this.areaY, 0.6 );
-		var cube = new THREE.Mesh( geometry, material );
-		cube.position.x = 0;
-		cube.position.y = - ( this.areaY ) / 2 - 0.5;
-		cube.castShadow = false;
-		wallGroup.add( cube );
+		// geometry = new THREE.BoxBufferGeometry( 1, this.areaY, 0.6 );
+		// var cube = new THREE.Mesh( geometry, material );
+		// cube.position.x = 0;
+		// cube.position.y = - ( this.areaY ) / 2 - 0.5;
+		// cube.castShadow = false;
+		// wallGroup.add( cube );
 
-		geometry = new THREE.BoxBufferGeometry( 1, this.areaY, 0.6 );
-		var cube = new THREE.Mesh( geometry, material );
-		cube.position.x = this.areaX + 1;
-		cube.position.y = - ( this.areaY ) / 2 - 0.5;
-		cube.castShadow = true;
-		wallGroup.add( cube );		
+		// geometry = new THREE.BoxBufferGeometry( 1, this.areaY, 0.6 );
+		// var cube = new THREE.Mesh( geometry, material );
+		// cube.position.x = this.areaX + 1;
+		// cube.position.y = - ( this.areaY ) / 2 - 0.5;
+		// cube.castShadow = true;
+		// wallGroup.add( cube );		
 	};
 
 	initSnake(){
 
 		// init group
 		this.snake = new THREE.Group();
-		this.snake.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.21 ) );
-
 		this.scene.add(this.snake);
+		this.snake.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.3 ) );
+
+		var texture = new THREE.TextureLoader().load( 'assets/Wall2.png' );
 
 		// init snake`s head
-		var geometry = new THREE.BoxGeometry( 0.8, 0.8, 0.4 );
+		var geometry = new THREE.SphereGeometry( 0.45, 32, 32 );
 		var material = new THREE.MeshLambertMaterial( {
-			color: 0xf5cc5a
+			// color: 0xf5cc5a,
+			side: THREE.DoubleSide, 
+			map: texture
 		} );
 
-		var cube = new THREE.Mesh( geometry, material );
+		var head = new THREE.Mesh( geometry, material );
 
-		cube.castShadow = true;
-		this.snake.add( cube );
+		head.castShadow = true;
+		this.snake.add( head );
+
+		console.log( this.snake.children[0] );
 	};
 
 	initBonus(){
-		var geometry = new THREE.SphereGeometry( 0.4, 32, 32 );
+		var geometry = new THREE.SphereGeometry( 0.3, 32, 32 );
 		var materials = new THREE.MeshLambertMaterial( {
 			color: 0xd62a2a
 		} );
@@ -391,7 +523,7 @@ class ThreeRenderer{
 		}
 	
 	}
-	// <<< SET TEXTURE <<<
+	// <<< SET OBJECTS <<<
 
 
 
@@ -415,6 +547,7 @@ class ThreeRenderer{
     	time = now;
 
 			scope.particleGroup.tick( delta );
+			scope.particleBonusGroup.tick( delta );
 
 			scope.updateSnake( gameState.snake, gameState.direction, delta );
 			scope.updateBonus( gameState.bonus );
@@ -424,28 +557,10 @@ class ThreeRenderer{
 	};
 
 	updateCamera( cellPositions, direction ){
-		// if ( this.camera.position.z > 27 )
-		// 	this.down = true;
-		// else if ( this.camera.position.z < 24 )
-		// 	this.down = false;
-
-		// if ( this.down ){
-		// 	this.camera.position.z -= 0.08;
-		// }
-		// else{
-		// 	this.camera.position.z += 0.08;
-		// }
-		// var camera_pivot = new THREE.Object3D()
-
 
 		this.camera.position.x = cellPositions[0].x + 0.5 - 2 * direction.x;
 		this.camera.position.y = -cellPositions[0].y - 0.5 + 2 * direction.y;
 		this.camera.position.z = 1.2;
-		// camera_pivot.add( this.camera );
-
-
-		// this.camera.rotateZ( 3.14 / 2 )
-		// var tmpX = cellPositions[0].x + direction.x
 		
 		this.camera.lookAt( new THREE.Vector3( this.camera.position.x + 5 * direction.x, this.camera.position.y - 5 * direction.y, 0 ) );
 
@@ -455,58 +570,19 @@ class ThreeRenderer{
 			this.camera.rotateZ( 1.57 );
 		else if ( Vector.equals( direction, new Vector( 0, 1 ) ) )
 			this.camera.rotateZ( 3.14 );
-		// camera_pivot.rotateOnAxis( new THREE.Vector3(1,1,0), Math.PI / 2 );    // radi
 	}
 
-	updateSnake( cellPositions, cellDirections ){
-
-		 
-
-		var sprites = {
-			'snakeHead_up': 
-			{ dir: { x: 0, y: 1 }, "x":192,"y":0,"w":64,"h":64 },
-			'snakeHead_right': 
-			{ dir: { x: 1, y: 0 }, "x":256,"y":0,"w":64,"h":64 },
-			'snakeHead_left': 
-			{ dir: { x: -1, y: 0 }, "x":192,"y":64,"w":64,"h":64 },
-			'snakeHead_down': 
-			{ dir: { x: 0, y: -1 }, "x":256,"y":64,"w":64,"h":64 },
-
-
-			'snakeBody_top_left': 
-			{ "x":128,"y":128,"w":64,"h":64 },
-			'snakeBody_top_right': 
-			{ "x":0,"y":64,"w":64,"h":64 },
-
-			'snakeBody_horizontal': 
-			{ "x":64,"y":0,"w":64,"h":64 },
-			'snakeBody_vertical': 
-			{ "x":128,"y":64,"w":64,"h":64 },
-
-			'snakeBody_bottom_left': 
-			{ "x":128,"y":0,"w":64,"h":64 },
-			'snakeBody_bottom_right': 
-			{ "x":0,"y":0,"w":64,"h":64 },
-
-			'snakeTail_up': 
-			{ "x":192,"y":128,"w":64,"h":64 },
-			'snakeTail_right': 
-			{ "x":256,"y":128,"w":64,"h":64 },
-			'snakeTail_left': 
-			{ "x":192,"y":192,"w":64,"h":64 },
-			'snakeTail_down': 
-			{ "x":256,"y":192,"w":64,"h":64 }
-		}
+	updateSnake( cellPositions, cellDirections, delta ){
 
 		// console.log( cellDirections );
 		var snake = this.snake.children;
 
 		if ( snake.length > cellPositions.length ){
 			snake.length = cellPositions.length
-			console.log( snake )
+			// console.log( snake )
 		}
 		while ( cellPositions.length > snake.length ){
-			var cubeGeometry = new THREE.BoxGeometry( 0.7, 0.7, 0.4 );
+			var cubeGeometry = new THREE.CubeGeometry(0.6, 0.6, 0.4);// this.snakeGroup['snakeBody_' + cellDirections[snake.length]];
 			var cubeMaterial = new THREE.MeshLambertMaterial( { color: 0xfefefe } );
 
 			var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
@@ -514,22 +590,16 @@ class ThreeRenderer{
 
 			cube.castShadow = true;
 			this.snake.add( cube );
-			console.log( snake );
+			// console.log( snake );
 		};
 
-		if ( this.upd ){
-			console.log( "wow2" )
-			snake[i].position.x = sprites['snakeHead_' + cellDirections[0]].dir.x * this.blockSize * delta;
-			snake[i].position.y = sprites['snakeHead_' + cellDirections[0]].dir.x * this.blockSize * delta;
-			return;
-		};
+		// for ( var i = 1; i < snake.length - 1; i++ )
+		// 	snake[i].geometry = this.snakeGroup['snakeBody_' + cellDirections[i]];
+
 
 		for ( var i = 0; i < snake.length; i++){
-			console.log( "wow" )
-
 			snake[i].position.x = cellPositions[i].x;
 			snake[i].position.y = -cellPositions[i].y;
-			this.upd = true;
 		}
 	};
 
