@@ -127,7 +127,6 @@ class ThreeRenderer{
 		$( document )
 		.on( 'game:finished', function( e, param ){
 			var position = scope.game.gameState.snake[0];
-			console.log( position );
 			scope.createExplosion( position );
 		})
 		.on( 'game:bonusTaken', function( e, param ){
@@ -223,8 +222,6 @@ class ThreeRenderer{
 	};
 
 	initArea( preloader ){
-
-		console.log( preloader );
 		
 		// add ground group
 		var groundGroup = new THREE.Group();
@@ -236,7 +233,7 @@ class ThreeRenderer{
 
 		var scope = this;
 		var texture = new THREE.TextureLoader().load( 'assets/Ground.png' , function ( texture ) {
-			texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+				texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 		  texture.repeat.set( scope.areaX < 6 ? scope.areaX : scope.areaX - 5, scope.areaY < 6 ? scope.areaY : scope.areaY - 5 );
 			texture.anisotropy = 16;
 		} );
@@ -253,8 +250,6 @@ class ThreeRenderer{
 		var wallGroup = new THREE.Group();
 		wallGroup.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0 ) );
 		this.scene.add(wallGroup);
-
-		// console.log(  preloader.queue )
 
 		texture = new THREE.TextureLoader().load(
 			'assets/Wall2.png',

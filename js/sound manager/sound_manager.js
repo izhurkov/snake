@@ -12,7 +12,7 @@ class SoundManager{
 			var soundConfig = config.sounds[soundName];
 
 			this.sounds[soundName] = PIXI.sound.add(soundName, {
-			    url: preloader.getFileById( soundName ).src
+			    url: preloader.queue.getItem( soundName ).src
 			});
 
 			var sound = this.sounds[soundName];
