@@ -145,7 +145,7 @@ class InputController {
   };
 
   // >>> ACTIONS >>>
-  enableAction(actionName, value){
+  enableAction( actionName, value ){
     var newAction = this.actions[actionName];
     if (!newAction) return;
     newAction.enabled = value;

@@ -11,29 +11,28 @@ class ThreeRenderer{
 		this.blockSize = null;
 		this.setBlockSize()
 
+		this.chaseViewActive = false;
+
 		this.camRotation = 2;
 
 		this.gameState = gameState;
 
 		this.height = this.blockSize * (this.areaY + 2);
-		this.width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth - 20
+		this.width = ( window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth ) - 20;
+		this.newCenter = { x: ( this.areaX + 2 ) / 2, y: ( this.areaY + 2 ) / 2, z: 0 };
 
-		this.game = game;
-		
+		this.game = game;		
+
 		// >>> SETUP CANVAS >>>
 		this.scene = new THREE.Scene()
-		this.camera = new THREE.PerspectiveCamera( 90, this.width / this.height, 0.1, 1000 )
 		this.renderer = new THREE.WebGLRenderer( { antialias: true} )
 
 		this.renderer.setSize( this.width, this.height );
 		this.renderer.setClearColor( 0xFFFFFF, 1);
-		this.renderer.shadowMap.enabled = true;
+		this.renderer.shadowMap.enabled = false;
 
 		this.renderer.setPixelRatio( window.devicePixelRatio );
 		this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-		// this.renderer.gammaInput = true;
-		// this.renderer.gammaOutput = true;
-
 
 		$( renderConfig.parentElement ).append( this.renderer.domElement );
 		$( this.renderer.domElement ).attr('tabindex', 0);
@@ -42,23 +41,36 @@ class ThreeRenderer{
 		
 
 		// >>> SETUP CAMERA >>>
-		this.newCenter = { x: ( this.areaX + 2 ) / 2, y: ( this.areaY + 2 ) / 2, z: 0 };
+		
+		// 	top view cam
+		this.topViewCamera = new THREE.PerspectiveCamera( 60, this.width / this.height, 0.1, 10000 )
 
-		this.camera.position.x = 4//this.newCenter.x + 0;
-		this.camera.position.y = -3//- 1.5 * this.areaY ;
-		this.camera.position.z = 1;
-		this.camera.rotation.x = 1 * Math.PI / 2;
-		this.camera.rotation.z = 0 * Math.PI / 2;
-		// this.camera.lookAt( new THREE.Vector3( this.newCenter.x, -this.newCenter.y, this.newCenter.z ) );
+		this.topViewCamera.position.x = this.newCenter.x + 0;
+		this.topViewCamera.position.y = - 1.5 * this.areaY ;
+		this.topViewCamera.position.z = 18;
+		this.topViewCamera.lookAt( this.newCenter.x, -this.newCenter.y, this.newCenter.z );
+		
+		// 	chase view cam
+		this.chaseViewCamera = new THREE.PerspectiveCamera( 100, this.width / this.height, 0.1, 10000 )
+
+		this.chaseViewCamera.position.x = 4;
+		this.chaseViewCamera.position.y = -3;
+		this.chaseViewCamera.position.z = 1;
+		this.chaseViewCamera.rotation.x = 1 * Math.PI / 2;
+		this.chaseViewCamera.rotation.z = 0 * Math.PI / 2;
+
 		// <<< SETUP CAMERA <<<
 
 		
 		// >>> INIT STAGE'S OBJECTS >>>
 		
 		this.initArea( preloader );
-		this.initSnake( );
+		this.initSkyBox();
+		this.initSnake();
 		this.initBonus();
 		this.initLights();
+
+		// <<< INIT STAGE'S OBJECTS <<<
 
 		this.pos = new THREE.Vector3();
 
@@ -69,7 +81,7 @@ class ThreeRenderer{
         radius: 0.1,
       },
       velocity: {
-        value: new THREE.Vector3( 3, 3, 0 )
+        value: new THREE.Vector3( 1, 1, 0 )
       },
       size: {
         value: [ 1, 4 ]
@@ -84,39 +96,46 @@ class ThreeRenderer{
       alive: false,
       duration: 0.2,
       maxAge: {
-        value: 0.5
+        value: 0.9
       }
     };
 
-  	this.particleGroup = new SPE.Group({
-  		texture: {
-          value: THREE.TextureLoader('assets/CartoonSmoke.png')
-      },
-      blending: THREE.NormalBlending
-  	});
-    this.particleGroup.addPool( 10, emitterSettings, false );
-  	this.scene.add( this.particleGroup.mesh );
+    
+    var bgImage = preloader.queue.getResult('cartoonSmoke');
+		var bgBitmap = new createjs.Bitmap( bgImage );
 
-  	this.particleBonusGroup = new SPE.Group({
+		console.log( typeof(bgImage), bgBitmap )
+
+  	this.particleExplosion = new SPE.Group({
   		texture: {
-         value: THREE.TextureLoader('assets/Particle.png')
+          value: new THREE.TextureLoader().load( 'assets/CartoonSmoke.png' )
       },
       blending: THREE.NormalBlending
   	});
-    this.particleBonusGroup.addPool( 10, emitterSettings, false );
-  	this.scene.add( this.particleBonusGroup.mesh );
+
+    this.particleExplosion.addPool( 10, emitterSettings, false );
+  	this.scene.add( this.particleExplosion.mesh );
+
+  	this.particleBonus = new SPE.Group({
+  		texture: {
+         value: new THREE.TextureLoader().load( 'assets/Particle.png' )
+      },
+      blending: THREE.NormalBlending
+  	});
+    this.particleBonus.addPool( 10, emitterSettings, false );
+  	this.scene.add( this.particleBonus.mesh );
 
 
 		var scope = this;
 
 		$( document ).on( 'game:finished', function( e, param ){
-			var position = scope.snake.children[0].position;
-			scope.particleGroup.triggerPoolEmitter( 1, (scope.pos.set( position.x + 0.5, -position.y - 0.5, 0.5 )) );
+			var position = scope.game.gameState.snake[0];
+			scope.particleExplosion.triggerPoolEmitter( 1, (new THREE.Vector3( position.x + 0.5, -position.y - 0.5, 0.5 )) );
 		});
 
 		$( document ).on( 'game:bonusTaken', function( e, param ){
-			var position = param;
-			scope.particleBonusGroup.triggerPoolEmitter( 1, (scope.pos.set( position.x + 0.5, -position.y - 0.5, 0.5 )) );
+			var position = scope.game.gameState.snake[0];
+			scope.particleBonus.triggerPoolEmitter( 1, (new THREE.Vector3( position.x + 0.5, -position.y - 0.5, 0.5 )) );
 
 			var seconds = 0.001 * scope.game.stepTime ;
 			var duration = seconds;
@@ -144,22 +163,48 @@ class ThreeRenderer{
 
 		$( document ).on( 'timer:accel:start', function( e, param ){
 			scope.accelerator.visible = false;
-			console.log( scope.accelerator );
 		});
 
 		$( document ).on( 'timer:accel:end', function( e, param ){
 			scope.accelerator.visible = true;
-			console.log( scope.accelerator );
+		});
+
+		$( document ).on( 'game:setChaseView', function( e, param ){
+			var head = scope.game.gameState.snake[1];
+			var direction = scope.game.gameState.direction[0];
+			scope.chaseViewCamera.position.x = head.x + 0.5;
+			scope.chaseViewCamera.position.y = -head.y - 0.5;
+			scope.chaseViewCamera.position.z = 1;
+
+			var directions = {
+				"up": 0,
+				"left": 1,
+				"down": 2,
+				"right": 3
+			}
+			scope.chaseViewCamera.rotation.y = directions[direction] * Math.PI / 2;
+
+			scope.chaseViewActive = true;
+		$( scope.renderer.domElement ).focus();
+		});
+
+		$( document ).on( 'game:setTopView', function( e, param ){
+			scope.chaseViewActive = false;
+		$( scope.renderer.domElement ).focus();
 		});
 
 	};
 
+	addListeners(){
+
+	};
+
 	createExplosion( position ) {
-      this.particleGroup.triggerPoolEmitter( 1, (this.pos.set( position.x + 0.5, - position.y - 0.5, 0.5 )) );
+      this.particleExplosion.triggerPoolEmitter( 1, (this.pos.set( position.x + 0.5, - position.y - 0.5, 0 )) );
   };
 
   createExplosionBonus( position ) {
-      this.particleBonusGroup.triggerPoolEmitter( 1, (this.pos.set( position.x + 0.5, - position.y - 0.5, 0.5 )) );
+      this.particleBonus.triggerPoolEmitter( 1, (this.pos.set( position.x + 0.5, - position.y - 0.5, 0 )) );
   };
 
 	getActiveElement(){
@@ -188,59 +233,33 @@ class ThreeRenderer{
 		
 	};
 
-	initArea( preloader ){ // 0x575965
+	initArea( preloader ){
+
+		console.log( preloader );
 		
-		var rockPos = this.gameState.rock;
-
-		geometry = new THREE.BoxBufferGeometry( 0.8, 0.8, 0.8 );
-		material = new THREE.MeshLambertMaterial( {
-					color: 0x333333,
-					side: THREE.DoubleSide, 
-				} );
-
-		this.rock = new THREE.Mesh( geometry, material );
-		this.rock.position.x = rockPos.x;
-		this.rock.position.y = -rockPos.y;
-		this.rock.castShadow = true;
-
-		this.scene.add( this.rock );
-
-		// add group
+		// add ground group
 		var groundGroup = new THREE.Group();
 		groundGroup.applyMatrix( new THREE.Matrix4().makeTranslation( this.newCenter.x, -this.newCenter.y, 0 ) );
 		this.scene.add( groundGroup );
 
-		// init ground`s shadow
+		// init ground texture 
 		var geometry = new THREE.PlaneGeometry( this.areaX + 2, this.areaY + 2, 1 );
 
-		var material = new THREE.ShadowMaterial( );
-		material.opacity = 0.2;
-
-		var groundShadow = new THREE.Mesh( geometry, material );
-		groundShadow.receiveShadow = true;
-
-		groundGroup.add( groundShadow );
-
 		var scope = this;
-
-		// init ground texture 
 		var texture = new THREE.TextureLoader().load( 'assets/Ground.png' , function ( texture ) {
 			texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 		  texture.repeat.set( scope.areaX < 6 ? scope.areaX : scope.areaX - 5, scope.areaY < 6 ? scope.areaY : scope.areaY - 5 );
 			texture.anisotropy = 16;
 		} );
 
-		material = new THREE.MeshLambertMaterial( {
+		var material = new THREE.MeshLambertMaterial( {
 					map: texture,
 					side: THREE.DoubleSide, 
 				} );
 
 		var groundTexture = new THREE.Mesh( geometry, material );
-
-		var mesh = new THREE.Mesh( geometry, material );
-
+		groundTexture.receiveShadow = true;
 		groundGroup.add(groundTexture);
-
 
 		var wallGroup = new THREE.Group();
 		wallGroup.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0 ) );
@@ -314,6 +333,25 @@ class ThreeRenderer{
 		}
 	};
 
+	initSkyBox(){
+		var imagePrefix = "assets/dawnmountain-";
+		var directions  = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"];
+		var imageSuffix = ".png";
+		var skyGeometry = new THREE.CubeGeometry( 5000, 5000, 5000 );	
+		
+		var materialArray = [];
+		for (var i = 0; i < 6; i++)
+			materialArray.push( new THREE.MeshBasicMaterial({
+				map: THREE.ImageUtils.loadTexture( imagePrefix + directions[i] + imageSuffix ),
+				side: THREE.BackSide
+			}));
+		var skyMaterial = new THREE.MeshFaceMaterial( materialArray );
+		var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
+		skyBox.rotateX( Math.PI / 2 );
+		skyBox.rotateY( Math.PI / 2 );
+		this.scene.add( skyBox );
+	}
+
 	initSnake(){
 
 		// init group
@@ -339,33 +377,33 @@ class ThreeRenderer{
 
 	initBonus(){
 		var geometry = new THREE.SphereGeometry( 0.3, 32, 32 );
-		var materials = new THREE.MeshLambertMaterial( {
+		var material = new THREE.MeshLambertMaterial( {
 			color: 0xd62a2a
 		} );
 
-		this.cubeBonus = new THREE.Mesh( geometry, materials );
+		this.cubeBonus = new THREE.Mesh( geometry, material );
 		this.cubeBonus.castShadow = true;
 		this.cubeBonus.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.10 ) );
 
 		this.scene.add( this.cubeBonus );
 
 		geometry = new THREE.SphereGeometry( 0.3, 32, 32 );
-		materials = new THREE.MeshLambertMaterial( {
+		material = new THREE.MeshLambertMaterial( {
 			color: 0x0000ff
 		} );
 
-		this.apple = new THREE.Mesh( geometry, materials );
+		this.apple = new THREE.Mesh( geometry, material );
 		this.apple.castShadow = true;
 		this.apple.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.10 ) );
 
 		this.scene.add( this.apple );
 
 		geometry = new THREE.ConeGeometry( 0.5, 0.8, 4 );
-		materials = new THREE.MeshLambertMaterial( {
+		material = new THREE.MeshLambertMaterial( {
 			color: 0xffaa00
 		} );
 
-		this.accelerator = new THREE.Mesh( geometry, materials );
+		this.accelerator = new THREE.Mesh( geometry, material );
 		this.accelerator.castShadow = true;
 		this.accelerator.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.4 ) );
 		this.accelerator.rotateX( Math.PI / 2 );
@@ -373,25 +411,39 @@ class ThreeRenderer{
 		this.scene.add( this.accelerator );
 
 		geometry = new THREE.SphereGeometry( 0.34, 32, 4 );
-		materials = new THREE.MeshLambertMaterial( {
+		material = new THREE.MeshLambertMaterial( {
 			color: 0x33ff55
 		} );
 
-		this.frog = new THREE.Mesh( geometry, materials );
+		this.frog = new THREE.Mesh( geometry, material );
 		this.frog.castShadow = true;
 		this.frog.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.3 ) );
 
 		this.scene.add( this.frog );
+
+		var rockPos = this.gameState.rock;
+
+		geometry = new THREE.BoxBufferGeometry( 0.8, 0.8, 0.8 );
+		material = new THREE.MeshLambertMaterial( {
+					color: 0x333333,
+					side: THREE.DoubleSide, 
+				} );
+
+		this.rock = new THREE.Mesh( geometry, material );
+		this.rock.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.4 ) );
+		this.rock.castShadow = true;
+
+		this.scene.add( this.rock );
 	}
 
 	initLights(){
 
-		this.scene.add( new THREE.AmbientLight( 0x404040, 0.2 ) );
+		this.scene.add( new THREE.AmbientLight( 0xc35321, 0.6 ) );
 
-		this.scene.add( createLight( 0xfefefe, 0.4, 0, 0, 12, false ) );
-		this.scene.add( createLight( 0xfefefe, 0.6, this.areaX + 2 + 5, 0 + 5, 20, true ) );
+		this.scene.add( createLight( 0xfefefe, 0.3, 0, 0, 12, false ) );
+		this.scene.add( createLight( 0xffff62, 1.0, 2 * this.areaX, this.areaY, 20, true ) );
 		this.scene.add( createLight( 0xfefefe, 0.2, 0, - this.areaY - 4, 12, false )  );
-		this.scene.add( createLight( 0xfefefe, 0.4, this.areaX + 2, - this.areaY - 4, 12, false )  );
+		this.scene.add( createLight( 0xfefefe, 0.3, this.areaX + 2, - this.areaY - 4, 12, false )  );
 
 		function createLight( color, intensity, x, y, z, castShadow ){
 
@@ -426,31 +478,34 @@ class ThreeRenderer{
 
 			var gameState = scope.game.gameState;
 
-
 			var now = new Date().getTime();
 
 			var delta = ( now - (time || now) ) * 0.001;
 
     	time = now;
 
-			scope.particleGroup.tick( delta );
-			scope.particleBonusGroup.tick( delta );
+			scope.particleExplosion.tick( delta );
+			scope.particleBonus.tick( delta );
 
-			scope.updateCamera( gameState, delta );
 			scope.updateSnake( gameState.snake, gameState.direction, delta );
 			scope.updateBonus( gameState );
-			scope.renderer.render( scope.scene, scope.camera );
+			if ( scope.chaseViewActive ){
+				scope.updateCamera( gameState, delta );
+				scope.renderer.render( scope.scene, scope.chaseViewCamera );
+			}
+			else
+				scope.renderer.render( scope.scene, scope.topViewCamera );
 		}());
 	};
 
 	updateCamera( gameState, delta ){
 
-		var head = gameState.snake[2];
+		var head = gameState.snake[1];
 		var direction = gameState.direction[0];
 		var stepTime = 1000 / this.game.stepTime;
 
 		var headPosition = new THREE.Vector3( head.x + 0.5, -head.y - 0.5, 1 );
-		var camPosition = this.camera.position;
+		var camPosition = this.chaseViewCamera.position;
 
 		if ( camPosition.x < headPosition.x )
 			camPosition.x += delta * stepTime;
@@ -461,7 +516,7 @@ class ThreeRenderer{
 			camPosition.y += delta * stepTime;
 		if ( camPosition.y > headPosition.y )
 			camPosition.y -= delta * stepTime;
-		camPosition.z = 1.5;
+		camPosition.z = 1.0;
 
 		var directions = {
 			"up": 0,
@@ -472,13 +527,26 @@ class ThreeRenderer{
 
 		var headRotation = directions[direction];
 
-		if ( this.camRotation > headRotation)
-			this.camRotation -= delta * stepTime;
-		if ( this.camRotation < headRotation)
-			this.camRotation += delta * stepTime;
+		if ( this.camRotation > headRotation ){
+			if ( this.camRotation > 2.5 && headRotation < 0.5 )
+				this.camRotation += delta * stepTime;
+			else
+				this.camRotation -= delta * stepTime;
+		}
+		if ( this.camRotation > 3.5 )
+			this.camRotation = -0.5
 
-		// console.log( this.camRotation, headRotation );
-		this.camera.rotation.y = this.camRotation * Math.PI / 2;
+		if ( this.camRotation < headRotation ){
+			if ( this.camRotation < 0.5 && headRotation > 2.5 )
+				this.camRotation -= delta * stepTime;
+			else
+				this.camRotation += delta * stepTime;
+		}
+		if ( this.camRotation < -0.5 )
+			this.camRotation = 3.5
+
+
+		this.chaseViewCamera.rotation.y = this.camRotation * Math.PI / 2;
 	}
 
 	updateSnake( cellPositions, cellDirections, delta ){

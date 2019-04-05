@@ -11,7 +11,7 @@ class Preloader{
 	 	this.manifest = manifest;
 
 	  this.queue = new createjs.LoadQueue(true);
-
+	  
 	  this.queue.loadManifest(this.manifest);
 
 	  var scope = this;

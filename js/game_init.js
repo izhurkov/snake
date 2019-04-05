@@ -55,6 +55,12 @@ $(window).on( 'preloader:complete', function( e, data ){
 		    },
 		    'turnLeft': {
 		      keyCodes:[65]
+		    },
+		    'setChaseView': {
+		      keyCodes:[50]
+		    },
+		    'setTopView': {
+		      keyCodes:[49]
 		    }
 		  }
 		},
@@ -150,8 +156,8 @@ $(window).on( 'preloader:complete', function( e, data ){
 		
 	  blockColor: "rgba(143, 255, 143, 1)",
 	  wallColor: "rgba(68, 119, 68, 1)" ,
-	  areaX: 11,
-	  areaY: 9,
+	  areaX: 15,
+	  areaY: 11,
 	  blockSize: 24,
 
 	  headColor: "rgba(124, 112, 96, 1)",
@@ -161,7 +167,7 @@ $(window).on( 'preloader:complete', function( e, data ){
 
 	  bonusColor: "rgba(200, 70, 150, 1)",
 
-	  stepTime: 1000,
+	  stepTime: 500,
 	  acceleratorSpeedMultiply: 2,
 	  acceleratorDuration: 5
 	};

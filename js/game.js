@@ -61,6 +61,7 @@ class Game{
 		// 
 		this.STATE_READY = 'STATE_READY';
 		this.STATE_PLAYING = 'STATE_PLAYING';
+		this.STATE_FPV_PLAYING = 'STATE_FPV_PLAYING';
 		this.STATE_FINISHED = 'STATE_FINISHED';
 		this.STATE_PAUSE = 'STATE_PAUSE';
 
@@ -68,24 +69,51 @@ class Game{
 		var states = {
 
 			'STATE_READY': {
-				states: [ scope.STATE_FINISHED, scope.STATE_PAUSE, scope.STATE_PLAYING, undefined ],
+				states: [ scope.STATE_FINISHED, scope.STATE_PAUSE, scope.STATE_PLAYING, scope.STATE_FPV_PLAYING, undefined ],
 				onSet: function(){
 					scope.resetGame();
 				}
 			},
 
 			'STATE_PLAYING': {
-				states: [ scope.STATE_READY, scope.STATE_PAUSE ],
+				states: [ scope.STATE_READY, scope.STATE_PAUSE, scope.STATE_FPV_PLAYING ],
 				onSet: function(){ 
-					$( scope.renderer.getActiveElement() ).focus();
-					scope.playSound('music_mp3');
+
+        	scope.inputController.enableAction( 'turnLeft', false );
+        	scope.inputController.enableAction( 'turnRight', false );
+
+        	scope.inputController.enableAction( 'right', true );
+        	scope.inputController.enableAction( 'left', true );
+        	scope.inputController.enableAction( 'up', true );
+        	scope.inputController.enableAction( 'down', true );
+        	scope.inputController.enableAction( 'touchup', true );
+
+        	$( document ).trigger( 'game:setTopView' );
+				},
+
+				onDisable: function(){ }
+			},
+
+			'STATE_FPV_PLAYING': {
+				states: [ scope.STATE_READY, scope.STATE_PAUSE, scope.STATE_PLAYING ],
+				onSet: function(){ 
+
+        	scope.inputController.enableAction( 'turnLeft', true );
+        	scope.inputController.enableAction( 'turnRight', true );
+
+        	scope.inputController.enableAction( 'right', false );
+        	scope.inputController.enableAction( 'left', false );
+        	scope.inputController.enableAction( 'up', false );
+        	scope.inputController.enableAction( 'down', false );
+        	scope.inputController.enableAction( 'touchup', false );
+        	$( document ).trigger( 'game:setChaseView' );
 				},
 
 				onDisable: function(){ }
 			},
 
 			'STATE_PAUSE':{
-				states: [ scope.STATE_PLAYING ],
+				states: [ scope.STATE_PLAYING, scope.STATE_FPV_PLAYING ],
 				onSet: function(){
 					scope.timerAccel.pause();
 				},
@@ -96,7 +124,7 @@ class Game{
 			},
 
 			'STATE_FINISHED': {
-				states: [ scope.STATE_PLAYING ],
+				states: [ scope.STATE_PLAYING, scope.STATE_FPV_PLAYING ],
 				onSet: function(){
 					scope.playSound('game_over_mp3');
 				},
@@ -120,19 +148,20 @@ class Game{
 		$( document ).on( scope.inputController.ACTION_ACTIVATED, function(e, param) {
 	    switch( param.detail.action_name ){
 	    		case 'right':
-						scope.currentDirection = param.detail.action_name;
-	          break
 	        case 'left':
-						scope.currentDirection = param.detail.action_name;
-	          break
 	        case 'up':
-						scope.currentDirection = param.detail.action_name;
-	          break
 	        case 'down':
 						scope.currentDirection = param.detail.action_name;
 	          break;
 	        case 'touchup':
 	        	scope.setDirectionFromTouch( param.detail.cursor_pos );
+	        	break;
+
+	        case 'setChaseView':
+	  				scope.setState( scope.STATE_FPV_PLAYING );
+	        	break;
+	        case 'setTopView':
+	  				scope.setState( scope.STATE_PLAYING );
 	        	break;
 
 	        case 'turnLeft':
@@ -143,12 +172,10 @@ class Game{
 							"right": "up",
 							"null": "right"
 						}
-	        	scope.currentDirection = directions[scope.currentDirection]
-		        console.log("left:",scope.currentDirection)
+	        	scope.currentDirection = directions[scope.currentDirection];
 	        	break;
 
 	        case 'turnRight':
-	        console.log("fasfa");
 	        	var directions = {
 							"up": "right",
 							"left": "up",
@@ -156,18 +183,7 @@ class Game{
 							"right": "down",
 							"null": "right"
 						}
-	        	scope.currentDirection = directions[scope.currentDirection]
-		        console.log("right:",scope.currentDirection)
-	        	break;
-
-	        case 'setCanvas':
-	        	scope.renderer.setActiveRenderer('canvas');
-						scope.inputController.attach( scope.renderer.getActiveElement() );
-	        	break;
-
-	        case 'setPixi':
-	        	scope.renderer.setActiveRenderer('pixi');
-						scope.inputController.attach( scope.renderer.getActiveElement() );
+	        	scope.currentDirection = directions[scope.currentDirection];
 	        	break;
 	    };
 	  });
@@ -251,14 +267,12 @@ class Game{
 		this.gameState.accelerator = this.accelerator.position;
 		this.gameState.frog = this.frog.position
 
-		// this.renderer.drawFrame( this.gameState );
-
 		this.interfaceController.update( this.score );
 	};
 
 	updateGame(){
 
-		if ( !this.isState( this.STATE_PLAYING ) )
+		if ( !this.isState( this.STATE_PLAYING ) && !this.isState( this.STATE_FPV_PLAYING ))
 			return;
 
 		if ( Vector.equals( this.snake.head, this.apple.position ) ){
