@@ -190,24 +190,25 @@ class Game{
 
 	  ////////////////////
 	  //
-	  EventBus.addEvent('game:ready', function(){
-	  	scope.setState( scope.STATE_READY );
-	  } );
-	  EventBus.addEvent('game:start', function(){
-	  	scope.setState( scope.STATE_PLAYING );
-	  } );
-	  EventBus.addEvent('game:finished', function(){
-	  	scope.timerAccel.stop();
+	  $( document )
+	  .on( 'game:ready', function(e) {
+			scope.setState( scope.STATE_READY )
+	  })
+	  .on( 'game:start', function(e) {
+			scope.setState( scope.STATE_PLAYING );
+	  })
+	  .on( "game:finished", function(e){
+			scope.timerAccel.stop();
 	  	scope.setState( scope.STATE_FINISHED );
 	  	$( document ).trigger('show-screen', 'endScreen');
-	  } );
-	  EventBus.addEvent('game:pause', function(){
-	  	scope.setState( scope.STATE_PAUSE );
-	  } );
-	  EventBus.addEvent('timer:accel:end', function(){
+		})
+		.on( "game:pause", function(e){
+			scope.setState( scope.STATE_PAUSE );
+		})
+	 	.on( "timer:accel:end", function(e){
 			scope.accelerator.position = scope.getNewPosition();
 	  	scope.stepTime = scope.params.stepTime;
-	  } );
+		})
 	};
 
 
@@ -378,8 +379,8 @@ class Game{
 };
 
 
-function EventBus(){}
+// function EventBus(){}
 
-EventBus.addEvent = function( eventName, atEvent ){
-	$(document).on( eventName, atEvent )
-}
+// EventBus.addEvent = function( eventName, atEvent ){
+// 	$(document).on( eventName, atEvent )
+// }
