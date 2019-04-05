@@ -303,7 +303,7 @@ class Game{
 		this.snake.update( this.currentDirection );
 
 		if ( Vector.equals( this.snake.head, this.frog.position ) ){
-			this.score+=10;
+			this.score+=2;
 			this.frog.position = this.getNewPosition();
 			$(document).trigger( 'game:frogEaten' );
 		}

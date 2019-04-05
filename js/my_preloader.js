@@ -60,7 +60,7 @@ class MyPreloader{
 	getFileById( fileId ){
 		return this.files[fileId];
 	};
-
+	
 };
 
 function dynamicallyLoadScript(url) {

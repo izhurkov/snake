@@ -78,10 +78,10 @@ class ThreeRenderer{
       type: SPE.distributions.SPHERE,
       position: {
         spread: new THREE.Vector3( 1 ),
-        radius: 0.1,
+        radius: 0.5,
       },
       velocity: {
-        value: new THREE.Vector3( 0, 0, 1 )
+        value: new THREE.Vector3( 0, 0, 5 )
       },
       size: {
         value: [ 0.2, 4 ]
@@ -91,7 +91,7 @@ class ThreeRenderer{
       },
       particleCount: 15,
       alive: false,
-      duration: 0.01,
+      duration: 1.1,
       maxAge: {
         value: 0.9
       }
