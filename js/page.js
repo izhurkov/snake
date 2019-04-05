@@ -75,15 +75,21 @@
 	new ScreenManager( screens, modals );
 
 	var manifest = [
-		  {src:"assets/Ground.png", id:"ground"},
-		  {src:"assets/Wall.png", id:"wall"},
-		  {src:"assets/snake-graphics.png", id:"snake-graphics"},
-		  {src:"assets/CartoonSmoke.png", id:"cartoonSmoke"},
-		  {src:"assets/Bubbles.png", id:"bubbles"},
+			// images
+		  {src:"assets/Ground.png", id:"ground", type:createjs.Types.IMAGE},
+		  {src:"assets/Wall.png", id:"wall", type:createjs.Types.IMAGE},
+		  {src:"assets/snake-graphics.png", id:"snake-graphics", type:createjs.Types.IMAGE},
+		  {src:"assets/CartoonSmoke.png", id:"cartoonSmoke", type:createjs.Types.IMAGE},
+		  {src:"assets/Bubbles.png", id:"bubbles", type:createjs.Types.IMAGE},
 
+		  // sounds
 		  {src:"assets/bonus.mp3", id:"bonus_mp3"},
 		  {src:"assets/game over.mp3", id:"game_over_mp3"},
-		  {src:"assets/music.mp3", id:"music_mp3"}
+		  {src:"assets/music.mp3", id:"music_mp3"},
+
+		  // scripts
+			{src:"js/game_init.js", id:"script1"},
+			{src:"js/game.js", id:"script1"}
 		];
 
 	new Preloader( manifest );

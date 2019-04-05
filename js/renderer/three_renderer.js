@@ -51,7 +51,7 @@ class ThreeRenderer{
 		this.topViewCamera.lookAt( this.newCenter.x, -this.newCenter.y, this.newCenter.z );
 		
 		// 	chase view cam
-		this.chaseViewCamera = new THREE.PerspectiveCamera( 100, this.width / this.height, 0.1, 10000 )
+		this.chaseViewCamera = new THREE.PerspectiveCamera( 80, this.width / this.height, 0.1, 10000 )
 
 		this.chaseViewCamera.position.x = 4;
 		this.chaseViewCamera.position.y = -3;
@@ -77,44 +77,50 @@ class ThreeRenderer{
     var emitterSettings = {
       type: SPE.distributions.SPHERE,
       position: {
-        spread: new THREE.Vector3(1),
+        spread: new THREE.Vector3( 1 ),
         radius: 0.1,
       },
       velocity: {
-        value: new THREE.Vector3( 1, 1, 0 )
+        value: new THREE.Vector3( 0, 0, 1 )
       },
       size: {
-        value: [ 1, 4 ]
+        value: [ 0.2, 4 ]
       },
       opacity: {
         value: [1, 0]
       },
-      color: {
-        value: [new THREE.Color('red'),new THREE.Color('yellow')]
-      },
       particleCount: 15,
       alive: false,
-      duration: 0.2,
+      duration: 0.01,
       maxAge: {
         value: 0.9
       }
     };
 
+  	var scope = this;
     
-    var bgImage = preloader.queue.getResult('cartoonSmoke');
-		var bgBitmap = new createjs.Bitmap( bgImage );
+    var bgImage = preloader.queue.getItem('cartoonSmoke');
+		var img2 = bgImage.src;
+		console.log( bgImage );
+		var img1 = new THREE.TextureLoader().load(
+			bgImage.src,
+			function( ){
+			
+				console.log( 'time1' )
+			}
+		);
 
-		console.log( typeof(bgImage), bgBitmap )
 
-  	this.particleExplosion = new SPE.Group({
+		console.log( "time2");
+		this.particleExplosion = new SPE.Group({
   		texture: {
-          value: new THREE.TextureLoader().load( 'assets/CartoonSmoke.png' )
+         value: img1
       },
       blending: THREE.NormalBlending
   	});
-
     this.particleExplosion.addPool( 10, emitterSettings, false );
   	this.scene.add( this.particleExplosion.mesh );
+
 
   	this.particleBonus = new SPE.Group({
   		texture: {
@@ -124,18 +130,23 @@ class ThreeRenderer{
   	});
     this.particleBonus.addPool( 10, emitterSettings, false );
   	this.scene.add( this.particleBonus.mesh );
+		
+		this.addListeners();
+	};
 
+	addListeners(){
 
 		var scope = this;
 
-		$( document ).on( 'game:finished', function( e, param ){
+		$( document )
+		.on( 'game:finished', function( e, param ){
 			var position = scope.game.gameState.snake[0];
-			scope.particleExplosion.triggerPoolEmitter( 1, (new THREE.Vector3( position.x + 0.5, -position.y - 0.5, 0.5 )) );
-		});
-
-		$( document ).on( 'game:bonusTaken', function( e, param ){
+			console.log( position );
+			scope.createExplosion( position );
+		})
+		.on( 'game:bonusTaken', function( e, param ){
 			var position = scope.game.gameState.snake[0];
-			scope.particleBonus.triggerPoolEmitter( 1, (new THREE.Vector3( position.x + 0.5, -position.y - 0.5, 0.5 )) );
+			scope.createExplosionBonus( position );
 
 			var seconds = 0.001 * scope.game.stepTime ;
 			var duration = seconds;
@@ -159,18 +170,14 @@ class ThreeRenderer{
 				scope.cubeBonus.scale.set( scale, scale, scale );
 			}());
 
-		} );
-
-		$( document ).on( 'timer:accel:start', function( e, param ){
+		})
+		.on( 'timer:accel:start', function( e, param ){
 			scope.accelerator.visible = false;
-		});
-
-		$( document ).on( 'timer:accel:end', function( e, param ){
+		})
+		.on( 'timer:accel:end', function( e, param ){
 			scope.accelerator.visible = true;
-		});
-
-		$( document ).on( 'game:setChaseView', function( e, param ){
-			scope.skyBox.visible = true;
+		})
+		.on( 'game:setChaseView', function( e, param ){
 			var head = scope.game.gameState.snake[1];
 			var direction = scope.game.gameState.direction[0];
 			scope.chaseViewCamera.position.x = head.x + 0.5;
@@ -186,27 +193,21 @@ class ThreeRenderer{
 			scope.chaseViewCamera.rotation.y = directions[direction] * Math.PI / 2;
 
 			scope.chaseViewActive = true;
-		$( scope.renderer.domElement ).focus();
-		});
-
-		$( document ).on( 'game:setTopView', function( e, param ){
-			scope.skyBox.visible = false;
+			$( scope.renderer.domElement ).focus();
+		})
+		.on( 'game:setTopView', function( e, param ){
 			scope.chaseViewActive = false;
-		$( scope.renderer.domElement ).focus();
+			$( scope.renderer.domElement ).focus();
 		});
-
-	};
-
-	addListeners(){
 
 	};
 
 	createExplosion( position ) {
-      this.particleExplosion.triggerPoolEmitter( 1, (this.pos.set( position.x + 0.5, - position.y - 0.5, 0 )) );
+      this.particleExplosion.triggerPoolEmitter( 1, (this.pos.set( position.x + 0.5, - position.y - 0.5, 0.5 )) );
   };
 
   createExplosionBonus( position ) {
-      this.particleBonus.triggerPoolEmitter( 1, (this.pos.set( position.x + 0.5, - position.y - 0.5, 0 )) );
+      this.particleBonus.triggerPoolEmitter( 1, (this.pos.set( position.x + 0.5, - position.y - 0.5, 0.5 )) );
   };
 
 	getActiveElement(){
@@ -491,6 +492,7 @@ class ThreeRenderer{
 
 			scope.updateSnake( gameState.snake, gameState.direction, delta );
 			scope.updateBonus( gameState );
+			// scope.updateCamera( gameState, delta );
 			if ( scope.chaseViewActive ){
 				scope.updateCamera( gameState, delta );
 				scope.renderer.render( scope.scene, scope.chaseViewCamera );

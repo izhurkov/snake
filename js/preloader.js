@@ -27,3 +27,7 @@ class Preloader{
 	  });
 	};
 }
+
+function addScript(src){
+	document.write('<script type="text/JavaScript" src="', src, '"></script>');
+}
