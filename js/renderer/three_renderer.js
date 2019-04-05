@@ -170,6 +170,7 @@ class ThreeRenderer{
 		});
 
 		$( document ).on( 'game:setChaseView', function( e, param ){
+			scope.skyBox.visible = true;
 			var head = scope.game.gameState.snake[1];
 			var direction = scope.game.gameState.direction[0];
 			scope.chaseViewCamera.position.x = head.x + 0.5;
@@ -189,6 +190,7 @@ class ThreeRenderer{
 		});
 
 		$( document ).on( 'game:setTopView', function( e, param ){
+			scope.skyBox.visible = false;
 			scope.chaseViewActive = false;
 		$( scope.renderer.domElement ).focus();
 		});
@@ -346,10 +348,10 @@ class ThreeRenderer{
 				side: THREE.BackSide
 			}));
 		var skyMaterial = new THREE.MeshFaceMaterial( materialArray );
-		var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
-		skyBox.rotateX( Math.PI / 2 );
-		skyBox.rotateY( Math.PI / 2 );
-		this.scene.add( skyBox );
+		this.skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
+		this.skyBox.rotateX( Math.PI / 2 );
+		this.skyBox.rotateY( Math.PI / 2 );
+		this.scene.add( this.skyBox );
 	}
 
 	initSnake(){
