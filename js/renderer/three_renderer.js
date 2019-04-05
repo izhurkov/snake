@@ -99,23 +99,11 @@ class ThreeRenderer{
 
   	var scope = this;
     
-    var bgImage = preloader.queue.getItem('cartoonSmoke');
-		var img2 = bgImage.src;
-		console.log( bgImage );
-		var img1 = new THREE.TextureLoader().load(
-			bgImage.src,
-			function( ){
-			
-				console.log( 'time1' )
-			}
-		);
+		var img1 = new THREE.TextureLoader().load( preloader.queue.getItem('cartoonSmoke').src );
+		var img2 = new THREE.TextureLoader().load( preloader.queue.getItem('bubbles').src );
 
-
-		console.log( "time2");
 		this.particleExplosion = new SPE.Group({
-  		texture: {
-         value: img1
-      },
+  		texture: { value: img1 },
       blending: THREE.NormalBlending
   	});
     this.particleExplosion.addPool( 10, emitterSettings, false );
@@ -123,9 +111,7 @@ class ThreeRenderer{
 
 
   	this.particleBonus = new SPE.Group({
-  		texture: {
-         value: new THREE.TextureLoader().load( 'assets/Particle.png' )
-      },
+  		texture: { value: img2 },
       blending: THREE.NormalBlending
   	});
     this.particleBonus.addPool( 10, emitterSettings, false );

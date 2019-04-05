@@ -170,7 +170,7 @@ class Game{
 							"left": "down",
 							"down": "right",
 							"right": "up",
-							"null": "right"
+							"null": "up"
 						}
 	        	scope.currentDirection = directions[scope.currentDirection];
 	        	break;
@@ -181,7 +181,7 @@ class Game{
 							"left": "up",
 							"down": "left",
 							"right": "down",
-							"null": "right"
+							"null": "down"
 						}
 	        	scope.currentDirection = directions[scope.currentDirection];
 	        	break;
@@ -189,7 +189,7 @@ class Game{
 	  });
 
 	  ////////////////////
-	  //
+	  
 	  $( document )
 	  .on( 'game:ready', function(e) {
 			scope.setState( scope.STATE_READY )
@@ -377,10 +377,3 @@ class Game{
 	// <<< GAME LOGIC <<<
 
 };
-
-
-// function EventBus(){}
-
-// EventBus.addEvent = function( eventName, atEvent ){
-// 	$(document).on( eventName, atEvent )
-// }
