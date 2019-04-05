@@ -7,10 +7,10 @@ class ProgressBar{
 		    id: 'outerProgressBar'
 		}).append( $('<div>', { 
 		    id: 'innerProgressBar'
-		})).prependTo('#interface');
+		})).prependTo( document.body );
 
 		$(document).on('preloader:progress', function(e, data){
-			$('#innerProgressBar').css("width", data.event.loaded * 100 +"%");
+			$('#innerProgressBar').css("width", data.procent * 100 +"%");
 		});
 
 		$(document).on('preloader:complete', function(e){

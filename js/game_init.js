@@ -1,8 +1,8 @@
 'use strict';
 
-var count = 0;
+$( document ).on( 'preloader:complete', function( e, data ){
 
-$(window).on( 'preloader:complete', function( e, data ){
+	// console.log("game init", data );
 
 	var config = {
 		input: {
@@ -171,6 +171,9 @@ $(window).on( 'preloader:complete', function( e, data ){
 	  acceleratorSpeedMultiply: 2,
 	  acceleratorDuration: 5
 	};
+
+	// console.log(data.queue)
+	// console.log(data.data)
 
 	var snakeGame = new Game( config, params, data.queue );
 

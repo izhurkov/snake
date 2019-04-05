@@ -2,7 +2,7 @@
 
 class Renderer {
 
-	constructor ( configRender, params, preloader_queue, gameState, game ){
+	constructor ( configRender, params, preloader, gameState, game ){
 		this.params = params;
 
 		this.parentElement = configRender.parentElement;
@@ -34,7 +34,7 @@ class Renderer {
 			if( renderDefault && typeof(renderDefault.renderClass) !== undefined ){
 				for ( var configName in renderConfig )
 					this.defaultRender.renders[renderName][configName] = renderConfig[configName];
-				this.renders[renderName] = new renderDefault.renderClass( params, renderDefault, preloader_queue, gameState, game );
+				this.renders[renderName] = new renderDefault.renderClass( params, renderDefault, preloader, gameState, game );
 			}
 			this.renders[renderName].hide();
 		};

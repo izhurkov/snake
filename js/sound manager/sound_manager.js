@@ -12,7 +12,7 @@ class SoundManager{
 			var soundConfig = config.sounds[soundName];
 
 			this.sounds[soundName] = PIXI.sound.add(soundName, {
-			    url: preloader.queue.getResult( soundName ).src
+			    url: preloader.getFileById( soundName ).src
 			});
 
 			var sound = this.sounds[soundName];
@@ -36,6 +36,9 @@ class SoundManager{
 		$( document )
 			.on( 'game:bonusTaken', function(){
 				scope.playSound( 'bonus_mp3' )
+			})
+			.on( 'game:start', function(){
+				scope.playSound( 'music_mp3' )
 			});
 	};
 

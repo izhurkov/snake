@@ -11,7 +11,7 @@ class Preloader{
 	 	this.manifest = manifest;
 
 	  this.queue = new createjs.LoadQueue(true);
-	  
+
 	  this.queue.loadManifest(this.manifest);
 
 	  var scope = this;
@@ -26,8 +26,4 @@ class Preloader{
 			$(document).trigger('preloader:complete', { event: event, queue: scope } );
 	  });
 	};
-}
-
-function addScript(src){
-	document.write('<script type="text/JavaScript" src="', src, '"></script>');
 }
