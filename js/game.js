@@ -215,6 +215,7 @@ class Game{
 
 	startGame(){
 		this.mainStep();
+		this.frogStep();
 		this.inputController.attach( this.renderer.getActiveElement() );
 	};
 
@@ -257,6 +258,17 @@ class Game{
 		}, this.stepTime );
 	};
 
+	frogStep(){
+	  let scope = this;
+		setTimeout( function(){
+			requestAnimationFrame( () => { scope.frogStep() } );
+			scope.gameState.frog = scope.frog.position;
+			scope.frog.jump( scope.rock.position );
+		}, 900 );
+	};
+
+
+
 	gameStep(){
 		this.updateGame();
 
@@ -266,7 +278,6 @@ class Game{
 		this.gameState.apple = this.apple.position;
 		this.gameState.rock = this.rock.position;
 		this.gameState.accelerator = this.accelerator.position;
-		this.gameState.frog = this.frog.position
 
 		this.interfaceController.update( this.score );
 	};
@@ -290,7 +301,6 @@ class Game{
 
 		// move snake
 		this.snake.update( this.currentDirection );
-		this.frog.jump( this.rock.position );
 
 		if ( Vector.equals( this.snake.head, this.frog.position ) ){
 			this.score+=10;
