@@ -47,9 +47,4 @@ class AssetManager{
 		return pulledAsset;
 	}
 
-	//
-	putAllAssets(){
-
-	}
-
 }

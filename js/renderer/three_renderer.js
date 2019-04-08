@@ -384,7 +384,6 @@ class ThreeRenderer{
 		}
 
 		for ( var snakeName in this.snakeGeometryParams ){
-
 			this.AM.addAsset(
 				snakeName, 
 				50, 
@@ -405,18 +404,14 @@ class ThreeRenderer{
 					return new THREE.Mesh( geometry, material );
 				}
 			)
-
 		};
-
-		console.log(this.AM)
-
 
 		// init group
 		this.snake = new THREE.Group();
 		this.scene.add(this.snake);
 		this.snake.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.3 ) );
 
-		var texture = new THREE.TextureLoader().load( preloader.queue.getItem( "snake-texture" ).src );
+		var texture = this.snake_texture;
 
 		// init snake`s head
 		var geometry = new THREE.SphereGeometry( 0.45, 32, 32 );
@@ -425,7 +420,7 @@ class ThreeRenderer{
 			map: texture,
 			side: THREE.DoubleSide
 		} );
-			// var tube = new THREE.Mesh( geometry, material );
+		// var tube = new THREE.Mesh( geometry, material );
 
 		var head = new THREE.Mesh( geometry, material );
 
@@ -440,6 +435,7 @@ class ThreeRenderer{
 		objectsGroup.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0 ) );
 		this.scene.add(objectsGroup);
 
+		// >>> create bonus
 		var geometry = new THREE.SphereGeometry( 0.3, 32, 32 );
 		var material = new THREE.MeshLambertMaterial( {
 			color: 0xd62a2a
@@ -451,6 +447,7 @@ class ThreeRenderer{
 
 		objectsGroup.add( this.cubeBonus );
 
+		// >>> create apple
 		geometry = new THREE.SphereGeometry( 0.3, 32, 32 );
 		material = new THREE.MeshLambertMaterial( {
 			color: 0x0000ff
@@ -462,6 +459,7 @@ class ThreeRenderer{
 
 		objectsGroup.add( this.apple );
 
+		// >>> create accelerator
 		geometry = new THREE.ConeGeometry( 0.5, 0.8, 4 );
 		material = new THREE.MeshLambertMaterial( {
 			color: 0xffaa00
@@ -474,6 +472,7 @@ class ThreeRenderer{
 
 		objectsGroup.add( this.accelerator );
 
+		// >>> create frog
 		geometry = new THREE.SphereGeometry( 0.34, 32, 4 );
 		material = new THREE.MeshLambertMaterial( {
 			color: 0x33ff55
@@ -485,8 +484,7 @@ class ThreeRenderer{
 
 		objectsGroup.add( this.frog );
 
-		var rockPos = this.gameState.rock;
-
+		// >>> create rock
 		geometry = new THREE.BoxBufferGeometry( 0.8, 0.8, 0.8 );
 		material = new THREE.MeshLambertMaterial( {
 					color: 0x333333,
@@ -639,8 +637,8 @@ class ThreeRenderer{
 		}
 
 		for ( var snakeTile in snake ){
-			snake[snakeTile].position.set( cellPositions[snakeTile].x,
-																			-cellPositions[snakeTile].y, 0)
+			console.log(snake[snakeTile] )
+			snake[snakeTile].position.set( cellPositions[snakeTile].x, -cellPositions[snakeTile].y, 0)
 		}
 
 	};
