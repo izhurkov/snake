@@ -10,7 +10,8 @@ class ProgressBar{
 		})).prependTo( document.body );
 
 		$(document).on('preloader:progress', function(e, data){
-			$('#innerProgressBar').css("width", data.procent * 100 +"%");
+			var procent = data.event.loaded;
+			$('#innerProgressBar').css("width", procent * 100 +"%");
 		});
 
 		$(document).on('preloader:complete', function(e){

@@ -29,6 +29,7 @@ class Game{
 
 		this.score = 0;
 		this.currentDirection = null;
+		this.currentTurn = null;
 
 		this.gameState = {
 			area: this.area.blocks,
@@ -172,7 +173,7 @@ class Game{
 							"right": "up",
 							"null": "up"
 						}
-	        	scope.currentDirection = directions[scope.currentDirection];
+	        	scope.currentTurn = directions[scope.currentDirection];
 	        	break;
 
 	        case 'turnRight':
@@ -183,7 +184,7 @@ class Game{
 							"right": "down",
 							"null": "down"
 						}
-	        	scope.currentDirection = directions[scope.currentDirection];
+	        	scope.currentTurn = directions[scope.currentDirection];
 	        	break;
 	    };
 	  });
@@ -229,6 +230,7 @@ class Game{
 
 		this.score = 0;
 		this.currentDirection = null;
+		this.currentTurn = null;
 		this.inputController.attach( this.renderer.getActiveElement() );
 	};
 
@@ -280,6 +282,7 @@ class Game{
 		this.gameState.accelerator = this.accelerator.position;
 
 		this.interfaceController.update( this.score );
+		console.log( this.currentTurn, this.currentDirection );
 	};
 
 	updateGame(){
@@ -300,7 +303,9 @@ class Game{
 		}
 
 		// move snake
-		this.snake.update( this.currentDirection );
+		if ( this.isState( this.STATE_FPV_PLAYING ) )
+			this.currentDirection = this.currentTurn;
+		this.snake.update( this.currentDirection 	);
 
 		if ( Vector.equals( this.snake.head, this.frog.position ) ){
 			this.score+=2;

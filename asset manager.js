@@ -50,11 +50,13 @@ class AssetManager(){
 	// положить ассет
 	putAsset( asset ){
 
+
+
 	}
 
 	// взять ассет
 	pullAsset( asset_id ){
-
+		
 	}
 
 	//

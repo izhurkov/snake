@@ -1,8 +1,73 @@
 'use strict';
 
 $( document ).on( 'preloader:complete', function( e, data ){
+	var screens = {
+	  'menuScreen': {
+	    onShow: function(){ 
+	    	$(document).trigger( 'game:ready' );
+	  		$(document).trigger( 'hide-modal' ); },
+	    afterShow: function(){ },
+	    onHide: function(){ }
+	  },
+	  'gameScreen': {
 
-	// console.log("game init", data );
+	    onShow: function(){ 
+	    	$(document).trigger( 'game:ready' );
+	  		$(document).trigger( 'hide-modal' ); },
+
+	    afterShow: function(){
+	    	$(document).trigger( 'game:start' ); },
+
+	    onHide: function(){  },
+	    afterHide: function(){
+	    	$(document).trigger( 'game:ready' ); },
+
+	    'showAnimation': 'fadeIn',
+	    'showDuration': 300,
+	    'hideAnimation': 'fadeOut',
+	    'hideDuration': 1400
+	  },
+	  'endScreen': {
+	    onShow: function(){
+	  		$(document).trigger( 'hide-modal' ); },
+	  		
+	    onHide: function(){ }
+	  }
+	};
+
+	var modals = {
+	  'pauseModal': {
+	  	text: 'Pause',
+	  	buttons: {
+	  		'continue': {
+	  			value: "continue",
+	  			onClick: function(){
+	  				$(document).trigger( 'hide-modal', 'pauseModal' );
+	  			}
+	  		},
+	  		'menu': {
+	  			value: "menu",
+	  			// data-event: 'game:menu;show-screen>menuScreen;hide-modal>pauseModal',
+	  			//////////////////////// data-event: 'game:menu;show-screen>menuScreen;hide-modal>pauseModal'
+	  			onClick: function(){
+  					$(document).trigger( 'show-screen', 'menuScreen' );
+	  				$(document).trigger( 'hide-modal', 'pauseModal' );
+	  			}
+	  		}
+		  },
+		  onShow: function(){
+		  	$(document).trigger( 'game:pause' ); },
+
+	    onHide: function(){ },
+	    afterHide: function() {
+  			$(document).trigger( 'game:start' );
+	    },
+	    'showDuration': 500,
+	    'hideDuration': 800
+		}
+	};
+
+	new ScreenManager( screens, modals );
 
 	var config = {
 		input: {
@@ -171,9 +236,6 @@ $( document ).on( 'preloader:complete', function( e, data ){
 	  acceleratorSpeedMultiply: 2,
 	  acceleratorDuration: 5
 	};
-
-	// console.log(data.queue)
-	// console.log(data.data)
 
 	var snakeGame = new Game( config, params, data.queue );
 

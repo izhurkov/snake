@@ -1,66 +1,53 @@
 'use strict';
 
-class AssetManager {
+class AssetManager{
 
-	constructor( params ){
+	constructor(){
+		this.assets = {};
+		this.pulled_assets = [];
+	}
 
-		this.entities = [];
-		this.entityParams = [];
-		this.params = Object.assign( {}, params );
-	};	
+	addAsset( asset_id, count, onCreate, onAdd, onRemove ){
 
-	addEntity( entities ){
+		this.assets[ asset_id ]	= null;
+		this.assets[ asset_id ]	= {
+			assets: [],
+			asset_id: asset_id,
+			onCreate: onCreate,
+			onAdd: onAdd,
+			onRemove, onRemove,
+		}
 
-		for ( var entityName in entities ) {
+		for(var i=0; i<count; i++)
+			this.assets[asset_id].assets.push( onCreate() );
+	}
+	
+	// положить ассет
+	putAsset( asset, asset_id ){
+    var position = this.pulled_assets.indexOf(asset);
 
-			var entity = entities[entityName];
-			
-			if ( !entity.assetClass ) return;
+    var put_asset = null;
 
-			this.entities.push( new entity.assetClass( this.params ) );
-			entity.name = entityName;
-			this.entityParams.push( entity );
-		};
-	};
+		if ( ~position )
+			put_asset = this.pulled_assets.splice(position, 1);
 
-	update( params ){
-		var entities = this.entities;
-		for ( var i = 0; i < entities.length; i++ ){
-			if ( entities[i].update ){
-				entities[i].update( params );
-			};
-		};
-	};
+		this.assets[ asset_id ].assets.push( put_asset[0] );
+	}
 
-	setData( entityName, data ){
+	// взять ассет
+	pullAsset( asset_id ){
+		var assets = this.assets[asset_id].assets;
+		if ( assets.length <= 0 ) return false;
+
+		var pulledAsset = assets.pop();
+
+		this.pulled_assets.push( pulledAsset );
+		return pulledAsset;
+	}
+
+	//
+	putAllAssets(){
 
 	}
 
-	getData( entityName ){
-		var entity = this.getEntityByName( entityName );
-		if ( entity && entity.getData ){
-			return entity.getData();
-		}
-	};
-
-	cloneEntity( entityName, number ){
-		var entities = this.entities;
-		var entity = this.getEntityByName( entityName );
-
-		if ( entity === undefined ) return;
-
-		for ( var i = number - 1; i >= 0; i-- ) {
-			entities.push( Object.assign( {}, entity ) );
-		};
-	};
-
-	getEntityByName( entityName ){
-		var entities = this.entityParams;
-		for ( var i = 0; i < entities.length; i++ ){
-			if ( entities[i].name === entityName ){
-				return this.entities[i];
-			};
-		};
-	};
-
-};
+}
