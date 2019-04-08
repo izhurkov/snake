@@ -65,6 +65,7 @@ class ThreeRenderer{
 
 		
 		// >>> INIT STAGE'S OBJECTS >>>	
+		this.initTexture( preloader );
 		this.initArea( preloader );
 		this.initSkyBox( preloader );
 		this.initSnake( preloader );
@@ -233,45 +234,43 @@ class ThreeRenderer{
 	// ╚═╝╚═╝  ╚═══╝╚═╝   ╚═╝        ╚═════╝ ╚═════╝  ╚════╝ ╚══════╝ ╚═════╝   ╚═╝   ╚══════╝
 
 	// >>> SET OBJECTS >>>
-	initTexture( configRender, preloader, gameState ){
-
-		
+	initTexture( preloader ){
+		var scope = this;
+		this.snake_texture = new THREE.TextureLoader().load( preloader.queue.getItem( "snake-texture" ).src );
+		this.wall_texture = new THREE.TextureLoader().load( preloader.queue.getItem( "wallDark" ).src );
+		this.ground_texture = new THREE.TextureLoader().load( preloader.queue.getItem('ground').src , function ( texture ) {
+			texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+	  	texture.repeat.set( scope.areaX < 6 ? scope.areaX : scope.areaX - 5, scope.areaY < 6 ? scope.areaY : scope.areaY - 5 );
+			texture.anisotropy = 16;
+		} );
 	};
 
 	initArea( preloader ){
+		var scope = this;
 		
 		// add ground group
 		var groundGroup = new THREE.Group();
 		groundGroup.applyMatrix( new THREE.Matrix4().makeTranslation( this.newCenter.x, -this.newCenter.y, 0 ) );
 		this.scene.add( groundGroup );
 
-		// init ground texture 
+		// init ground
 		var geometry = new THREE.PlaneGeometry( this.areaX + 2, this.areaY + 2, 1 );
 
-		var scope = this;
-
-		var texture = new THREE.TextureLoader().load( preloader.queue.getItem('ground').src , function ( texture ) {
-				texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-		  	texture.repeat.set( scope.areaX < 6 ? scope.areaX : scope.areaX - 5, scope.areaY < 6 ? scope.areaY : scope.areaY - 5 );
-				texture.anisotropy = 16;
+		var material = new THREE.MeshLambertMaterial( {
+			map: this.ground_texture,
+			side: THREE.DoubleSide, 
 		} );
 
-		var material = new THREE.MeshLambertMaterial( {
-					map: texture,
-					side: THREE.DoubleSide, 
-				} );
-
 		var groundTexture = new THREE.Mesh( geometry, material );
-		groundTexture.receiveShadow = true;
 		groundGroup.add(groundTexture);
 
+		// init walls group
 		var wallGroup = new THREE.Group();
 		wallGroup.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0 ) );
 		this.scene.add(wallGroup);
 
-		texture = new THREE.TextureLoader().load( preloader.queue.getItem('wallDark').src );
-
-		material = new THREE.MeshLambertMaterial( { map: texture } );
+		// init walls
+		material = new THREE.MeshLambertMaterial( { map: this.wall_texture } );
 
 		for ( var i = 0; i < this.areaY + 2; i++ ){
 			var maxRand = randomInteger( 60, 95 ) / 100;
@@ -325,7 +324,6 @@ class ThreeRenderer{
 			cube.position.x = positionX;
 			cube.position.y = positionY;
 			cube.castShadow = castShadow;
-
 			return cube;
 		}
 	};
@@ -350,9 +348,7 @@ class ThreeRenderer{
 
 	initSnake( preloader ){
 		var scope = this;
-		this.snakeParams = {
-
-
+		this.snakeGeometryParams = {
 			'snakeBody_top_left': 
 			{
 				start: { x: 0.5, y: 0 },
@@ -387,36 +383,21 @@ class ThreeRenderer{
  			}
 		}
 
-		this.snakeGroup = {};
-
-		var i = 0;
-
-
-		for ( var snakeName in this.snakeParams ){
-			var position = this.snakeParams[snakeName];
-			var start = new THREE.Vector3(position.start.x-0.5, position.start.y+0.5, 0);
-      var middle = new THREE.Vector3(0, 0, 0);
-      var end = new THREE.Vector3(position.end.x-0.5, position.end.y+0.5, 0);
-      var curveQuad = new THREE.QuadraticBezierCurve3(start, middle, end);
-			var geometry = new THREE.TubeGeometry( curveQuad, 16, 0.3, 16, false );
-			this.snakeGroup[snakeName] = geometry;
-			// var tube = new THREE.Mesh( geometry, material );
-			// tube.position.x = 1 + i;
-			// tube.position.y = -1;
-			// tube.position.z = 0;
-			// this.scene.add(tube);
+		for ( var snakeName in this.snakeGeometryParams ){
 
 			this.AM.addAsset(
 				snakeName, 
-				300, 
+				50, 
 				function(){
-					var position = scope.snakeParams[snakeName];
-					var start = new THREE.Vector3(position.start.x, position.start.y, 0);
-		      var middle = new THREE.Vector3(0.5, -0.5, 0);
-		      var end = new THREE.Vector3(position.end.x, position.end.y, 0);
+					var position = scope.snakeGeometryParams[snakeName];
+
+					var start = new THREE.Vector3(position.start.x-0.5, position.start.y+0.5, 0);
+		      var middle = new THREE.Vector3(0, 0, 0);
+		      var end = new THREE.Vector3(position.end.x-0.5, position.end.y+0.5, 0);
+
 		      var curveQuad = new THREE.QuadraticBezierCurve3(start, middle, end);
-					var geometry = new THREE.TubeGeometry( curveQuad, 16, 0.5, 16, false );
-					// var texture = new THREE.TextureLoader().load( preloader.queue.getItem( "snake-texture" ).src );
+					var geometry = new THREE.TubeGeometry( curveQuad, 16, 0.3, 16, false );
+
 					var material = new THREE.MeshLambertMaterial( {
 						color: 0x421095,
 						side: THREE.DoubleSide
@@ -648,41 +629,19 @@ class ThreeRenderer{
 
 		var snake = this.snake.children;
 
-		while ( cellPositions.length < snake.length ){
-			snake.splice( -1, 1 );
-			// var asset = snake.pop();
-			// this.AM.putAsset( asset, 'snakeBody_horizontal' );
+		while ( snake.length < cellDirections.length ){
+			this.snake.add(this.AM.pullAsset( 'snakeBody_horizontal' ))
 		}
 
-		while ( cellPositions.length > snake.length ){
-
-		// init snake`s head
-			var geometry = this.snakeGroup['snakeBody_bottom_left'];
-			var material = new THREE.MeshLambertMaterial( {
-				// color: 0xf5cc5a
-				color: 0x004499,
-				side: THREE.DoubleSide
-			} );
-			var tube = new THREE.Mesh( geometry, material );
-			this.snake.add( this.AM.pullAsset('snakeBody_horizontal') )
-			// var snakeTile = this.AM.pullAsset( 'snakeBody_horizontal' );
-			// this.snake.add( snakeTile );
-		};
+		for ( var i = 1; i < snake.length - 1; i++ ){
+			var snake_geometry = 'snakeBody_' + cellDirections[i];
+			snake[i] = this.AM.pullAsset( snake_geometry );
+		}
 
 		for ( var snakeTile in snake ){
 			snake[snakeTile].position.set( cellPositions[snakeTile].x,
 																			-cellPositions[snakeTile].y, 0)
 		}
-
-		for ( var i = 1; i < snake.length - 1; i++ ){
-			if (this.snakeGroup['snakeBody_' + cellDirections[i]] === undefined) return;
-			var snake_geometry = 'snakeBody_' + cellDirections[i];
-			this.AM.putAsset(snake[i], snake_geometry); 
-			snake[i] = this.AM.pullAsset( snake_geometry );
-			console.log(this.AM)
-		}
-
-		console.log( 'frame' )
 
 	};
 
