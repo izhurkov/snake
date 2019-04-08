@@ -24,6 +24,7 @@ class AssetManager{
 	
 	// положить ассет
 	putAsset( asset, asset_id ){
+		if ( this.assets[asset_id] === undefined ) return null;
     var position = this.pulled_assets.indexOf(asset);
 
     var put_asset = null;
@@ -36,6 +37,7 @@ class AssetManager{
 
 	// взять ассет
 	pullAsset( asset_id ){
+		if ( this.assets[asset_id] === undefined ) return null;
 		var assets = this.assets[asset_id].assets;
 		if ( assets.length <= 0 ) return false;
 

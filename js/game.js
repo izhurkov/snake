@@ -281,8 +281,9 @@ class Game{
 		this.gameState.rock = this.rock.position;
 		this.gameState.accelerator = this.accelerator.position;
 
+		$( document ).trigger( 'game:updated' );
+
 		this.interfaceController.update( this.score );
-		console.log( this.currentTurn, this.currentDirection );
 	};
 
 	updateGame(){
@@ -328,7 +329,6 @@ class Game{
 			this.bonus.position = this.getNewPosition();
 
 			$(document).trigger( 'game:bonusTaken', { x: this.snake.head.x, y: this.snake.head.y } );
-
 		}
 		else if ( this.snakeCollision() ){
 				$(document).trigger( 'game:finished', { x: this.snake.head.x, y: this.snake.head.y } );
@@ -376,7 +376,6 @@ class Game{
 	};
 
 	wallCollision(){
-		// console.log( this.snake.head, this.rock.position )
 		if (this.area.blocks[this.snake.head.x][this.snake.head.y] != 0 || Vector.equals( this.snake.head, this.rock.position) )
 			return true;
 		return false;

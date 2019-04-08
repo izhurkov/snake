@@ -4,6 +4,7 @@ class ThreeRenderer{
 
 	constructor ( params, renderConfig, preloader, gameState, game ){
 		this.params = params;
+  	var scope = this;
 
 		this.areaX = params.areaX !== undefined ? params.areaX : 50;
 		this.areaY = params.areaY !== undefined ? params.areaY : 5;
@@ -24,19 +25,7 @@ class ThreeRenderer{
 		this.game = game;
 
 		this.AM = new AssetManager();
-		this.AM.addAsset(
-			'snakeTail',
-			100,
-			function(){
-				var cubeGeometry = new THREE.CubeGeometry(0.6, 0.6, 0.4);
-				var cubeMaterial = new THREE.MeshLambertMaterial( { color: 0xfefefe } );
-
-				var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
-
-				cube.castShadow = true;
-				return cube;
-			}
-		);
+		
 
 		// >>> SETUP CANVAS >>>
 		this.scene = new THREE.Scene()
@@ -101,15 +90,17 @@ class ThreeRenderer{
       opacity: {
         value: [1, 0]
       },
+      color:{
+      	value: [new THREE.Color('yellow'), new THREE.Color('red')] 
+      },
       particleCount: 15,
       alive: false,
-      duration: 1.1,
+      duration: 0.5,
       maxAge: {
         value: 0.9
       }
     };
 
-  	var scope = this;
     
 		var img1 = new THREE.TextureLoader().load( preloader.queue.getItem('cartoonSmoke').src );
 		var img2 = new THREE.TextureLoader().load( preloader.queue.getItem('bubbles').src );
@@ -196,7 +187,11 @@ class ThreeRenderer{
 		.on( 'game:setTopView', function( e, param ){
 			scope.chaseViewActive = false;
 			$( scope.renderer.domElement ).focus();
-		});
+		})
+		.on( 'game:updated', function(){
+			var gameState = scope.game.gameState;
+			scope.updateSnake( gameState )
+		})
 
 	};
 
@@ -354,32 +349,86 @@ class ThreeRenderer{
 	}
 
 	initSnake( preloader ){
-		function CustomSinCurve( scale ) {
+		var scope = this;
+		this.snakeParams = {
 
-			THREE.Curve.call( this );
 
-			this.scale = ( scale === undefined ) ? 1 : scale;
+			'snakeBody_top_left': 
+			{
+				start: { x: 0.5, y: 0 },
+				end: { x: 0, y: -0.5 }
+			},
+			'snakeBody_top_right': 
+			{
+				start: { x: 0.5, y: 0 },
+				end: { x: 1, y: -0.5 }
+			},
 
+			'snakeBody_horizontal': 
+			{
+				start: { x: 0, y: -0.5 },
+				end: { x: 1, y: -0.5 }
+			},
+			'snakeBody_vertical': 
+			{
+				start: { x: 0.5, y: 0 },
+				end: { x: 0.5, y: -1 }
+			},
+
+			'snakeBody_bottom_left': 
+			{
+				start: { x: 0, y: -0.5 },
+				end: { x: 0.5, y: -1 }
+			},
+			'snakeBody_bottom_right': 
+			{
+				start: { x: 0.5, y: -1 },
+				end: { x: 1, y: -0.5 }
+ 			}
 		}
 
-		CustomSinCurve.prototype = Object.create( THREE.Curve.prototype );
-		CustomSinCurve.prototype.constructor = CustomSinCurve;
+		this.snakeGroup = {};
 
-		CustomSinCurve.prototype.getPoint = function ( t ) {
+		var i = 0;
 
-			var tx = Math.cos( 2 * Math.PI * t );
-			var ty = Math.sin( 2 * Math.PI * t );
-			var tz = 0;
 
-			return new THREE.Vector3( tx, ty, tz ).multiplyScalar( this.scale );
+		for ( var snakeName in this.snakeParams ){
+			var position = this.snakeParams[snakeName];
+			var start = new THREE.Vector3(position.start.x-0.5, position.start.y+0.5, 0);
+      var middle = new THREE.Vector3(0, 0, 0);
+      var end = new THREE.Vector3(position.end.x-0.5, position.end.y+0.5, 0);
+      var curveQuad = new THREE.QuadraticBezierCurve3(start, middle, end);
+			var geometry = new THREE.TubeGeometry( curveQuad, 16, 0.3, 16, false );
+			this.snakeGroup[snakeName] = geometry;
+			// var tube = new THREE.Mesh( geometry, material );
+			// tube.position.x = 1 + i;
+			// tube.position.y = -1;
+			// tube.position.z = 0;
+			// this.scene.add(tube);
+
+			this.AM.addAsset(
+				snakeName, 
+				300, 
+				function(){
+					var position = scope.snakeParams[snakeName];
+					var start = new THREE.Vector3(position.start.x, position.start.y, 0);
+		      var middle = new THREE.Vector3(0.5, -0.5, 0);
+		      var end = new THREE.Vector3(position.end.x, position.end.y, 0);
+		      var curveQuad = new THREE.QuadraticBezierCurve3(start, middle, end);
+					var geometry = new THREE.TubeGeometry( curveQuad, 16, 0.5, 16, false );
+					// var texture = new THREE.TextureLoader().load( preloader.queue.getItem( "snake-texture" ).src );
+					var material = new THREE.MeshLambertMaterial( {
+						color: 0x421095,
+						side: THREE.DoubleSide
+					} );
+					return new THREE.Mesh( geometry, material );
+				}
+			)
 
 		};
 
-		var path = new CustomSinCurve( 1 );
-		var geometry = new THREE.TubeGeometry( path, 10, 2, 4, false );
-		var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-		var mesh = new THREE.Mesh( geometry, material );
-		this.scene.add( mesh );
+		console.log(this.AM)
+
 
 		// init group
 		this.snake = new THREE.Group();
@@ -391,10 +440,11 @@ class ThreeRenderer{
 		// init snake`s head
 		var geometry = new THREE.SphereGeometry( 0.45, 32, 32 );
 		var material = new THREE.MeshLambertMaterial( {
-			// color: 0xf5cc5a,
-			side: THREE.DoubleSide, 
-			map: texture
+			// color: 0xf5cc5a
+			map: texture,
+			side: THREE.DoubleSide
 		} );
+			// var tube = new THREE.Mesh( geometry, material );
 
 		var head = new THREE.Mesh( geometry, material );
 
@@ -492,10 +542,7 @@ class ThreeRenderer{
 			light.shadow.bias = 0.001;
 
 			return light;
-		}
-
-		console.log( this.AM );
-	
+		}	
 	}
 	// <<< SET OBJECTS <<<
 
@@ -529,22 +576,16 @@ class ThreeRenderer{
 
 			scope.particleExplosion.tick( delta );
 			scope.particleBonus.tick( delta );
-			try {
-				scope.updateSnake( gameState.snake, gameState.direction, delta );
-				scope.updateObjects( gameState, delta );
-				// scope.updateCamera( gameState, delta );
-				if ( scope.chaseViewActive ){
-					scope.updateCamera( gameState, delta );
-					scope.renderer.render( scope.scene, scope.chaseViewCamera );
-				}
-				else
-					scope.renderer.render( scope.scene, scope.topViewCamera );
-			}
-			catch( error ){
-				console.log( error );
-				return;
-			}
 
+			// scope.updateSnake( gameState, delta );
+			scope.updateObjects( gameState, delta );
+			// scope.updateCamera( gameState, delta );
+			if ( scope.chaseViewActive ){
+				scope.updateCamera( gameState, delta );
+				scope.renderer.render( scope.scene, scope.chaseViewCamera );
+			}
+			else
+				scope.renderer.render( scope.scene, scope.topViewCamera );
 
 		}());
 	};
@@ -600,24 +641,49 @@ class ThreeRenderer{
 		this.chaseViewCamera.rotation.y = this.camRotation * Math.PI / 2;	
 	}
 
-	updateSnake( cellPositions, cellDirections, delta ){
+	updateSnake( gameState ){
+
+		var cellPositions = gameState.snake;
+		var cellDirections = gameState.direction;
 
 		var snake = this.snake.children;
 
 		while ( cellPositions.length < snake.length ){
-			var asset = snake.pop();
-			this.AM.putAsset( asset, 'snakeTail' );
+			snake.splice( -1, 1 );
+			// var asset = snake.pop();
+			// this.AM.putAsset( asset, 'snakeBody_horizontal' );
 		}
 
 		while ( cellPositions.length > snake.length ){
-			var snakeTail = this.AM.pullAsset( 'snakeTail' );
-			this.snake.add( snakeTail );
+
+		// init snake`s head
+			var geometry = this.snakeGroup['snakeBody_bottom_left'];
+			var material = new THREE.MeshLambertMaterial( {
+				// color: 0xf5cc5a
+				color: 0x004499,
+				side: THREE.DoubleSide
+			} );
+			var tube = new THREE.Mesh( geometry, material );
+			this.snake.add( this.AM.pullAsset('snakeBody_horizontal') )
+			// var snakeTile = this.AM.pullAsset( 'snakeBody_horizontal' );
+			// this.snake.add( snakeTile );
 		};
 
-		for ( var i = 0; i < snake.length; i++){
-			snake[i].position.x = cellPositions[i].x;
-			snake[i].position.y = -cellPositions[i].y;
+		for ( var snakeTile in snake ){
+			snake[snakeTile].position.set( cellPositions[snakeTile].x,
+																			-cellPositions[snakeTile].y, 0)
 		}
+
+		for ( var i = 1; i < snake.length - 1; i++ ){
+			if (this.snakeGroup['snakeBody_' + cellDirections[i]] === undefined) return;
+			var snake_geometry = 'snakeBody_' + cellDirections[i];
+			this.AM.putAsset(snake[i], snake_geometry); 
+			snake[i] = this.AM.pullAsset( snake_geometry );
+			console.log(this.AM)
+		}
+
+		console.log( 'frame' )
+
 	};
 
 	updateObjects( gameState, delta ){
