@@ -1,6 +1,6 @@
 'use strict';
 
-class EmitterManager{
+class PixiEmitterManager{
 
 	constructor( blockSize, config, preloader, stage ){
 

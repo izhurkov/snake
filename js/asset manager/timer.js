@@ -10,7 +10,9 @@ function Timer( event ){
 Timer.prototype = {
 
 	play: function( duration) {
-		$( document ).trigger( this.event + ":start" );
+		if ( !this.isStopped ){
+			$( document ).trigger( this.event + ":start" );
+		}
 
 		var seconds = duration;
 		var duration = duration;

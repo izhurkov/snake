@@ -42,19 +42,17 @@ class Game{
 			frog: this.frog.position
 		};
 
+		this.DEV_PAUSE = false;
+
+		this.chaseView = false;
+
 
 		var scope = this;
 
-		// отрисовка
-		this.renderer = new Renderer( config.render, this.params, preloader, this.gameState, scope );
-		this.blockSize = this.renderer.getBlockSize();
-
-		// музыка
-		this.soundManager = new SoundManager( config.audio, preloader );
+		
 
 		// управление
 		this.inputController = new InputController( config.input );
-		this.inputController.attach( this.renderer.getActiveElement() );
 
 		//
 		this.interfaceController = new InterfaceController();
@@ -62,7 +60,6 @@ class Game{
 		// 
 		this.STATE_READY = 'STATE_READY';
 		this.STATE_PLAYING = 'STATE_PLAYING';
-		this.STATE_FPV_PLAYING = 'STATE_FPV_PLAYING';
 		this.STATE_FINISHED = 'STATE_FINISHED';
 		this.STATE_PAUSE = 'STATE_PAUSE';
 
@@ -70,51 +67,22 @@ class Game{
 		var states = {
 
 			'STATE_READY': {
-				states: [ scope.STATE_FINISHED, scope.STATE_PAUSE, scope.STATE_PLAYING, scope.STATE_FPV_PLAYING, undefined ],
+				states: [ scope.STATE_FINISHED, scope.STATE_PAUSE, scope.STATE_PLAYING, undefined ],
 				onSet: function(){
 					scope.resetGame();
 				}
 			},
 
 			'STATE_PLAYING': {
-				states: [ scope.STATE_READY, scope.STATE_PAUSE, scope.STATE_FPV_PLAYING ],
-				onSet: function(){ 
-
-        	scope.inputController.enableAction( 'turnLeft', false );
-        	scope.inputController.enableAction( 'turnRight', false );
-
-        	scope.inputController.enableAction( 'right', true );
-        	scope.inputController.enableAction( 'left', true );
-        	scope.inputController.enableAction( 'up', true );
-        	scope.inputController.enableAction( 'down', true );
-        	scope.inputController.enableAction( 'touchup', true );
-
-        	$( document ).trigger( 'game:setTopView' );
+				states: [ scope.STATE_READY, scope.STATE_PAUSE ],
+				onSet: function(){
+					$( scope.renderer.getActiveElement() ).focus();
 				},
-
-				onDisable: function(){ }
-			},
-
-			'STATE_FPV_PLAYING': {
-				states: [ scope.STATE_READY, scope.STATE_PAUSE, scope.STATE_PLAYING ],
-				onSet: function(){ 
-
-        	scope.inputController.enableAction( 'turnLeft', true );
-        	scope.inputController.enableAction( 'turnRight', true );
-
-        	scope.inputController.enableAction( 'right', false );
-        	scope.inputController.enableAction( 'left', false );
-        	scope.inputController.enableAction( 'up', false );
-        	scope.inputController.enableAction( 'down', false );
-        	scope.inputController.enableAction( 'touchup', false );
-        	$( document ).trigger( 'game:setChaseView' );
-				},
-
 				onDisable: function(){ }
 			},
 
 			'STATE_PAUSE':{
-				states: [ scope.STATE_PLAYING, scope.STATE_FPV_PLAYING ],
+				states: [ scope.STATE_PLAYING ],
 				onSet: function(){
 					scope.timerAccel.pause();
 				},
@@ -125,7 +93,7 @@ class Game{
 			},
 
 			'STATE_FINISHED': {
-				states: [ scope.STATE_PLAYING, scope.STATE_FPV_PLAYING ],
+				states: [ scope.STATE_PLAYING ],
 				onSet: function(){
 					scope.playSound('game_over_mp3');
 				},
@@ -136,6 +104,12 @@ class Game{
 		}
 
 		this.stateMachine = new StateMachine( states );
+		// отрисовка
+		this.renderer = new Renderer( config.render, this.params, preloader, this.gameState, scope );
+		this.blockSize = this.renderer.getBlockSize();
+
+		// музыка
+		this.soundManager = new SoundManager( config.audio, preloader );
 
 		this.even = true;
 
@@ -159,10 +133,29 @@ class Game{
 	        	break;
 
 	        case 'setChaseView':
-	  				scope.setState( scope.STATE_FPV_PLAYING );
+	  				scope.inputController.enableAction( 'turnLeft', true );
+	        	scope.inputController.enableAction( 'turnRight', true );
+
+	        	scope.inputController.enableAction( 'right', false );
+	        	scope.inputController.enableAction( 'left', false );
+	        	scope.inputController.enableAction( 'up', false );
+	        	scope.inputController.enableAction( 'down', false );
+	        	scope.inputController.enableAction( 'touchup', false );
+	        	$( document ).trigger( 'game:setChaseView' );
+	        	scope.chaseView = true;
 	        	break;
 	        case 'setTopView':
-	  				scope.setState( scope.STATE_PLAYING );
+	  				scope.inputController.enableAction( 'turnLeft', false );
+	        	scope.inputController.enableAction( 'turnRight', false );
+
+	        	scope.inputController.enableAction( 'right', true );
+	        	scope.inputController.enableAction( 'left', true );
+	        	scope.inputController.enableAction( 'up', true );
+	        	scope.inputController.enableAction( 'down', true );
+	        	scope.inputController.enableAction( 'touchup', true );
+
+	        	$( document ).trigger( 'game:setTopView' );
+	        	scope.chaseView = false;
 	        	break;
 
 	        case 'turnLeft':
@@ -185,6 +178,10 @@ class Game{
 							"null": "down"
 						}
 	        	scope.currentTurn = directions[scope.currentDirection];
+	        	break;
+
+	        case 'SET_DEV_PAUSE':
+	        	scope.DEV_PAUSE = !scope.DEV_PAUSE;
 	        	break;
 	    };
 	  });
@@ -287,8 +284,9 @@ class Game{
 	};
 
 	updateGame(){
+		if ( this.DEV_PAUSE ) return;
 
-		if ( !this.isState( this.STATE_PLAYING ) && !this.isState( this.STATE_FPV_PLAYING ))
+		if ( !this.isState( this.STATE_PLAYING ))
 			return;
 
 		if ( Vector.equals( this.snake.head, this.apple.position ) ){
@@ -304,7 +302,7 @@ class Game{
 		}
 
 		// move snake
-		if ( this.isState( this.STATE_FPV_PLAYING ) )
+		if ( this.chaseView )
 			this.currentDirection = this.currentTurn;
 		this.snake.update( this.currentDirection 	);
 

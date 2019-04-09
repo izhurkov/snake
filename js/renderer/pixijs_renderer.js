@@ -34,7 +34,7 @@ class PixiJSRenderer{
 		this.setScreenShake( 1.2, 0.05, 15 );
 
 		// частицы
-		new EmitterManager( this.blockSize, renderConfig.emitters, preloader, this.app.stage );
+		new PixiEmitterManager( this.blockSize, renderConfig.emitters, preloader, this.app.stage );
 
 	};
 

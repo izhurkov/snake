@@ -6,6 +6,8 @@ class ThreeRenderer{
 		this.params = params;
   	var scope = this;
 
+  	Math.PIhalf = Math.PI/2;
+
 		this.areaX = params.areaX !== undefined ? params.areaX : 50;
 		this.areaY = params.areaY !== undefined ? params.areaY : 5;
 
@@ -16,15 +18,13 @@ class ThreeRenderer{
 
 		this.camRotation = 2;
 
-		this.gameState = gameState;
-
 		this.width = this.blockSize * (this.areaX + 2);
 		this.height = this.blockSize * (this.areaY + 2);
 		this.newCenter = { x: ( this.areaX + 2 ) / 2, y: ( this.areaY + 2 ) / 2, z: 0 };
 
 		this.game = game;
 
-		this.AM = new AssetManager();
+		this.assetManager = new AssetManager();
 		
 
 		// >>> SETUP CANVAS >>>
@@ -45,6 +45,10 @@ class ThreeRenderer{
 		
 
 		// >>> SETUP CAMERA >>>
+		// 
+		this.camera = new THREE.PerspectiveCamera(60, this.width / this.height, 0.1, 10000 );
+
+		this.setTopViewCamera();
 		// 	top view cam
 		this.topViewCamera = new THREE.PerspectiveCamera( 60, this.width / this.height, 0.1, 10000 )
 
@@ -59,8 +63,7 @@ class ThreeRenderer{
 		this.chaseViewCamera.position.x = 4;
 		this.chaseViewCamera.position.y = -3;
 		this.chaseViewCamera.position.z = 1;
-		this.chaseViewCamera.rotation.x = 1 * Math.PI / 2;
-		this.chaseViewCamera.rotation.z = 0 * Math.PI / 2;
+		this.chaseViewCamera.rotation.x = Math.PI / 2;
 		// <<< SETUP CAMERA <<<
 
 		
@@ -73,56 +76,13 @@ class ThreeRenderer{
 		this.initLights();
 		// <<< INIT STAGE'S OBJECTS <<<
 		
-		// >>> INIT PARTICLES >>>
-		this.pos = new THREE.Vector3();
+		this.emitterManager = new ThreeEmitterManager( preloader, this.scene );
 
-    var emitterSettings = {
-      type: SPE.distributions.SPHERE,
-      position: {
-        spread: new THREE.Vector3( 1 ),
-        radius: 0.5,
-      },
-      velocity: {
-        value: new THREE.Vector3( 0, 0, 5 )
-      },
-      size: {
-        value: [ 0.2, 4 ]
-      },
-      opacity: {
-        value: [1, 0]
-      },
-      color:{
-      	value: [new THREE.Color('yellow'), new THREE.Color('red')] 
-      },
-      particleCount: 15,
-      alive: false,
-      duration: 0.5,
-      maxAge: {
-        value: 0.9
-      }
-    };
+		this.cameraTarget;
 
-    
-		var img1 = new THREE.TextureLoader().load( preloader.queue.getItem('cartoonSmoke').src );
-		var img2 = new THREE.TextureLoader().load( preloader.queue.getItem('bubbles').src );
-
-		this.particleExplosion = new SPE.Group({
-  		texture: { value: img1 },
-      blending: THREE.NormalBlending
-  	});
-    this.particleExplosion.addPool( 10, emitterSettings, false );
-  	this.scene.add( this.particleExplosion.mesh );
-
-
-  	this.particleBonus = new SPE.Group({
-  		texture: { value: img2 },
-      blending: THREE.NormalBlending
-  	});
-    this.particleBonus.addPool( 10, emitterSettings, false );
-  	this.scene.add( this.particleBonus.mesh );
-  	// <<< INIT PARTICLES <<<
-		
 		this.addListeners();
+
+		console.log( this.topViewCamera );
 	};
 
 	addListeners(){
@@ -130,13 +90,7 @@ class ThreeRenderer{
 		var scope = this;
 
 		$( document )
-		.on( 'game:finished', function( e, param ){
-			var position = scope.game.gameState.snake[0];
-			scope.createExplosion( position );
-		})
 		.on( 'game:bonusTaken', function( e, param ){
-			var position = scope.game.gameState.snake[0];
-			scope.createExplosionBonus( position );
 
 			var seconds = 0.001 * scope.game.stepTime ;
 			var duration = seconds;
@@ -168,32 +122,34 @@ class ThreeRenderer{
 			scope.accelerator.visible = true;
 		})
 		.on( 'game:setChaseView', function( e, param ){
-			var head = scope.game.gameState.snake[1];
-			var direction = scope.game.gameState.direction[0];
-			scope.chaseViewCamera.position.x = head.x + 0.5;
-			scope.chaseViewCamera.position.y = -head.y - 0.5;
-			scope.chaseViewCamera.position.z = 1;
+			scope.camera.rotation.x = 1 * Math.PI / 2;
+			scope.camera.rotation.z = 0 * Math.PI / 2;
 
-			var directions = {
-				"up": 0,
-				"left": 1,
-				"down": 2,
-				"right": 3
-			}
-			scope.chaseViewCamera.rotation.y = directions[direction] * Math.PI / 2;
-
+			// scope.camera.lookAt( new, -headPosition.y + directions[direction][2], 0 );
 			scope.chaseViewActive = true;
-			$( scope.renderer.domElement ).focus();
+
+			var pos = scope.game.gameState.snake[0];
+			scope.lastPosition = new THREE.Vector3( scope.camera.x, scope.camera.y, scope.camera.z ) 
+			scope.cameraTarget = new THREE.Vector3( pos.x, -pos.y, 1 );
 		})
 		.on( 'game:setTopView', function( e, param ){
+
 			scope.chaseViewActive = false;
-			$( scope.renderer.domElement ).focus();
+			scope.lastPosition = new THREE.Vector3( scope.camera.x, scope.camera.y, scope.camera.z ) 
+			scope.cameraTarget = new THREE.Vector3( scope.newCenter.x, -scope.areaY, Math.min( scope.areaY, scope.areaX ) + 4 );
 		})
 		.on( 'game:updated', function(){
+			scope.lastGameUpdateTime = Date.now();
 			var gameState = scope.game.gameState;
-			scope.updateSnake( gameState )
+			scope.updateSnake( gameState );
 		})
+	};
 
+	setTopViewCamera(){
+		this.camera.position.x = this.areaX * 0.5;
+		this.camera.position.y = -this.areaY * 0.75;
+		this.camera.position.z = Math.min( this.areaY, this.areaX ) + 4;
+		// this.camera.lookAt( this.newCenter.x, -this.newCenter.y, this.newCenter.z );
 	};
 
 	createExplosion( position ) {
@@ -272,46 +228,6 @@ class ThreeRenderer{
 		// init walls
 		material = new THREE.MeshLambertMaterial( { map: this.wall_texture } );
 
-		for ( var i = 0; i < this.areaY + 2; i++ ){
-			var maxRand = randomInteger( 60, 95 ) / 100;
-			var height = 1 - ( maxRand - 0.5 ) * 1;
-			geometry = new THREE.BoxBufferGeometry( maxRand, maxRand, height );
-			geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, height/2 ) );
-
-			var cube1 = new THREE.Mesh( geometry, material );
-			cube1.position.x = 0;
-			cube1.position.y = -i;
-
-			var cube2 = new THREE.Mesh( geometry, material );
-			cube2.position.x = this.areaX + 1;
-			cube2.position.y = - this.areaY + i - 1;
-
-			cube2.castShadow = true;
-
-			wallGroup.add( cube1 );
-			wallGroup.add( cube2 );
-		}
-
-		for ( var i = 1; i < this.areaX + 1; i++ ){
-			var maxRand = randomInteger( 60, 95 ) / 100;
-			var height =  1 - ( maxRand - 0.5 ) * 1;
-			geometry = new THREE.BoxBufferGeometry( maxRand, maxRand, height );
-			geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, height/2 ) );
-
-			var cube1 = new THREE.Mesh( geometry, material );
-			cube1.position.y = 0;
-			cube1.position.x = i;
-
-			var cube2 = new THREE.Mesh( geometry, material );
-			cube2.position.y = -this.areaY - 1;
-			cube2.position.x = this.areaX + 1 - i;
-
-			cube1.castShadow = true;
-
-			wallGroup.add( cube1 );
-			wallGroup.add( cube2 );
-		}
-
 		wallGroup.add( createWall( this.areaX + 2, 1, ( this.areaX + 2 ) / 2 - 0.5, 0, true) );
 		wallGroup.add( createWall( this.areaX + 2, 1, ( this.areaX + 2 ) / 2 - 0.5, - this.areaY - 1, false) );
 		wallGroup.add( createWall( 1, this.areaY, 0, - ( this.areaY ) / 2 - 0.5, false ) );
@@ -383,28 +299,28 @@ class ThreeRenderer{
  			}
 		}
 
-		for ( var snakeName in this.snakeGeometryParams ){
-			this.AM.addAsset(
-				snakeName, 
-				50, 
-				function(){
-					var position = scope.snakeGeometryParams[snakeName];
+		// for ( var snakeName in this.snakeGeometryParams ){
+		// 	this.assetManager.addAsset(
+		// 		snakeName, 
+		// 		50, 
+		// 		function(){
+		// 			var position = scope.snakeGeometryParams[snakeName];
 
-					var start = new THREE.Vector3(position.start.x-0.5, position.start.y+0.5, 0);
-		      var middle = new THREE.Vector3(0, 0, 0);
-		      var end = new THREE.Vector3(position.end.x-0.5, position.end.y+0.5, 0);
+		// 			var start = new THREE.Vector3(position.start.x-0.5, position.start.y+0.5, 0);
+		//       var middle = new THREE.Vector3(0, 0, 0);
+		//       var end = new THREE.Vector3(position.end.x-0.5, position.end.y+0.5, 0);
 
-		      var curveQuad = new THREE.QuadraticBezierCurve3(start, middle, end);
-					var geometry = new THREE.TubeGeometry( curveQuad, 16, 0.3, 16, false );
+		//       var curveQuad = new THREE.QuadraticBezierCurve3(start, middle, end);
+		// 			var geometry = new THREE.TubeGeometry( curveQuad, 16, 0.3, 16, false );
 
-					var material = new THREE.MeshLambertMaterial( {
-						color: 0x421095,
-						side: THREE.DoubleSide
-					} );
-					return new THREE.Mesh( geometry, material );
-				}
-			)
-		};
+		// 			var material = new THREE.MeshLambertMaterial( {
+		// 				color: 0x421095,
+		// 				side: THREE.DoubleSide
+		// 			} );
+		// 			return new THREE.Mesh( geometry, material );
+		// 		}
+		// 	)
+		// };
 
 		// init group
 		this.snake = new THREE.Group();
@@ -430,6 +346,7 @@ class ThreeRenderer{
 
 	// create frog, bonus & etc
 	initObejcts(){
+		var scope = this;
 
 		var objectsGroup = new THREE.Group();
 		objectsGroup.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0 ) );
@@ -441,11 +358,15 @@ class ThreeRenderer{
 			color: 0xd62a2a
 		} );
 
-		this.cubeBonus = new THREE.Mesh( geometry, material );
-		this.cubeBonus.castShadow = true;
-		this.cubeBonus.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.10 ) );
+		function onCreateBonus() { return new THREE.Mesh( geometry, material ) };
 
+		this.assetManager.addAsset( 'bonus', 3, onCreateBonus, undefined, undefined );
+		this.cubeBonus = this.assetManager.pullAsset( 'bonus' );
+		// console.log( obj )
 		objectsGroup.add( this.cubeBonus );
+		this.assetManager.putAsset( this.cubeBonus );
+
+		console.log( "kk", this.assetManager, this.cubeBonus );
 
 		// >>> create apple
 		geometry = new THREE.SphereGeometry( 0.3, 32, 32 );
@@ -494,7 +415,7 @@ class ThreeRenderer{
 		this.rock = new THREE.Mesh( geometry, material );
 		this.rock.applyMatrix( new THREE.Matrix4().makeTranslation( 0.5, -0.5, 0.4 ) );
 		this.rock.castShadow = true;
-
+		
 		objectsGroup.add( this.rock );
 	}
 
@@ -553,97 +474,186 @@ class ThreeRenderer{
 
     	time = now;
 
-			scope.particleExplosion.tick( delta );
-			scope.particleBonus.tick( delta );
-
 			// scope.updateSnake( gameState, delta );
 			scope.updateObjects( gameState, delta );
-			// scope.updateCamera( gameState, delta );
-			if ( scope.chaseViewActive ){
-				scope.updateCamera( gameState, delta );
-				scope.renderer.render( scope.scene, scope.chaseViewCamera );
-			}
-			else
-				scope.renderer.render( scope.scene, scope.topViewCamera );
+			// 
+			
+			scope.updateCamera( gameState, delta );
+			scope.renderer.render( scope.scene, scope.camera );
+			
+			// if ( scope.chaseViewActive ){
+			// 	scope.updateCamera( gameState, delta );
+			// 	scope.renderer.render( scope.scene, scope.chaseViewCamera );
+			// }
+			// else
+			// 	scope.renderer.render( scope.scene, scope.topViewCamera );
 
+			$( document ).trigger( 'three-renderer:updated', { delta: delta } )
 		}());
 	};
 
 	updateCamera( gameState, delta ){
 
-		var head = gameState.snake[1];
-		var direction = gameState.direction[0];
+		if ( this.game.isState( this.game.STATE_PAUSE ) )
+			return;
+
+		var nowTime = Date.now();
+		var delta = ( nowTime - this.lastGameUpdateTime ) * 0.001
 		var stepTime = 1000 / this.game.stepTime;
 
-		var headPosition = new THREE.Vector3( head.x + 0.5, -head.y - 0.5, 1 );
-		var camPosition = this.chaseViewCamera.position;
 
-		if ( camPosition.x < headPosition.x )
-			camPosition.x += delta * stepTime;
-		if ( camPosition.x > headPosition.x )
-			camPosition.x -= delta * stepTime;
+		var camPosition = this.camera.position;
+		var camRotation = this.camera.rotation;
 
-		if ( camPosition.y < headPosition.y )
-			camPosition.y += delta * stepTime;
-		if ( camPosition.y > headPosition.y )
-			camPosition.y -= delta * stepTime;
-		camPosition.z = 1.0;
+		var headPosition = gameState.snake[0];
+		var neckPosition = this.cameraTarget || gameState.snake[1] ;
+		var lastPosition = this.lastPosition || gameState.snake[2];
 
+		var direction = gameState.direction[0];
 		var directions = {
-			"up": 0,
-			"left": 1,
-			"down": 2,
-			"right": 3
+			"up": [0, 0, -1],
+			"left": [Math.PIhalf, 1, 0],
+			"down": [Math.PI, 0, 1],
+			"right": [Math.PIhalf*3, -1, 0]
 		}
 
-		var headRotation = directions[direction];
+		var target = this.cameraTarget;
+		var lastPos = this.lastPosition;
 
-		if ( this.camRotation > headRotation ){
-			if ( this.camRotation > 2.5 && headRotation < 0.5 )
-				this.camRotation += delta * stepTime;
-			else
-				this.camRotation -= delta * stepTime;
+		camPosition.x = lastPosition.x + ( neckPosition.x - lastPosition.x ) * stepTime * delta + 0.5;
+		camPosition.y = -(lastPosition.y + ( neckPosition.y - lastPosition.y ) * stepTime * delta) - 0.5;
+		camPosition.z = 1;
+
+		if ( this.chaseViewActive ){
+
+			// calc delta time from last snake update
+			// move camera
+			camPosition.x = lastPosition.x + ( neckPosition.x - lastPosition.x ) * stepTime * delta + 0.5;
+			camPosition.y = -(lastPosition.y + ( neckPosition.y - lastPosition.y ) * stepTime * delta) - 0.5;
+			camPosition.z = 1;
+
+			// rotate camera 
+			// var direction = gameState.direction[0];
+			// // var directions = {
+			// // 	"up": [0, 0, -1],
+			// // 	"left": [Math.PIhalf, 1, 0],
+			// // 	"down": [Math.PI, 0, 1],
+			// // 	"right": [Math.PIhalf*3, -1, 0]
+			// // }
+			// var sub = directions[direction][0] - camRotation.y;
+			// if ( sub > Math.PI )
+			// 	camRotation.y += 2 * Math.PI;
+			// else if ( sub < -Math.PI )
+			// 	camRotation.y -= 2 * Math.PI;
+			// camRotation.y += sub / 8;
 		}
-		if ( this.camRotation > 3.5 )
-			this.camRotation = -0.5
-
-		if ( this.camRotation < headRotation ){
-			if ( this.camRotation < 0.5 && headRotation > 2.5 )
-				this.camRotation -= delta * stepTime;
-			else
-				this.camRotation += delta * stepTime;
+		else{
+			// this.camera.position.x = this.areaX * 0.5;
+			// this.camera.position.y = -this.areaY * 0.75;
+			// this.camera.position.z = Math.min( this.areaY, this.areaX ) + 4;
+			// // camPosition.z -= 0.1;
+			// if ( camPosition.z < )
+			// this.camera.lookAt( this.newCenter.x, -this.newCenter.y, this.newCenter.z );
+			// camPosition.x = this.areaX * 0.5 * stepTime * delta + 0.5;
+			// camPosition.y = -this.areaY * 0.75 * stepTime * delta - 0.5;
+			// camPosition.z = Math.min( this.areaY, this.areaX ) + 4;
+			// this.camera.lookAt( headPosition.x + directions[direction][1], -headPosition.y - directions[direction][2], 0 );
 		}
-		if ( this.camRotation < -0.5 )
-			this.camRotation = 3.5
+
+		// if ( target !== undefined ){
+		// 	console.log( "fly", delta );
+		// 	// camPosition.x = lastPos.x + ( target.x - lastPos.x) * stepTime * delta + 0.5;
+		// 	// camPosition.y = -(lastPos.y + ( target.y - lastPos.y) * stepTime * delta) - 0.5;
+		// 	// camPosition.y = lastPos.z + ( target.z - lastPos.z) * stepTime * delta + 0.5;
+		// 	if ( delta + 0.1 > this.game.stepTime * 0.001 ){
+		// 		target = undefined;
+		// 		lastPos = undefined;
+		// 	}
+		// }
+
+		if ( this.chaseViewActive ){
+			if ( this.game.isState( this.game.STATE_PAUSE ) )
+				return;
+
+			// calc delta time fro mlast snake update
+			var nowTime = Date.now();
+			var delta = ( nowTime - this.lastGameUpdateTime ) * 0.001
+			var stepTime = 1000 / this.game.stepTime;
+
+			// move camera
+			if ( target === null || target === undefined ){
+				camPosition.x = lastPosition.x + ( neckPosition.x - lastPosition.x ) * stepTime * delta + 0.5;
+				camPosition.y = -(lastPosition.y + ( neckPosition.y - lastPosition.y ) * stepTime * delta) - 0.5;
+				camPosition.z = 1;
+			}
+			else{
+				camPosition.x = lastPos.x + target.x * stepTime * delta + 0.5;
+				camPosition.y = -(lastPos.y + target.y * stepTime * delta) - 0.5;
+				camPosition.y = lastPos.z + target.z * stepTime * delta + 0.5;
+			}
+
+			// rotate camera 
+			// var direction = gameState.direction[0];
+			// // var directions = {
+			// // 	"up": [0, 0, -1],
+			// // 	"left": [Math.PIhalf, 1, 0],
+			// // 	"down": [Math.PI, 0, 1],
+			// // 	"right": [Math.PIhalf*3, -1, 0]
+			// // }
+			// var sub = directions[direction][0] - camRotation.y;
+			// if ( sub > Math.PI )
+			// 	camRotation.y += 2 * Math.PI;
+			// else if ( sub < -Math.PI )
+			// 	camRotation.y -= 2 * Math.PI;
+			// camRotation.y += sub / 8;
+		}
+		else{
+			this.camera.position.x = this.areaX * 0.5;
+			this.camera.position.y = -this.areaY * 0.75;
+			this.camera.position.z = Math.min( this.areaY, this.areaX ) + 4;
+			// camPosition.z -= 0.1;
+			// if ( camPosition.z < )
+			// this.camera.lookAt( this.newCenter.x, -this.newCenter.y, this.newCenter.z );
+			// camPosition.x = this.areaX * 0.5 * stepTime * delta + 0.5;
+			// camPosition.y = -this.areaY * 0.75 * stepTime * delta - 0.5;
+			// camPosition.z = Math.min( this.areaY, this.areaX ) + 4;
+			// this.camera.lookAt( headPosition.x + directions[direction][1], -headPosition.y - directions[direction][2], 0 );
+		}
 
 
-		this.chaseViewCamera.rotation.y = this.camRotation * Math.PI / 2;	
+		
 	}
 
 	updateSnake( gameState ){
+
+		if ( this.game.isState( this.game.STATE_PAUSE ) )
+			return;
+//// сделать привязку мэша к позиции 
 
 		var cellPositions = gameState.snake;
 		var cellDirections = gameState.direction;
 
 		var snake = this.snake.children;
 
-		while ( snake.length < cellDirections.length ){
-			this.snake.add(this.AM.pullAsset( 'snakeBody_horizontal' ))
-		}
+		// while ( snake.length < cellDirections.length ){
+		// 	var model = this.assetManager.pullAsset( 'snakeBody_horizontal' );
+		// 	this.snake.add( model );
+		// }
 
-		for ( var i = 1; i < snake.length - 1; i++ ){
-			var snake_geometry = 'snakeBody_' + cellDirections[i];
-			snake[i] = this.AM.pullAsset( snake_geometry );
-		}
+		// for ( var i = 1; i < snake.length - 1; i++ ){
+		// 	var snake_geometry = 'snakeBody_' + cellDirections[i];
+		// 	snake[i] = this.assetManager.pullAsset( snake_geometry );
+		// }
 
 		for ( var snakeTile in snake ){
-			console.log(snake[snakeTile] )
 			snake[snakeTile].position.set( cellPositions[snakeTile].x, -cellPositions[snakeTile].y, 0)
 		}
 
 	};
 
 	updateObjects( gameState, delta ){
+		if ( this.game.isState( this.game.STATE_PAUSE ) )
+			return;
 
 		this.cubeBonus.position.x = gameState.bonus.x;
 		this.cubeBonus.position.y = -gameState.bonus.y 
