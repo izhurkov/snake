@@ -128,18 +128,6 @@ $( document ).on( 'preloader:complete', function( e, data ){
 		    'setTopView': {
 		      keyCodes:[49]
 		    },
-		    'SET_DEV_PAUSE': {
-		      keyCodes:[48]
-		    },
-		    'ROTATE_X': {
-		      keyCodes:[55]
-		    },
-		    'ROTATE_Y': {
-		      keyCodes:[56]
-		    },
-		    'ROTATE_Z': {
-		      keyCodes:[57]
-		    }
 
 		  }
 		},

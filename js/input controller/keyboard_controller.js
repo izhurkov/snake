@@ -32,23 +32,35 @@ class KeyboardInputDevice extends Controller{
       this.onKeyDown = function(e){
         if (!keyboard.enabled)
           return;
-        var action = keyboard.actions_by_keycode[ e.keyCode ];
-        if (!action) return;
-        scope.setActionActive( action, true );
+        var actions = keyboard.getActionsByKeycode( e.keyCode );
+        for (var action in actions) {
+          scope.setActionActive( actions[action], true );
+        }
       };
 
       this.onKeyUp = function(e){
         if (!keyboard.enabled)
           return;
-        var action = keyboard.actions_by_keycode[ e.keyCode ];
-        if (!action) return;
-        scope.setActionActive( action, false );
+        var actions = keyboard.getActionsByKeycode( e.keyCode );
+        for (var action in actions) {
+          scope.setActionActive( actions[action], false );
+        }
       };
     };
 
     target.addEventListener( 'keydown', this.onKeyDown, true );
     target.addEventListener( 'keyup', this.onKeyUp, true );
   };
+
+  getActionsByKeycode( keyCode ){
+    var actions = [];
+    for ( var k in this.actions_by_keycode){
+      if ( k == keyCode){
+        actions.push( this.actions_by_keycode[ k ] )
+      }
+    }
+    return actions;
+  }
 
   detach( target ){
     target.removeEventListener( 'keyup', this.onKeyUp );

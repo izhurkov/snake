@@ -124,19 +124,10 @@ class ThreeRenderer{
 			scope.accelerator.visible = true;
 		})
 		.on( 'game:setChaseView', function( e, param ){
-			// scope.camera.rotation.x = 1 * Math.PI / 2;
-			// scope.camera.rotation.z = 0 * Math.PI / 2;
-
 			scope.chaseViewActive = true;
-			var pos = scope.game.gameState.snake[0];
-			scope.lastPosition = new THREE.Vector3( scope.camera.x, scope.camera.y, scope.camera.z ) 
-			scope.cameraTarget = new THREE.Vector3( pos.x, -pos.y, 1 );
 		})
 		.on( 'game:setTopView', function( e, param ){
-
 			scope.chaseViewActive = false;
-			scope.lastPosition = new THREE.Vector3( scope.camera.x, scope.camera.y, scope.camera.z ) 
-			scope.cameraTarget = new THREE.Vector3( scope.newCenter.x, -scope.areaY, Math.min( scope.areaY, scope.areaX ) + 4 );
 		})
 		.on( 'game:updated', function(){
 			scope.lastGameUpdateTime = Date.now();
@@ -235,7 +226,7 @@ class ThreeRenderer{
 
 		function createWall( sizeX, sixeY, positionX, positionY, castShadow ){
 
-			geometry = new THREE.BoxBufferGeometry( sizeX, sixeY, 0.6 );
+			geometry = new THREE.BoxBufferGeometry( sizeX, sixeY, 1.2 );
 			var cube = new THREE.Mesh( geometry, material );
 			cube.position.x = positionX;
 			cube.position.y = positionY;
@@ -299,28 +290,28 @@ class ThreeRenderer{
  			}
 		}
 
-		// for ( var snakeName in this.snakeGeometryParams ){
-		// 	this.assetManager.addAsset(
-		// 		snakeName, 
-		// 		50, 
-		// 		function(){
-		// 			var position = scope.snakeGeometryParams[snakeName];
+		for ( var snakeName in this.snakeGeometryParams ){
+			this.assetManager.addAsset(
+				snakeName, 
+				1, 
+				function(){
+					var position = scope.snakeGeometryParams[snakeName];
 
-		// 			var start = new THREE.Vector3(position.start.x-0.5, position.start.y+0.5, 0);
-		//       var middle = new THREE.Vector3(0, 0, 0);
-		//       var end = new THREE.Vector3(position.end.x-0.5, position.end.y+0.5, 0);
+					var start = new THREE.Vector3(position.start.x-0.5, position.start.y+0.5, 0);
+		      var middle = new THREE.Vector3(0, 0, 0);
+		      var end = new THREE.Vector3(position.end.x-0.5, position.end.y+0.5, 0);
 
-		//       var curveQuad = new THREE.QuadraticBezierCurve3(start, middle, end);
-		// 			var geometry = new THREE.TubeGeometry( curveQuad, 16, 0.3, 16, false );
+		      var curveQuad = new THREE.QuadraticBezierCurve3(start, middle, end);
+					var geometry = new THREE.TubeGeometry( curveQuad, 16, 0.3, 16, false );
 
-		// 			var material = new THREE.MeshLambertMaterial( {
-		// 				color: 0x421095,
-		// 				side: THREE.DoubleSide
-		// 			} );
-		// 			return new THREE.Mesh( geometry, material );
-		// 		}
-		// 	)
-		// };
+					var material = new THREE.MeshLambertMaterial( {
+						color: 0x421095,
+						side: THREE.DoubleSide
+					} );
+					return new THREE.Mesh( geometry, material );
+				}
+			)
+		};
 
 		// init group
 		this.snake = new THREE.Group();
@@ -336,7 +327,6 @@ class ThreeRenderer{
 			map: texture,
 			side: THREE.DoubleSide
 		} );
-		// var tube = new THREE.Mesh( geometry, material );
 
 		var head = new THREE.Mesh( geometry, material );
 
@@ -474,19 +464,14 @@ class ThreeRenderer{
 
     	time = now;
 
-			// scope.updateSnake( gameState, delta );
 			scope.updateObjects( gameState, delta );
-			// 
 			
-			scope.updateCamera( gameState, delta );
-			scope.renderer.render( scope.scene, scope.camera );
-			
-			// if ( scope.chaseViewActive ){
-			// 	scope.updateCamera( gameState, delta );
-			// 	scope.renderer.render( scope.scene, scope.chaseViewCamera );
-			// }
-			// else
-			// 	scope.renderer.render( scope.scene, scope.topViewCamera );
+			if ( scope.chaseViewActive ){
+				scope.updateCamera( gameState, delta );
+				scope.renderer.render( scope.scene, scope.chaseViewCamera );
+			}
+			else
+				scope.renderer.render( scope.scene, scope.topViewCamera );
 
 			$( document ).trigger( 'three-renderer:updated', { delta: delta } )
 		}());
@@ -497,17 +482,17 @@ class ThreeRenderer{
 		if ( this.game.isState( this.game.STATE_PAUSE ) )
 			return;
 
+		// calc delta time from last snake update
 		var nowTime = Date.now();
 		var delta = ( nowTime - this.lastGameUpdateTime ) * 0.001
 		var stepTime = 1000 / this.game.stepTime;
 
-
-		var camPosition = this.camera.position;
-		var camRotation = this.camera.rotation;
+		var camPosition = this.chaseViewCamera.position;
+		var camRotation = this.chaseViewCamera.rotation;
 
 		var headPosition = gameState.snake[0];
-		var targetPosition = this.cameraTarget || gameState.snake[1] ;
-		var lastPosition = this.lastPosition || gameState.snake[2];
+		var targetPosition = gameState.snake[1] ;
+		var lastPosition = gameState.snake[2];
 		var zet = 10;
 
 		var direction = gameState.direction[0];
@@ -518,110 +503,19 @@ class ThreeRenderer{
 			"right": [Math.PIhalf*3, -1, 0]
 		}
 
+		// move camera
 		camPosition.x = lastPosition.x + ( targetPosition.x - lastPosition.x ) * stepTime * delta + 0.5;
-		camPosition.y = lastPosition.y + ( targetPosition.y - lastPosition.y ) * stepTime * delta - 0.5;
+		camPosition.y = -(lastPosition.y + ( targetPosition.y - lastPosition.y ) * stepTime * delta) - 0.5;
+		camPosition.z = 1;
 
-		console.log(camPosition)
-
-		if ( this.chaseViewActive ){
-
-
-			// calc delta time from last snake update
-			// move camera
-			// camPosition.x = lastPosition.x + ( neckPosition.x - lastPosition.x ) * stepTime * delta + 0.5;
-			// camPosition.y = -(lastPosition.y + ( neckPosition.y - lastPosition.y ) * stepTime * delta) - 0.5;
-			// camPosition.z = 1;
-
-			// rotate camera 
-			// var direction = gameState.direction[0];
-			// // var directions = {
-			// // 	"up": [0, 0, -1],
-			// // 	"left": [Math.PIhalf, 1, 0],
-			// // 	"down": [Math.PI, 0, 1],
-			// // 	"right": [Math.PIhalf*3, -1, 0]
-			// // }
-			// var sub = directions[direction][0] - camRotation.y;
-			// if ( sub > Math.PI )
-			// 	camRotation.y += 2 * Math.PI;
-			// else if ( sub < -Math.PI )
-			// 	camRotation.y -= 2 * Math.PI;
-			// camRotation.y += sub / 8;
-		}
-		else{
-			// this.camera.position.x = this.areaX * 0.5;
-			// this.camera.position.y = -this.areaY * 0.75;
-			// this.camera.position.z = Math.min( this.areaY, this.areaX ) + 4;
-			// // camPosition.z -= 0.1;
-			// if ( camPosition.z < )
-			// this.camera.lookAt( this.newCenter.x, -this.newCenter.y, this.newCenter.z );
-			// camPosition.x = this.areaX * 0.5 * stepTime * delta + 0.5;
-			// camPosition.y = -this.areaY * 0.75 * stepTime * delta - 0.5;
-			// camPosition.z = Math.min( this.areaY, this.areaX ) + 4;
-			// this.camera.lookAt( headPosition.x + directions[direction][1], -headPosition.y - directions[direction][2], 0 );
-		}
-
-		// if ( target !== undefined ){
-		// 	console.log( "fly", delta );
-		// 	// camPosition.x = lastPos.x + ( target.x - lastPos.x) * stepTime * delta + 0.5;
-		// 	// camPosition.y = -(lastPos.y + ( target.y - lastPos.y) * stepTime * delta) - 0.5;
-		// 	// camPosition.y = lastPos.z + ( target.z - lastPos.z) * stepTime * delta + 0.5;
-		// 	if ( delta + 0.1 > this.game.stepTime * 0.001 ){
-		// 		target = undefined;
-		// 		lastPos = undefined;
-		// 	}
-		// }
-
-		// if ( this.chaseViewActive ){
-		// 	if ( this.game.isState( this.game.STATE_PAUSE ) )
-		// 		return;
-
-		// 	// calc delta time fro mlast snake update
-		// 	var nowTime = Date.now();
-		// 	var delta = ( nowTime - this.lastGameUpdateTime ) * 0.001
-		// 	var stepTime = 1000 / this.game.stepTime;
-
-		// 	// move camera
-		// 	if ( target === null || target === undefined ){
-		// 		camPosition.x = lastPosition.x + ( neckPosition.x - lastPosition.x ) * stepTime * delta + 0.5;
-		// 		camPosition.y = -(lastPosition.y + ( neckPosition.y - lastPosition.y ) * stepTime * delta) - 0.5;
-		// 		camPosition.z = 1;
-		// 	}
-		// 	else{
-		// 		camPosition.x = lastPos.x + target.x * stepTime * delta + 0.5;
-		// 		camPosition.y = -(lastPos.y + target.y * stepTime * delta) - 0.5;
-		// 		camPosition.y = lastPos.z + target.z * stepTime * delta + 0.5;
-		// 	}
-
-			// rotate camera 
-			// var direction = gameState.direction[0];
-			// // var directions = {
-			// // 	"up": [0, 0, -1],
-			// // 	"left": [Math.PIhalf, 1, 0],
-			// // 	"down": [Math.PI, 0, 1],
-			// // 	"right": [Math.PIhalf*3, -1, 0]
-			// // }
-			// var sub = directions[direction][0] - camRotation.y;
-			// if ( sub > Math.PI )
-			// 	camRotation.y += 2 * Math.PI;
-			// else if ( sub < -Math.PI )
-			// 	camRotation.y -= 2 * Math.PI;
-			// camRotation.y += sub / 8;
-		// }
-		// else{
-		// 	this.camera.position.x = this.areaX * 0.5;
-		// 	this.camera.position.y = -this.areaY * 0.75;
-		// 	this.camera.position.z = Math.min( this.areaY, this.areaX ) + 4;
-			// camPosition.z -= 0.1;
-			// if ( camPosition.z < )
-			// this.camera.lookAt( this.newCenter.x, -this.newCenter.y, this.newCenter.z );
-			// camPosition.x = this.areaX * 0.5 * stepTime * delta + 0.5;
-			// camPosition.y = -this.areaY * 0.75 * stepTime * delta - 0.5;
-			// camPosition.z = Math.min( this.areaY, this.areaX ) + 4;
-			// this.camera.lookAt( headPosition.x + directions[direction][1], -headPosition.y - directions[direction][2], 0 );
-		// }
-
-
-		
+		// rotate camera 
+		var direction = gameState.direction[0];
+		var sub = directions[direction][0] - camRotation.y;
+		if ( sub > Math.PI )
+			camRotation.y += 2 * Math.PI;
+		else if ( sub < -Math.PI )
+			camRotation.y -= 2 * Math.PI;
+		camRotation.y += sub / 8;		
 	}
 
 	updateSnake( gameState ){
