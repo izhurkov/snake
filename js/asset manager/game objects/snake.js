@@ -43,7 +43,7 @@ class Snake{
 		this.cellPositions.push( new Vector( this.cellPositions[length-1].x, this.cellPositions[length-1].y));
 		this._cellPositions.push( new Vector( this._cellPositions[length-1].x, this._cellPositions[length-1].y));
 
-		this.cellDirections.push( this.cellDirections[length-1] );
+		// this.cellDirections.push( this.cellDirections[length-1] );
 	};
 
 	removeBlock( ){
@@ -96,6 +96,7 @@ class Snake{
 			this.cellDirections[i] = directions[vectorString];
 		};
 
+
 		if ( new_pos.length < 2 ) return;
 		if ( new_pos[new_pos.length-1].x > new_pos[new_pos.length-2].x ){
 				this.cellDirections[new_pos.length-1] = 'left';
@@ -106,6 +107,7 @@ class Snake{
 		} else {
 				this.cellDirections[new_pos.length-1] = 'down';
 		};
+		// console.log( this.cellDirections )
 
 		for ( var i = new_pos.length-1; i >= 0; i-- ){
 			old_pos[i] = new_pos[i].clone();

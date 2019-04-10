@@ -142,6 +142,7 @@ class Game{
 	        	scope.inputController.enableAction( 'down', false );
 	        	scope.inputController.enableAction( 'touchup', false );
 	        	$( document ).trigger( 'game:setChaseView' );
+	        	scope.currentDirection = null;
 	        	scope.chaseView = true;
 	        	break;
 	        case 'setTopView':
@@ -155,6 +156,7 @@ class Game{
 	        	scope.inputController.enableAction( 'touchup', true );
 
 	        	$( document ).trigger( 'game:setTopView' );
+	        	scope.currentTurn = null;
 	        	scope.chaseView = false;
 	        	break;
 
@@ -277,6 +279,8 @@ class Game{
 		this.gameState.apple = this.apple.position;
 		this.gameState.rock = this.rock.position;
 		this.gameState.accelerator = this.accelerator.position;
+
+		// console.log( this.gameState.direction )
 
 		$( document ).trigger( 'game:updated' );
 

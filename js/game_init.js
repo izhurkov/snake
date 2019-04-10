@@ -137,7 +137,59 @@ $( document ).on( 'preloader:complete', function( e, data ){
 					parentElement: '#renderer-container'
 				},
 				'three': {
-					parentElement: '#renderer-container'
+					parentElement: '#renderer-container',
+					snakeGeometryParams: {
+						'snakeBody_top_left': 
+						{
+							start: { x: 0.5, y: 0 },
+							end: { x: 0, y: -0.5 }
+						},
+						'snakeBody_top_right': 
+						{
+							start: { x: 0.5, y: 0 },
+							end: { x: 1, y: -0.5 }
+						},
+
+						'snakeBody_horizontal': 
+						{
+							start: { x: 0, y: -0.5 },
+							end: { x: 1, y: -0.5 }
+						},
+						'snakeBody_vertical': 
+						{
+							start: { x: 0.5, y: 0 },
+							end: { x: 0.5, y: -1 }
+						},
+
+						'snakeBody_bottom_left': 
+						{
+							start: { x: 0, y: -0.5 },
+							end: { x: 0.5, y: -1 }
+						},
+						'snakeBody_bottom_right': 
+						{
+							start: { x: 0.5, y: -1 },
+							end: { x: 1, y: -0.5 }
+			 			},
+
+
+						'snakeTail_up': 
+						{
+							rotation: 0
+						},
+						'snakeTail_right': 
+						{
+							rotation: 3 * Math.PI / 2
+						},
+						'snakeTail_down': 
+						{
+							rotation: Math.PI
+						},
+						'snakeTail_left': 
+						{
+							rotation: Math.PI / 2
+						}
+					}
 				},
 				'pixi': {
 					parentElement: '#renderer-container',
