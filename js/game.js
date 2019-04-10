@@ -88,7 +88,7 @@ class Game{
 				},
 
 				onDisable: function(){
-					scope.timerAccel.play();
+					scope.timerAccel.continue();
 				}
 			},
 

@@ -118,6 +118,7 @@ class ThreeRenderer{
 
 		})
 		.on( 'timer:accel:start', function( e, param ){
+			console.log('dsa')
 			scope.accelerator.visible = false;
 		})
 		.on( 'timer:accel:end', function( e, param ){

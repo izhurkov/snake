@@ -10,7 +10,7 @@ function Timer( event ){
 Timer.prototype = {
 
 	play: function( duration) {
-		if ( !this.isStopped ){
+		if ( !this.onPause ){
 			$( document ).trigger( this.event + ":start" );
 		}
 
@@ -42,6 +42,11 @@ Timer.prototype = {
 				seconds -= delta;
 
 		}());
+	},
+
+	continue: function(){
+		if ( this.onPause )
+			this.onPause = false;
 	},
 
 	stop: function() {
