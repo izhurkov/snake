@@ -115,6 +115,9 @@ class Game{
 
 		this.addListeners();
 	  this.startGame();
+
+		this.inputController.enableAction( 'turnLeft', false );
+  	this.inputController.enableAction( 'turnRight', false );
 	};
 
 	addListeners(){
@@ -280,8 +283,6 @@ class Game{
 		this.gameState.rock = this.rock.position;
 		this.gameState.accelerator = this.accelerator.position;
 
-		// console.log( this.gameState.direction )
-
 		$( document ).trigger( 'game:updated' );
 
 		this.interfaceController.update( this.score );
@@ -303,7 +304,13 @@ class Game{
 			this.timerAccel.play( this.accelerator.acceleratorDuration );
 			this.stepTime *= 1 / this.accelerator.acceleratorSpeedMultiply;
 			this.accelerator.position = new Vector( 0, 0 );
+
 		}
+
+		var event = this.snakeNearBonus() ? 'game:nearBonus:on' : 'game:nearBonus:off'; 
+		$(document).trigger( event ); 
+
+
 
 		// move snake
 		if ( this.chaseView )
@@ -365,6 +372,13 @@ class Game{
       else this.currentDirection = 'down';
     }
 	};
+
+	snakeNearBonus(){
+		if ( Math.abs(this.snake.head.x - this.bonus.position.x) <= 1.0 &&
+			Math.abs(this.snake.head.y - this.bonus.position.y) <= 1.0 )
+			return true;
+		return false;
+	}
 
 	getNewPosition(){
 		// var newPos = new Vector( this.bonus.position.x+1, this.bonus.position.y );

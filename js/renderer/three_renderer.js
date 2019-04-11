@@ -7,7 +7,7 @@ class ThreeRenderer{
   	var scope = this;
 
   	Math.PIhalf = Math.PI / 2;
-  	Math.PIrot = 1 * Math.PI / 3;
+  	Math.PIrot = Math.PI / 4;
 
 		this.areaX = params.areaX !== undefined ? params.areaX : 50;
 		this.areaY = params.areaY !== undefined ? params.areaY : 5;
@@ -35,7 +35,7 @@ class ThreeRenderer{
 
 		this.renderer.setSize( this.width, this.height );
 		this.renderer.setClearColor( 0xFFFFFF, 1);
-		this.renderer.shadowMap.enabled = false;
+		this.renderer.shadowMap.enabled = true;
 
 		this.renderer.setPixelRatio( window.devicePixelRatio );
 		this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -137,6 +137,14 @@ class ThreeRenderer{
 			var gameState = scope.game.gameState;
 			scope.updateSnake( gameState );
 		})
+		.on( 'game:nearBonus:on', function(){
+			var head = scope.snake.children[0];
+			head.geometry.parameters.phiLength = 1;
+		})
+		.on( 'game:nearBonus:off', function(){
+			var head = scope.snake.children[0];
+			head.geometry.parameters.phiLength = 2 * Math.PI;
+		})
 	};
 
 	createExplosion( position ) {
@@ -181,8 +189,8 @@ class ThreeRenderer{
 		var scope = this;
 		this.snake_texture = new THREE.TextureLoader().load( preloader.queue.getItem( "snake-texture" ).src );
 		this.wall_texture = new THREE.TextureLoader().load( preloader.queue.getItem( "wallDark" ).src, function( texture ) {
-			texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-	  	texture.repeat.set( scope.areaX < 6 ? scope.areaX : scope.areaX - 5, scope.areaY < 6 ? scope.areaY : scope.areaY - 5 );
+			// texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+	  // 	texture.repeat.set( scope.areaX < 6 ? scope.areaX : scope.areaX - 5, scope.areaY < 6 ? scope.areaY : scope.areaY - 5 );
 			texture.anisotropy = 16;
 		});
 		this.ground_texture = new THREE.TextureLoader().load( preloader.queue.getItem('ground').src , function ( texture ) {
@@ -220,6 +228,46 @@ class ThreeRenderer{
 		// init walls
 		material = new THREE.MeshLambertMaterial( { map: this.wall_texture } );
 
+		for ( var i = 0; i < this.areaY + 2; i++ ){
+			var maxRand = randomInteger( 60, 95 ) / 100;
+			var height = 1 - ( maxRand - 0.5 ) * 1;
+			geometry = new THREE.BoxBufferGeometry( maxRand, maxRand, height );
+			geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, height/2 ) );
+
+			var cube1 = new THREE.Mesh( geometry, material );
+			cube1.position.x = 0;
+			cube1.position.y = -i;
+
+			var cube2 = new THREE.Mesh( geometry, material );
+			cube2.position.x = this.areaX + 1;
+			cube2.position.y = - this.areaY + i - 1;
+
+			cube2.castShadow = true;
+
+			wallGroup.add( cube1 );
+			wallGroup.add( cube2 );
+		}
+
+		for ( var i = 1; i < this.areaX + 1; i++ ){
+			var maxRand = randomInteger( 60, 95 ) / 100;
+			var height =  1 - ( maxRand - 0.5 ) * 1;
+			geometry = new THREE.BoxBufferGeometry( maxRand, maxRand, height );
+			geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, height/2 ) );
+
+			var cube1 = new THREE.Mesh( geometry, material );
+			cube1.position.y = 0;
+			cube1.position.x = i;
+
+			var cube2 = new THREE.Mesh( geometry, material );
+			cube2.position.y = -this.areaY - 1;
+			cube2.position.x = this.areaX + 1 - i;
+
+			cube1.castShadow = true;
+
+			wallGroup.add( cube1 );
+			wallGroup.add( cube2 );
+		}
+
 		wallGroup.add( createWall( this.areaX + 2, 1, ( this.areaX + 2 ) / 2 - 0.5, 0, true) );
 		wallGroup.add( createWall( this.areaX + 2, 1, ( this.areaX + 2 ) / 2 - 0.5, - this.areaY - 1, false) );
 		wallGroup.add( createWall( 1, this.areaY, 0, - ( this.areaY ) / 2 - 0.5, false ) );
@@ -231,7 +279,7 @@ class ThreeRenderer{
 			var cube = new THREE.Mesh( geometry, material );
 			cube.position.x = positionX;
 			cube.position.y = positionY;
-			cube.castShadow = true;
+			cube.castShadow = castShadow;
 			return cube;
 		}
 	};
@@ -256,7 +304,6 @@ class ThreeRenderer{
 
 	initSnake( preloader, renderConfig ){
 
-		console.log( renderConfig );
 		var scope = this;
 		var snakeGeometryParams = renderConfig.snakeGeometryParams;
 		var texture = this.snake_texture;
@@ -307,7 +354,7 @@ class ThreeRenderer{
 		this.scene.add(this.snake);
 
 		// init snake`s head
-		var geometry = new THREE.SphereGeometry( 0.45, 32, 32 );
+		var geometry = new THREE.SphereGeometry( 0.45, 32, 32, 0 );
 		var head = new THREE.Mesh( geometry, material );
 		
 		head.castShadow = true;
@@ -491,14 +538,6 @@ class ThreeRenderer{
 		// rotate camera
 		var direction = gameState.direction[0];
 
-		// var sub = this.directions[direction][0] - camRotation.y;
-		// console.log( Math.round( (sub)*10000 )/10000 );
-		// if ( sub > Math.PI )
-		// 	camRotation.y += 2 * Math.PI;
-		// else if ( sub < -Math.PI )
-		// 	camRotation.y -= 2 * Math.PI;
-		// camRotation.y += sub / 8;		
-
 		var subZ = this.directions[direction][0] - camRotation.z;
 		var subY = this.directions[direction][1] - camRotation.y;
 		var subX = this.directions[direction][2] - camRotation.x;
@@ -511,30 +550,9 @@ class ThreeRenderer{
 		if ( Math.abs(subZ) > Math.PI )
 			subZ = this.directions[direction][0] - camRotation.z;
 
-		if ( subX > Math.PI )
-			camRotation.x += 2 * Math.PI;
-		else
-			if ( subX < -Math.PI  )
-				camRotation.x -= 2 * Math.PI;
-		if ( Math.abs(subX) > Math.PI )
-			subX = this.directions[direction][2] - camRotation.x;
-
-		if ( subY > Math.PI )
-			camRotation.y += 2 * Math.PI;
-		else
-			if ( subY < -Math.PI  )
-				camRotation.y -= 2 * Math.PI;
-		if ( Math.abs(subY) > Math.PI )
-			subY = this.directions[direction][1] - camRotation.y;
-
 		camRotation.z += subZ / 8;
 		camRotation.y += subY / 5;
 		camRotation.x += subX / 5;
-
-		// camRotation.z += randomInteger( -100, 100 ) * 0.0001;
-		// camRotation.y += randomInteger( -100, 100 ) * 0.00002;
-		// camRotation.x += randomInteger( -100, 100 ) * 0.00002;
-
 	}
 
 	updateSnake( gameState ){
