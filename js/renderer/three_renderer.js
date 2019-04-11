@@ -7,7 +7,7 @@ class ThreeRenderer{
   	var scope = this;
 
   	Math.PIhalf = Math.PI / 2;
-  	Math.PIrot = Math.PI / 4;
+  	Math.PIrot = 3 * Math.PI / 8;
 
 		this.areaX = params.areaX !== undefined ? params.areaX : 50;
 		this.areaY = params.areaY !== undefined ? params.areaY : 5;
@@ -50,7 +50,7 @@ class ThreeRenderer{
 		// 	top view cam
 		this.topViewCamera = new THREE.PerspectiveCamera( 60, this.width / this.height, 0.1, 10000 )
 
-		this.topViewCameraZ = Math.min( this.areaY, this.areaX );
+		this.topViewCameraZ = Math.max( this.areaY, this.areaX );
 
 		this.topViewCamera.position.x = this.newCenter.x;
 		this.topViewCamera.position.y = -this.areaY ;
@@ -80,7 +80,7 @@ class ThreeRenderer{
 
 		this.cameraTarget;
 
-		this.addListeners();
+		this.addListeners( renderConfig );
 
 		this.directions = {
 			"up": [0, 0, Math.PIrot],
@@ -90,7 +90,7 @@ class ThreeRenderer{
 		};
 	};
 
-	addListeners(){
+	addListeners( renderConfig ){
 
 		var scope = this;
 
@@ -189,8 +189,6 @@ class ThreeRenderer{
 		var scope = this;
 		this.snake_texture = new THREE.TextureLoader().load( preloader.queue.getItem( "snake-texture" ).src );
 		this.wall_texture = new THREE.TextureLoader().load( preloader.queue.getItem( "wallDark" ).src, function( texture ) {
-			// texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-	  // 	texture.repeat.set( scope.areaX < 6 ? scope.areaX : scope.areaX - 5, scope.areaY < 6 ? scope.areaY : scope.areaY - 5 );
 			texture.anisotropy = 16;
 		});
 		this.ground_texture = new THREE.TextureLoader().load( preloader.queue.getItem('ground').src , function ( texture ) {
@@ -368,6 +366,7 @@ class ThreeRenderer{
 		var objectsGroup = new THREE.Group();
 		this.scene.add(objectsGroup);
 
+
 		// >>> create bonus
 		function onCreateBonus() {
 			return new THREE.Mesh(
@@ -430,6 +429,7 @@ class ThreeRenderer{
 		this.rock = this.assetManager.pullAsset( 'rock' );
 		this.rock.castShadow = true;
 
+		
 		objectsGroup.add( this.bonus );
 		objectsGroup.add( this.apple );
 		objectsGroup.add( this.accelerator );
@@ -512,7 +512,7 @@ class ThreeRenderer{
 		var position = this.topViewCamera.position;
 		position.z = this.topViewCameraZ + this.accelerator.rotation.y / 4;
 		position.y = -this.areaY - this.accelerator.rotation.y / 4;
-		this.topViewCamera.lookAt( this.newCenter.x, -this.newCenter.y, this.newCenter.z )
+		this.topViewCamera.lookAt( this.newCenter.x, -this.newCenter.y - 1, this.newCenter.z )
 
 		if ( this.game.isState( this.game.STATE_PAUSE ) || this.game.isState( this.game.STATE_FINISHED ) )
 			return;

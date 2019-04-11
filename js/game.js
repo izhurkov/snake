@@ -184,10 +184,6 @@ class Game{
 						}
 	        	scope.currentTurn = directions[scope.currentDirection];
 	        	break;
-
-	        case 'SET_DEV_PAUSE':
-	        	scope.DEV_PAUSE = !scope.DEV_PAUSE;
-	        	break;
 	    };
 	  });
 
@@ -268,6 +264,11 @@ class Game{
 			requestAnimationFrame( () => { scope.frogStep() } );
 			scope.gameState.frog = scope.frog.position;
 			scope.frog.jump( scope.rock.position );
+			if ( scope.frogCollision() ){
+				scope.score+=2;
+				scope.frog.position = scope.getNewPosition();
+				$(document).trigger( 'game:frogEaten' );
+			}
 		}, 900 );
 	};
 
@@ -299,6 +300,7 @@ class Game{
 			this.snake.removeBlock();
 			this.apple.position = this.getNewPosition();
 		}
+		// meeting with accelerator
 		else if ( Vector.equals( this.snake.head, this.accelerator.position ) && !this.timerAccel.isActive ){
 
 			this.timerAccel.play( this.accelerator.acceleratorDuration );
@@ -307,6 +309,7 @@ class Game{
 
 		}
 
+		// 
 		var event = this.snakeNearBonus() ? 'game:nearBonus:on' : 'game:nearBonus:off'; 
 		$(document).trigger( event ); 
 
@@ -317,7 +320,8 @@ class Game{
 			this.currentDirection = this.currentTurn;
 		this.snake.update( this.currentDirection 	);
 
-		if ( Vector.equals( this.snake.head, this.frog.position ) ){
+		// meeting with frog
+		if ( this.frogCollision() ){
 			this.score+=2;
 			this.frog.position = this.getNewPosition();
 			$(document).trigger( 'game:frogEaten' );
@@ -404,6 +408,12 @@ class Game{
 		}
 		return false;
 	};
+
+	frogCollision(){
+		if ( Vector.equals( this.snake.head, this.frog.position ) )
+			return true;
+		return false;
+	}
 	// <<< GAME LOGIC <<<
 
 };
