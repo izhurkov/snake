@@ -6,7 +6,8 @@ class ThreeRenderer{
 		this.params = params;
   	var scope = this;
 
-  	Math.PIhalf = Math.PI/2;
+  	Math.PIhalf = Math.PI / 2;
+  	Math.PIrot = 1 * Math.PI / 3;
 
 		this.areaX = params.areaX !== undefined ? params.areaX : 50;
 		this.areaY = params.areaY !== undefined ? params.areaY : 5;
@@ -34,7 +35,7 @@ class ThreeRenderer{
 
 		this.renderer.setSize( this.width, this.height );
 		this.renderer.setClearColor( 0xFFFFFF, 1);
-		this.renderer.shadowMap.enabled = true;
+		this.renderer.shadowMap.enabled = false;
 
 		this.renderer.setPixelRatio( window.devicePixelRatio );
 		this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -42,8 +43,6 @@ class ThreeRenderer{
 		$( renderConfig.parentElement ).append( this.renderer.domElement );
 		$( this.renderer.domElement ).attr('tabindex', 0);
 		// <<< SETUP CANVAS <<<
-		
-		
 
 		// >>> SETUP CAMERA >>>
 		// this.camera = new THREE.PerspectiveCamera(60, this.width / this.height, 0.1, 10000 );
@@ -64,7 +63,7 @@ class ThreeRenderer{
 		this.chaseViewCamera.position.x = 4;
 		this.chaseViewCamera.position.y = -3;
 		this.chaseViewCamera.position.z = 1;
-		this.chaseViewCamera.rotation.x = Math.PI / 2;
+		// this.chaseViewCamera.rotation.z = 3 * Math.PI / 2 ;
 		// <<< SETUP CAMERA <<<
 
 		
@@ -84,10 +83,10 @@ class ThreeRenderer{
 		this.addListeners();
 
 		this.directions = {
-			"up": [0, 0, -1],
-			"left": [Math.PIhalf, 1, 0],
-			"down": [Math.PI, 0, 1],
-			"right": [Math.PIhalf*3, -1, 0]
+			"up": [0, 0, Math.PIrot],
+			"left": [Math.PIhalf, Math.PIrot, 0],
+			"down": [Math.PI, 0, -Math.PIrot],
+			"right": [Math.PIhalf * 3, -Math.PIrot, 0]
 		};
 	};
 
@@ -453,8 +452,9 @@ class ThreeRenderer{
 			if ( scope.chaseViewActive ){
 				scope.renderer.render( scope.scene, scope.chaseViewCamera );
 			}
-			else
+			else{
 				scope.renderer.render( scope.scene, scope.topViewCamera );
+			}
 
 			$( document ).trigger( 'three-renderer:updated', { delta: delta } )
 		}());
@@ -463,7 +463,6 @@ class ThreeRenderer{
 	updateCamera( gameState, delta ){
 
 		var position = this.topViewCamera.position;
-		// console.log( this.accelerator.rotation.y )
 		position.z = this.topViewCameraZ + this.accelerator.rotation.y / 4;
 		position.y = -this.areaY - this.accelerator.rotation.y / 4;
 		this.topViewCamera.lookAt( this.newCenter.x, -this.newCenter.y, this.newCenter.z )
@@ -479,7 +478,6 @@ class ThreeRenderer{
 		var camPosition = this.chaseViewCamera.position;
 		var camRotation = this.chaseViewCamera.rotation;
 
-		var headPosition = gameState.snake[0];
 		var targetPosition = gameState.snake[1] ;
 		var lastPosition = gameState.snake[2];
 
@@ -488,16 +486,55 @@ class ThreeRenderer{
 		// move camera
 		camPosition.x = lastPosition.x + ( targetPosition.x - lastPosition.x ) * stepTime * delta ;
 		camPosition.y = -(lastPosition.y + ( targetPosition.y - lastPosition.y ) * stepTime * delta);
-		camPosition.z = 0.8;
+		camPosition.z = 1.2;
 
-		// rotate camera 
+		// rotate camera
 		var direction = gameState.direction[0];
-		var sub = this.directions[direction][0] - camRotation.y;
-		if ( sub > Math.PI )
+
+		// var sub = this.directions[direction][0] - camRotation.y;
+		// console.log( Math.round( (sub)*10000 )/10000 );
+		// if ( sub > Math.PI )
+		// 	camRotation.y += 2 * Math.PI;
+		// else if ( sub < -Math.PI )
+		// 	camRotation.y -= 2 * Math.PI;
+		// camRotation.y += sub / 8;		
+
+		var subZ = this.directions[direction][0] - camRotation.z;
+		var subY = this.directions[direction][1] - camRotation.y;
+		var subX = this.directions[direction][2] - camRotation.x;
+
+		if ( subZ > Math.PI )
+			camRotation.z += 2 * Math.PI;
+		else
+			if ( subZ < -Math.PI  )
+				camRotation.z -= 2 * Math.PI;
+		if ( Math.abs(subZ) > Math.PI )
+			subZ = this.directions[direction][0] - camRotation.z;
+
+		if ( subX > Math.PI )
+			camRotation.x += 2 * Math.PI;
+		else
+			if ( subX < -Math.PI  )
+				camRotation.x -= 2 * Math.PI;
+		if ( Math.abs(subX) > Math.PI )
+			subX = this.directions[direction][2] - camRotation.x;
+
+		if ( subY > Math.PI )
 			camRotation.y += 2 * Math.PI;
-		else if ( sub < -Math.PI )
-			camRotation.y -= 2 * Math.PI;
-		camRotation.y += sub / 8;		
+		else
+			if ( subY < -Math.PI  )
+				camRotation.y -= 2 * Math.PI;
+		if ( Math.abs(subY) > Math.PI )
+			subY = this.directions[direction][1] - camRotation.y;
+
+		camRotation.z += subZ / 8;
+		camRotation.y += subY / 5;
+		camRotation.x += subX / 5;
+
+		// camRotation.z += randomInteger( -100, 100 ) * 0.0001;
+		// camRotation.y += randomInteger( -100, 100 ) * 0.00002;
+		// camRotation.x += randomInteger( -100, 100 ) * 0.00002;
+
 	}
 
 	updateSnake( gameState ){
@@ -533,7 +570,6 @@ class ThreeRenderer{
 		for ( var snakeTile in snake ){
 			snake[snakeTile].position.set( cellPositions[snakeTile].x, -cellPositions[snakeTile].y, 0);
 		}
-
 	};
 
 	updateObjects( gameState, delta ){

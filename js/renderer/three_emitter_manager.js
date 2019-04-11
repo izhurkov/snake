@@ -55,11 +55,11 @@ class ThreeEmitterManager{
 		$( document )
 		.on( 'game:finished', function( e, param ){
 			var position = param;
-			scope.particleExplosion.triggerPoolEmitter( 1, (scope.pos.set( position.x + 0.5, - position.y - 0.5, 0.5 )) );
+			scope.particleExplosion.triggerPoolEmitter( 1, (scope.pos.set( position.x, - position.y, 0.5 )) );
 		})
 		.on( 'game:bonusTaken', function( e, param ){
       var position = param;
-			scope.particleBonus.triggerPoolEmitter( 1, (scope.pos.set( position.x + 0.5, - position.y - 0.5, 0.5 )) );
+			scope.particleBonus.triggerPoolEmitter( 1, (scope.pos.set( position.x, - position.y, 0.5 )) );
 		})
 		.on( 'three-renderer:updated', function( e, param ){
 			var delta = param.delta;
