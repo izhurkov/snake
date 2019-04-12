@@ -278,8 +278,8 @@ $( document ).on( 'preloader:complete', function( e, data ){
 		
 	  blockColor: "rgba(143, 255, 143, 1)",
 	  wallColor: "rgba(68, 119, 68, 1)" ,
-	  areaX: 9,
-	  areaY: 7,
+	  areaX: 12,
+	  areaY: 9,
 	  blockSize: 24,
 
 	  headColor: "rgba(124, 112, 96, 1)",

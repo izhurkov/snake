@@ -7,7 +7,7 @@ class ThreeRenderer{
   	var scope = this;
 
   	Math.PIhalf = Math.PI / 2;
-  	Math.PIrot = 3 * Math.PI / 8;
+  	Math.PIrot = 1 * Math.PI / 4;
 
 		this.areaX = params.areaX !== undefined ? params.areaX : 50;
 		this.areaY = params.areaY !== undefined ? params.areaY : 5;
@@ -304,11 +304,21 @@ class ThreeRenderer{
 
 		var scope = this;
 		var snakeGeometryParams = renderConfig.snakeGeometryParams;
+
 		var texture = this.snake_texture;
 		var material = new THREE.MeshLambertMaterial( {
 			map: texture,
 			side: THREE.DoubleSide
 		} );
+
+		var curve = new THREE.CatmullRomCurve3( [
+			new THREE.Vector3( 0, 0, 0 ),
+			new THREE.Vector3( 1, 0, 0 )
+		] );
+		curve.curveType = 'chordal';
+		var geometry = new THREE.TubeGeometry( curve, 10, 0.3, 16, false );
+		this.splineObject = new THREE.Mesh( geometry, material );
+		this.scene.add(this.splineObject);
 
 		for ( var snakeName in snakeGeometryParams ){
 			if ( snakeName.includes("snakeBody") ){
@@ -533,7 +543,7 @@ class ThreeRenderer{
 		// move camera
 		camPosition.x = lastPosition.x + ( targetPosition.x - lastPosition.x ) * stepTime * delta ;
 		camPosition.y = -(lastPosition.y + ( targetPosition.y - lastPosition.y ) * stepTime * delta);
-		camPosition.z = 1.2;
+		camPosition.z = 1.5;
 
 		// rotate camera
 		var direction = gameState.direction[0];
@@ -551,8 +561,8 @@ class ThreeRenderer{
 			subZ = this.directions[direction][0] - camRotation.z;
 
 		camRotation.z += subZ / 8;
-		camRotation.y += subY / 5;
-		camRotation.x += subX / 5;
+		camRotation.y += subY / 6;
+		camRotation.x += subX / 6;
 	}
 
 	updateSnake( gameState ){
@@ -560,34 +570,82 @@ class ThreeRenderer{
 		if ( this.game.isState( this.game.STATE_PAUSE ) )
 			return;
 
-		var cellPositions = gameState.snake;
+		var cellPositions = Object.assign( {}, gameState.snake );
 		var cellDirections = gameState.direction;
 
+		for ( var i = 0 ; i < cellPositions; i++ ){
+
+		}
+
 		var snake = this.snake.children;
+		
+		var array = [];
 
-		while ( snake.length < cellDirections.length ){
-			var model = this.assetManager.pullAsset( 'snakeBody_vertical' );
-			this.snake.add( model );
+		for ( var i = 0; i < cellPositions.length; i++ ){
+			array.push( new THREE.Vector3( cellPositions[i].x, -cellPositions[i].y, 0 ) )
 		}
 
-		while ( snake.length > cellDirections.length ){
-			var asset = snake.splice( -1, 1 );
-			this.assetManager.putAsset( asset );
-		}
+		var new_curve = new THREE.CatmullRomCurve3( array );
+		new_curve.curveType = 'chordal';
 
-		for ( var i = 1; i < snake.length - 1; i++ ){
-			var snake_geometry = 'snakeBody_' + cellDirections[i];
-			this.assetManager.putAsset( snake[i] );
-			var model = this.assetManager.pullAsset( snake_geometry );
-			snake[i] = model;
-		}
+		var geometry = new THREE.TubeGeometry( new_curve, cellPositions.length * 10, 0.3, 16, false );
+		this.splineObject.geometry.dispose();
+		this.splineObject.geometry = geometry;
 
-		this.assetManager.putAsset( snake[cellDirections.length-1] );
-		snake[cellDirections.length-1] = this.assetManager.pullAsset( 'snakeTail_' + cellDirections[cellDirections.length-1] );
+		// var texture = this.snake_texture;
+		// var material = new THREE.MeshLambertMaterial( {
+		// 	map: texture,
+		// 	side: THREE.DoubleSide
+		// } );
 
-		for ( var snakeTile in snake ){
-			snake[snakeTile].position.set( cellPositions[snakeTile].x, -cellPositions[snakeTile].y, 0);
-		}
+		// var array = []
+
+		// for ( var i = 0; i < cellPositions.length; i++ ){
+		// 	array.push( new THREE.Vector3( cellPositions.x, cellPositions.y, 0 ))
+		// }
+
+		// var curve = new THREE.CatmullRomCurve3( array );
+		// curve.curveType = 'chordal';
+		// // 
+		// var new_geometry = new THREE.TubeGeometry( curve, 10, 0.3, 16, false );
+		// // console.log(geometry)
+		// // var geometry2 = new THREE.SphereGeometry( );
+		// var obj = new THREE.Mesh( geometry, material );
+		// obj.position.x = 2;
+		// obj.position.y = -2;
+		// obj.position.z = 1;
+
+		// // this.scene.remove( this.splineObject );
+
+		// this.splineObject.geometry = new_geometry;
+		// this.scene.add( obj );
+		// this.scene.add( this.splineObject );
+		// // console.log(this.splineObject.geometry);
+		// this.splineObject.geometry.attributes.position.needsUpdate = true;
+  //   this.splineObject.geometry.verticesNeedUpdate = true;
+		// // this.splineObject.geometry.attributes. = true;
+
+		// while ( snake.length < cellDirections.length ){
+		// 	var model = this.assetManager.pullAsset( 'snakeBody_vertical' );
+		// 	this.snake.add( model );
+		// }
+
+		// while ( snake.length > cellDirections.length ){
+		// 	var asset = snake.splice( -1, 1 );
+		// 	this.assetManager.putAsset( asset );
+		// }
+
+		// for ( var i = 1; i < snake.length - 1; i++ ){
+		// 	var snake_geometry = 'snakeBody_' + cellDirections[i];
+		// 	this.assetManager.putAsset( snake[i] );
+		// 	var model = this.assetManager.pullAsset( snake_geometry );
+		// 	snake[i] = model;
+		// }
+
+		// this.assetManager.putAsset( snake[cellDirections.length-1] );
+		// snake[cellDirections.length-1] = this.assetManager.pullAsset( 'snakeTail_' + cellDirections[cellDirections.length-1] );
+
+		snake[0].position.set( cellPositions[0].x, -cellPositions[0].y, 0);
 	};
 
 	updateObjects( gameState, delta ){
