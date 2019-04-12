@@ -606,7 +606,7 @@ class ThreeRenderer{
 
 		// console.log( _cellPositions, _oldCellPositions )
 		var cellPositions = [];
-		for ( var i = 1; i < _cellPositions.length - 1; i++ ){
+		for ( var i = 0; i < _cellPositions.length - 1; i++ ){
 			var point = new THREE.Vector3();
 			var x;
 			var y;
