@@ -6,6 +6,7 @@ class Snake{
 		this.startPos = params.startPos;
 		this.startLength = params.startLength;
 		this.reset();
+		this.changeVelocity( null )
 	};
 
 	// позиция "головы" змейки
@@ -17,11 +18,13 @@ class Snake{
 		this._cellPositions = []; // old position
 
 		this.cellDirections = [];
+		this._cellDirections = [];
 		this.direction = new Vector( 0, 0 );
 
 		for ( var i = 0; i < this.startLength; i++ ){
 			this.cellPositions.push( new Vector( this.startPos.x - i, this.startPos.y ) )
 			this._cellPositions.push( new Vector( this.startPos.x - i, this.startPos.y ) )
+			this._cellDirections.push( new Vector( 1, 0) );
 		}
 
 		this.cellDirections.push( 'right' );
@@ -40,8 +43,9 @@ class Snake{
 	addBlock( currentVelocity ){
 		var length = this.cellPositions.length;
 
-		this.cellPositions.push( new Vector( this.cellPositions[length-1].x, this.cellPositions[length-1].y));
-		this._cellPositions.push( new Vector( this._cellPositions[length-1].x, this._cellPositions[length-1].y));
+		this.cellPositions.push( new Vector( this.cellPositions[length-1].x, this.cellPositions[length-1].y) );
+		this._cellPositions.push( new Vector( this._cellPositions[length-1].x, this._cellPositions[length-1].y) );
+		this._cellDirections.push( new Vector( this._cellDirections[length-1].x, this._cellDirections[length-1].y) );
 
 		// this.cellDirections.push( this.cellDirections[length-1] );
 	};
@@ -54,6 +58,7 @@ class Snake{
 		this.cellPositions.splice( -1, 1 );
 		this._cellPositions.splice( -1, 1 );
 		this.cellDirections.splice( -1, 1 );
+		this._cellDirections.splice( -1, 1 );
 		return;	
 		
 	};
@@ -127,10 +132,24 @@ class Snake{
 
 		var currentDirection = new Vector( directions[_currentDirection][0], directions[_currentDirection][1] );
 
+
 		if ( Vector.equals( Vector.add( currentDirection, this.direction ), 0 )) return;
 
 		this.cellDirections[0] = ( _currentDirection !== null ) ? _currentDirection : this.cellDirections[0];
 		this.direction.set( currentDirection );
+
+
+
+		this._cellDirections[0] = new Vector( directions[_currentDirection][0], directions[_currentDirection][1] );
+
+		for( var i = this._cellDirections.length - 1; i > 0 ; i-- ){
+			this._cellDirections[i].set( this._cellDirections[i-1].x, this._cellDirections[i-1].y );
+		}
+
+		// console.log( this._cellDirections[0] );
+		// console.log( this._cellDirections[1] );
+		// console.log( this._cellDirections[2] );
+		// console.log( "this._cellDirections[0]" );
 	};
 
 };

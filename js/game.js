@@ -39,7 +39,9 @@ class Game{
 			apple: this.apple.position,
 			rock: this.rock.position,
 			accelerator: this.accelerator.position,
-			frog: this.frog.position
+			frog: this.frog.position,
+
+			_direction: this.snake._cellDirections
 		};
 
 		this.DEV_PAUSE = false;
@@ -262,6 +264,7 @@ class Game{
 	  let scope = this;
 		setTimeout( function(){
 			requestAnimationFrame( () => { scope.frogStep() } );
+				// console.log( scope.gameState._direction[0],  scope.gameState._direction[1] )
 			scope.gameState.frog = scope.frog.position;
 			scope.frog.jump( scope.rock.position );
 			if ( scope.frogCollision() ){
@@ -269,7 +272,7 @@ class Game{
 				scope.frog.position = scope.getNewPosition();
 				$(document).trigger( 'game:frogEaten' );
 			}
-		}, 900 );
+		}, 700 );
 	};
 
 
@@ -283,6 +286,10 @@ class Game{
 		this.gameState.apple = this.apple.position;
 		this.gameState.rock = this.rock.position;
 		this.gameState.accelerator = this.accelerator.position;
+
+		this.gameState._direction = this.snake._cellDirections;
+
+		// console.log( this.gameState._direction[2], this.snake._cellDirections[2] );
 
 		$( document ).trigger( 'game:updated' );
 
@@ -315,11 +322,6 @@ class Game{
 
 
 
-		// move snake
-		if ( this.chaseView )
-			this.currentDirection = this.currentTurn;
-		this.snake.update( this.currentDirection 	);
-
 		// meeting with frog
 		if ( this.frogCollision() ){
 			this.score+=2;
@@ -349,6 +351,13 @@ class Game{
 		else if ( this.wallCollision() ){
 				$(document).trigger( 'game:finished', { x: this.snake.head.x, y: this.snake.head.y } );
 		}
+
+		
+		// move snake
+		if ( this.chaseView )
+			this.currentDirection = this.currentTurn;
+		this.snake.update( this.currentDirection 	);
+
 	};
 	// <<< GAME LOOPS <<<
 	

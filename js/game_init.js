@@ -285,7 +285,7 @@ $( document ).on( 'preloader:complete', function( e, data ){
 	  headColor: "rgba(124, 112, 96, 1)",
 	  bodyColor: "rgba(204, 177, 156, 1)",
 	  startPos: { x: 4, y: 2 },
-	  startLength: 3,
+	  startLength: 8,
 
 	  bonusColor: "rgba(200, 70, 150, 1)",
 

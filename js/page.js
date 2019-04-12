@@ -13,7 +13,7 @@
 		  {src:"assets/snake-graphics.png", id:"snake-graphics"},
 		  {src:"assets/CartoonSmoke.png", id:"cartoonSmoke"},
 		  {src:"assets/Bubbles.png", id:"bubbles"},
-		  {src:"assets/snake_texture.jpg", id:"snake-texture"},
+		  {src:"assets/snake_texture_128.jpg", id:"snake-texture"},
 
 		  // skybox
 		  {src:"assets/dawnmountain-xpos.png", id:"dawnmountain-xpos"},
