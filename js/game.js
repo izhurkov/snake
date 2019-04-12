@@ -280,7 +280,6 @@ class Game{
 
 	gameStep(){
 		this.updateGame();
-		console.log( this.snake.cellPositions[0], this.snake._cellPositions[0])
 		this.gameState.snake = this.snake.cellPositions;
 		this.gameState.direction = this.snake.cellDirections;
 		this.gameState.bonus = this.bonus.position;
