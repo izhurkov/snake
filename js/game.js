@@ -41,6 +41,7 @@ class Game{
 			accelerator: this.accelerator.position,
 			frog: this.frog.position,
 
+			_snake: this.snake._cellPositions,
 			_direction: this.snake._cellDirections
 		};
 
@@ -279,7 +280,7 @@ class Game{
 
 	gameStep(){
 		this.updateGame();
-
+		console.log( this.snake.cellPositions[0], this.snake._cellPositions[0])
 		this.gameState.snake = this.snake.cellPositions;
 		this.gameState.direction = this.snake.cellDirections;
 		this.gameState.bonus = this.bonus.position;
@@ -288,12 +289,13 @@ class Game{
 		this.gameState.accelerator = this.accelerator.position;
 
 		this.gameState._direction = this.snake._cellDirections;
+		this.gameState._snake = this.snake._cellPositions;
 
 		// console.log( this.gameState._direction[2], this.snake._cellDirections[2] );
 
-		$( document ).trigger( 'game:updated' );
-
 		this.interfaceController.update( this.score );
+		$( document ).trigger( 'game:updated' );
+		this.snake.updateOldPosition();
 	};
 
 	updateGame(){
@@ -352,7 +354,7 @@ class Game{
 				$(document).trigger( 'game:finished', { x: this.snake.head.x, y: this.snake.head.y } );
 		}
 
-		
+
 		// move snake
 		if ( this.chaseView )
 			this.currentDirection = this.currentTurn;

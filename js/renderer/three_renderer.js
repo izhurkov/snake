@@ -1,5 +1,9 @@
 'use strict';
 
+var stats = new Stats();
+stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild( stats.dom );	
+
 class ThreeRenderer{
 
 	constructor ( params, renderConfig, preloader, gameState, game ){
@@ -370,6 +374,13 @@ class ThreeRenderer{
 		
 		head.castShadow = true;
 		this.snake.add( head );
+
+		var geometry2 = new THREE.SphereGeometry( 0.45, 32, 32, 0 );
+		var tail = new THREE.Mesh( geometry2, material );
+		
+		tail.castShadow = true;
+		this.snake.add( tail );
+		// console.log(this.snake)
 	};
 
 	// create frog, bonus & etc
@@ -494,8 +505,7 @@ class ThreeRenderer{
 		var time;
 
 		(function update(){
-
-			var updateId = requestAnimationFrame(update);
+			stats.begin();
 
 			var gameState = scope.game.gameState;
 
@@ -517,8 +527,11 @@ class ThreeRenderer{
 			else{
 				scope.renderer.render( scope.scene, scope.topViewCamera );
 			}
-
 			$( document ).trigger( 'three-renderer:updated', { delta: delta } )
+
+			stats.end();
+
+			var updateId = requestAnimationFrame(update);
 		}());
 	};
 
@@ -583,36 +596,41 @@ class ThreeRenderer{
 			return;
 
 		var nowTime = Date.now();
-		var delta = ( nowTime - this.lastGameUpdateTime ) * 0.001
+		var delta = ( nowTime - this.lastGameUpdateTime ) * 0.001 || 1
 		var stepTime = 1000 / this.game.stepTime;
 
+		// var _oldCellPositions = gameState._snake;
 
 		var _cellPositions = gameState.snake;
 		var _cellDirections = gameState._direction;
-		var cellDirections = gameState.direction;
 
+		// console.log( _cellPositions, _oldCellPositions )
 		var cellPositions = [];
-		for ( var i = 0; i < _cellPositions.length - 1; i++ ){
-			cellPositions[i] = _cellPositions[i + 1].clone();
-			cellPositions[i].x = _cellPositions[i + 1].x;
-			cellPositions[i].y = _cellPositions[i + 1].y;
+		for ( var i = 1; i < _cellPositions.length - 1; i++ ){
+			var point = new THREE.Vector3();
+			var x;
+			var y;
+			var _x = ( _cellPositions[i].x + _cellPositions[i+1].x ) / 2;
+			var _y = ( _cellPositions[i].y + _cellPositions[i+1].y ) / 2;
+			var dx = ( _cellDirections[i].x + _cellDirections[i+1].x) / 2;
+			var dy = ( _cellDirections[i].y + _cellDirections[i+1].y) / 2;
+
+			x = _x;
+			y = _y;
+
 			if ( delta * stepTime > 1){
-				cellPositions[i].x = _cellPositions[i+1].x + _cellDirections[i+1].x;
-				cellPositions[i].y = _cellPositions[i+1].y + _cellDirections[i+1].y;
+				x += dx;
+				y += dy;
 			}
-			else{
-				if ( cellDirections[i+ 1] !== undefined ){
-					if ( false ){ //cellDirections[i + 1].includes('horizontal')  || cellDirections[i + 1].includes('vertical') ){
-						cellPositions[i].x += delta * stepTime * _cellDirections[i+ 1].x;
-						cellPositions[i].y += delta * stepTime * _cellDirections[i+ 1].y;
-					}
-					else{
-						cellPositions[i].x += Math.sin(delta * stepTime * _cellDirections[i+ 1].x);
-						cellPositions[i].y += Math.sin(delta * stepTime * _cellDirections[i+ 1].y);
-					}
-				}
-			}			
+			else {
+				x += delta * stepTime * dx;
+				y += delta * stepTime * dy;
+			}
+			
+			cellPositions.push( { x: x, y: y} );
 		}
+		cellPositions[0].x -= _cellDirections[0].x/2;
+		cellPositions[0].y -= _cellDirections[0].y/2;
 
 		var snake = this.snake.children;
 		
@@ -621,25 +639,24 @@ class ThreeRenderer{
 		for ( var i = 0; i < cellPositions.length; i++ ){
 			array.push( new THREE.Vector3( cellPositions[i].x, -cellPositions[i].y, 0 ) )
 		}
-		array.push( new THREE.Vector3( cellPositions[cellPositions.length-1].x, -cellPositions[cellPositions.length-1].y, 0 ) )
 
 		var new_curve = new THREE.CatmullRomCurve3( array );
 		new_curve.curveType = 'chordal';
 
-		var geometry = new THREE.TubeGeometry( new_curve, cellPositions.length * 30, 0.4, 6, false );
+		var geometry = new THREE.TubeGeometry( new_curve, cellPositions.length * 10, 0.3, 4, false );
 		this.splineObject.geometry.dispose();
-		// this.splineObject.geometry = geometry;
+		this.splineObject.geometry = geometry;
 		// 
-		var points = new_curve.getPoints( cellPositions.length );
-		var geometry2 = new THREE.BufferGeometry().setFromPoints( points );
-		var material2 = new THREE.PointsMaterial( { size: 2, sizeAttenuation: false, color: 0xff0000 } );
-		var curveObject = new THREE.Points( geometry2, material2 );
-		// console.log("202", curveObject);
-		curveObject.name = "curveObjectTMP" 
-		this.scene.remove(this.scene.getObjectByName("curveObjectTMP"));
-		this.scene.add(curveObject);
+		// var points = new_curve.getPoints( cellPositions.length-1 );
+		// var geometry2 = new THREE.BufferGeometry().setFromPoints( points );
+		// var material2 = new THREE.PointsMaterial( { size: 3, sizeAttenuation: false, color: 0xff0000 } );
+		// var curveObject = new THREE.Line( geometry2, material2 );
+		// curveObject.name = "curveObjectTMP" 
+		// this.scene.remove(this.scene.getObjectByName("curveObjectTMP"));
+		// this.scene.add(curveObject);
 
 		snake[0].position.set( cellPositions[0].x, -cellPositions[0].y, 0);
+		// snake[1].position.set( cellPositions[cellPositions.length-1].x, -cellPositions[cellPositions.length-1].y, 0);
 	};
 
 	updateObjects( gameState, delta ){

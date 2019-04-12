@@ -102,22 +102,18 @@ class Snake{
 		};
 
 
-		if ( new_pos.length < 2 ) return;
-		if ( new_pos[new_pos.length-1].x > new_pos[new_pos.length-2].x ){
-				this.cellDirections[new_pos.length-1] = 'left';
-		} else if ( new_pos[new_pos.length-1].x < new_pos[new_pos.length-2].x ){
-				this.cellDirections[new_pos.length-1] = 'right';
-		} else if ( new_pos[new_pos.length-1].y > new_pos[new_pos.length-2].y ){
-				this.cellDirections[new_pos.length-1] = 'up';
-		} else {
-				this.cellDirections[new_pos.length-1] = 'down';
-		};
+		
 		// console.log( this.cellDirections )
+	};
+
+	updateOldPosition(){
+		var new_pos = this.cellPositions;
+		var old_pos = this._cellPositions;
 
 		for ( var i = new_pos.length-1; i >= 0; i-- ){
 			old_pos[i] = new_pos[i].clone();
 		};
-	};
+	}
 
 	// изменение направления
 	changeVelocity( _currentDirection ){
